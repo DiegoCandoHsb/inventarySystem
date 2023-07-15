@@ -1,9 +1,11 @@
-import { userSignUpData } from '../../interfaces/userSignUpData.interface';
-import { userSignInData } from '../../interfaces/userSingInData.interface';
+import {
+  LoginResponseData,
+  userSignUpData,
+} from "../../interfaces/userSignUpData.interface";
 
 interface ButtonComponentProps {
   title: string;
-  onclickButton?: () => Promise<userSignUpData | userSignInData | undefined>;
+  onclickButton?: () => Promise<userSignUpData | LoginResponseData | undefined>;
 }
 
 export const ButtonComponent = ({
@@ -13,7 +15,7 @@ export const ButtonComponent = ({
   return (
     <input
       className="w-full font-bold text-xl rounded-md border-2 border-slate-700 bg-slate-600 hover:bg-slate-700 transition-all text-zinc-200 mt-2 p-1"
-      type="button"
+      type="submit"
       value={title}
       onClick={onclickButton}
     />

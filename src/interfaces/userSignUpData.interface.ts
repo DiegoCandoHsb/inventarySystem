@@ -18,3 +18,17 @@ export interface plainData {
   password: string;
   confirmPassword: string;
 }
+
+export interface LoginResponseData {
+  user: {
+    name: string;
+    id: string;
+    email: string;
+    password: string;
+    details: {
+      lastname: string;
+      phone: string;
+    };
+  };
+  token: string;
+}

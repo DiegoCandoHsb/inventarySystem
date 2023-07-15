@@ -1,12 +1,15 @@
-import { userSignUpData } from '../interfaces/userSignUpData.interface';
-import { userSignInData } from '../interfaces/userSingInData.interface';
-import { HsbBaseApiDb } from './api.db';
+import {
+  LoginResponseData,
+  userSignUpData,
+} from "../interfaces/userSignUpData.interface";
+import { userSignInData } from "../interfaces/userSingInData.interface";
+import { HsbBaseApiDb } from "./api.db";
 
 export async function SignUp(
   userData: userSignUpData
 ): Promise<userSignUpData> {
   const res = await HsbBaseApiDb.post<userSignUpData>(
-    '/auth/register',
+    "/auth/register",
     userData
   );
 
@@ -16,10 +19,12 @@ export async function SignUp(
 export async function SignIn({
   email,
   password,
-}: userSignInData): Promise<userSignInData> {
-  const res = await HsbBaseApiDb.post<userSignInData>('/auth/login', {
+}: userSignInData): Promise<LoginResponseData> {
+  return await HsbBaseApiDb.post<LoginResponseData>("/auth/login", {
     email,
     password,
+  }).then((res) => {
+    sessionStorage.setItem("token", res.data.token);
+    return res.data;
   });
-  return res.data
 }

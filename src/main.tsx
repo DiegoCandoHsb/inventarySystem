@@ -1,13 +1,11 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-import Register from './pages/Register.tsx';
-import Login from './pages/Login.tsx';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { RouterProvider } from "react-router-dom";
+import { routes } from "./router/router";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    {/* <Register /> */}
-    <Login />
+    <RouterProvider router={routes} />
   </React.StrictMode>
 );

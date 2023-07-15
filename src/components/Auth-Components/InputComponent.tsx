@@ -15,8 +15,17 @@ export default function InputComponent({
   value,
   onChangeInput,
 }: InputComponentProps) {
-  return (
 
+  // key test
+  function enterKey(e: React.KeyboardEvent<HTMLInputElement>) {
+    const keyCode = e.key
+    if (keyCode === "Enter") {
+      console.log('ENTER');
+    }
+    return
+  }
+
+  return (
     <>
       <div className="w-full flex flex-col my-1 h-1/2">
         <label htmlFor={name} className="text-lg font-semibold">
@@ -29,7 +38,8 @@ export default function InputComponent({
           id={name}
           placeholder={placeholder}
           value={value}
-          onChange={e => onChangeInput(e.target.value, name)}
+          onChange={(e) => onChangeInput(e.target.value, name)}
+          onKeyDown={(e) => enterKey(e)}
         />
       </div>
     </>
