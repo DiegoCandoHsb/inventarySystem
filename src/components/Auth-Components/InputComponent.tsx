@@ -1,45 +1,32 @@
+import React from "react";
+
 interface InputComponentProps {
-  title: string;
+  [dataName: InputComponentProps]: string | number;
   name: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   placeholder: string;
-  inputType: string;
+  type: string;
   value: string | number;
-  onChangeInput: (value: string, field: any) => void;
 }
 
 export default function InputComponent({
+  onChange,
+  children,
   name,
-  placeholder,
-  inputType,
-  title,
-  value,
-  onChangeInput,
-}: InputComponentProps) {
-
-  // key test
-  function enterKey(e: React.KeyboardEvent<HTMLInputElement>) {
-    const keyCode = e.key
-    if (keyCode === "Enter") {
-      console.log('ENTER');
-    }
-    return
-  }
-
+  ...tagInputProperties
+}: InputComponentProps & React.PropsWithChildren) {
   return (
     <>
       <div className="w-full flex flex-col my-1 h-1/2">
         <label htmlFor={name} className="text-lg font-semibold">
-          {title}
+          {children}
         </label>
         <input
           className="border-2 border-slate-600 rounded-md p-1 px-2 outline-none focus:border-slate-900"
-          type={inputType}
           name={name}
           id={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={(e) => onChangeInput(e.target.value, name)}
-          onKeyDown={(e) => enterKey(e)}
+          {...tagInputProperties}
+          onInput={onChange}
         />
       </div>
     </>
