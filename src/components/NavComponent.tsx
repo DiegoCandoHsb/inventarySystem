@@ -8,7 +8,7 @@ export default function NavComponent() {
           <Link to={"/"}>Home</Link>
         </li>
         <li>
-          <Link to={"/test"}>Test</Link>
+          <Link to={"/fixedAssets"}>Fixed Assets</Link>
         </li>
         <li>
           <Link to={"/auth/register"}>Register</Link>

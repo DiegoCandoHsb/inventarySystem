@@ -1,12 +1,6 @@
 import { useState } from "react";
 import ActivitiesCardcomponent from "../components/ActivitiesCardComponent";
-import { redirect } from "react-router-dom";
-
-interface ActivitiesMenuOptions {
-  img: string;
-  title: string;
-  navigateTo: string;
-}
+import { ActivitiesMenuOptions } from "../interfaces/activitiesMenus.interface";
 
 export default function Activities() {
   const [activitiesMenuOptions] = useState<ActivitiesMenuOptions[]>([
@@ -23,10 +17,10 @@ export default function Activities() {
     {
       img: "https://www.petlife.mx/u/fotografias/m/2023/5/16/f768x1-2048_2175_5050.jpg",
       title: "Fixed Assets",
-      navigateTo: "/",
+      navigateTo: "/fixedAssets",
     },
     {
-      img: "https://img.playbuzz.com/image/upload/ar_1.5,c_pad,f_jpg,b_auto/q_auto:good,f_auto,fl_lossy,w_480,c_limit,dpr_1/cdn/dc0566b2-2749-4ebf-831a-360461863b1f/d25de7b8-da5e-4835-a593-4154357d7b4d_560_420.jpg",
+      img: "https://1.bp.blogspot.com/-iCnFX7eWVjs/XR9NQutHXcI/AAAAAAAAJ9k/ISWH3UXgJF8QJdsV6P9wh3agzOwOF_aYgCLcBGAs/s1600/cat-1285634_1920.png",
       title: "Electronic Items",
       navigateTo: "/",
     },
@@ -51,7 +45,7 @@ export default function Activities() {
 export function ActivitiesLoader() {
   const token = sessionStorage.getItem("token");
 
-  if (!token) return redirect("/auth/login");
+  // if (!token) return redirect("/auth/login");
 
   return token;
 }

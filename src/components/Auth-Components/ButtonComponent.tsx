@@ -5,7 +5,7 @@ import {
 
 interface ButtonComponentProps {
   title: string;
-  onclickButton?: () => Promise<userSignUpData | LoginResponseData | undefined>;
+  onclickButton?: () => Promise<userSignUpData | LoginResponseData | undefined> | any;
 }
 
 export const ButtonComponent = ({

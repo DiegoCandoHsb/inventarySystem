@@ -37,7 +37,7 @@ export function Component() {
       <RegisterForm title="Sign In">
         {/* email */}
         <InputComponent
-          onChange={(e) => onChange(e.target.value, "email")}
+          onChange={(e) => onChange(e.target.value, e.target.name as keyof userSignInData)}
           type="email"
           name="email"
           placeholder="example@exp.com"
