@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from "react";
-import { GetAllAssets } from "../../services/asset.service";
 import { useLoaderData } from "react-router-dom";
+import InputComponent from "../../components/Auth-Components/InputComponent";
+import { Dialog } from "primereact/dialog";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+
+import { useForm } from "../../hooks/useForm";
+import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
 import {
+  AssetData,
   AssetPlainData,
   AssetTypesData,
   defaultAssetData,
 } from "../../interfaces/asset.interface";
-import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
-import InputComponent from "../../components/Auth-Components/InputComponent";
-import { Dialog } from "primereact/dialog";
-import { useForm } from "../../hooks/useForm";
+import { GetAllAssets } from "../../services/asset.service";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { GetUsers } from "../../services/user.service";
 
@@ -26,7 +30,8 @@ export default function ElectronicEquipment() {
     decialQuiantity: 2,
   });
 
-  const { onChange, form } = useForm<AssetPlainData>(defaultAssetData);
+  const { onChange, form, setState } =
+    useForm<AssetPlainData>(defaultAssetData);
 
   useEffect(() => {
     calculareResValue();
@@ -129,15 +134,86 @@ export default function ElectronicEquipment() {
   }
 
   function logResults() {
-    console.log(form);
+    console.log(form.responsible);
+    return form.responsible.toString();
   }
 
   return (
     <div>
       <div className="w-1/12">
-        <ButtonComponent title="Add" onclickButton={() => setModal(true)} />
+        <ButtonComponent
+          title="Add"
+          onclickButton={() => {
+            setModal(true);
+            setState(defaultAssetData);
+          }}
+        />
+      </div>
+      {/* table */}
+      <div className="card">
+        <DataTable
+          className="m-5 shadow-md"
+          value={assets.furnitureAndFixturesAssets.map((asset) => {
+            for (let i = 0; i < (assets.users ? assets.users.length : 1); i++) {
+              if (asset.details.responsible === assets.users![i].id) {
+                asset.details.responsibleName = assets.users![i].name;
+              }
+            }
+            return asset;
+          })}
+          emptyMessage={"No Assets found"}
+          selectionMode="single"
+          title="Electronic Equipments"
+          onRowDoubleClick={(e) => {
+            const { details, ...assetData } = e.data as AssetData;
+            setState({
+              ...assetData,
+              ...details,
+              purchaseDate: assetData.purchaseDate.substring(0, 10),
+            } as AssetPlainData);
+            setModal(true);
+          }}
+          paginator
+          rows={25}
+          rowsPerPageOptions={[25, 50, 75, 100]}
+          tableStyle={{ minWidth: "50rem" }}
+        >
+          <Column header="ID" field="id" style={{ width: "15%" }}></Column>
+          <Column header="Name" field="name" style={{ width: "15%" }}></Column>
+          <Column
+            header="Acq. Date"
+            field="purchaseDate"
+            style={{ width: "15%" }}
+          ></Column>
+          <Column
+            header="Brand"
+            field="details.brand"
+            style={{ width: "15%" }}
+          ></Column>
+          <Column
+            header="Monthly Dep"
+            field="details.monthlyDepreciation"
+            style={{ width: "15" }}
+          ></Column>
+          <Column
+            header="Val Books"
+            field="details.valueBooks"
+            style={{ width: "15" }}
+          ></Column>
+          <Column
+            header="Insured"
+            field="details.insured"
+            style={{ width: "15" }}
+          ></Column>
+          <Column
+            header="Responsible"
+            field="details.responsibleName"
+            style={{ width: "15" }}
+          ></Column>
+        </DataTable>
       </div>
 
+      {/* modal */}
       <Dialog
         header="Create Asset"
         draggable={false}
@@ -172,7 +248,7 @@ export default function ElectronicEquipment() {
           placeholder="responsible"
           type="select"
           value={form.responsible}
-          mapOptions={() => GetUsers()}
+          mapOptions={assets.users}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -306,8 +382,10 @@ export default function ElectronicEquipment() {
 
 export async function loadAssets(): Promise<AssetTypesData> {
   const data = await GetAllAssets();
+  const users = await GetUsers();
 
   return {
     ...data,
+    users,
   };
 }

@@ -13,7 +13,7 @@ interface InputComponentProps {
   disabled?: boolean;
   reference?: React.RefObject<any>;
   enumOptions?: typeof AssetActive;
-  mapOptions?: () => Promise<userSignUpData[] | undefined>;
+  mapOptions?: userSignUpData[];
 }
 
 export default function InputComponent({
@@ -29,11 +29,7 @@ export default function InputComponent({
 
   useEffect(() => {
     if (mapOptions) {
-      mapOptions()
-        .then((res) => {
-          setOptions(res);
-        })
-        .catch((err) => console.log(err));
+      setOptions(mapOptions);
     }
     return;
   }, []);

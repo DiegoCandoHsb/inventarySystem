@@ -1,4 +1,5 @@
 import { AssetActive } from "./enums/assetActive";
+import { userSignUpData } from "./userSignUpData.interface";
 
 export interface AssetData {
   id: number;
@@ -6,6 +7,7 @@ export interface AssetData {
   details: {
     assetType: string;
     responsible: string;
+    responsibleName: string | undefined;
     supplier: string;
     value: number;
     depreciationTime: number;
@@ -24,6 +26,7 @@ export interface AssetTypesData {
   assetsList: AssetData[];
   electronicEquipmentAssets: AssetData[];
   furnitureAndFixturesAssets: AssetData[];
+  users?: userSignUpData[];
 }
 
 export interface AssetPlainData {
