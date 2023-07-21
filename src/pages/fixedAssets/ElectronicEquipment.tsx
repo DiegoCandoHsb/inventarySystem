@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { GetAllAssets } from "../../services/asset.service";
 import { useLoaderData } from "react-router-dom";
 import {
   AssetPlainData,
   AssetTypesData,
+  defaultAssetData,
 } from "../../interfaces/asset.interface";
 import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
 import InputComponent from "../../components/Auth-Components/InputComponent";
@@ -12,44 +13,120 @@ import { useForm } from "../../hooks/useForm";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { GetUsers } from "../../services/user.service";
 
+//  valor en libros = (fecha actual - fecaha de adqusicion ) * depresiacion mensual
+
 export default function ElectronicEquipment() {
   // const data = useLoaderData() as AssetTypesData;
   const [assets] = useState<AssetTypesData>(useLoaderData() as AssetTypesData);
 
   const [modal, setModal] = useState<boolean>(false);
 
-  const {
-    active,
-    anualDepreciation,
-    depreciationTime,
-    insured,
-    monthlyDepreciation,
-    name,
-    observation,
-    purchaseDate,
-    responsible,
-    supplier,
-    value,
-    valueBooks,
-    residualValue,
-    onChange,
-    form,
-  } = useForm<AssetPlainData>({
-    name: "",
-    purchaseDate: "",
-    assetType: "",
-    responsible: "",
-    supplier: "",
-    value: 0,
-    depreciationTime: 0,
-    residualValue: 0,
-    anualDepreciation: 0,
-    monthlyDepreciation: 0,
-    valueBooks: 0,
-    observation: "",
-    insured: 0,
-    active: AssetActive.new,
+  const [formSettings, setFormSettings] = useState({
+    porcetaje1: 10,
+    decialQuiantity: 2,
   });
+
+  const { onChange, form } = useForm<AssetPlainData>(defaultAssetData);
+
+  useEffect(() => {
+    calculareResValue();
+    depreciations();
+  }, [form.value, form.depreciationTime]);
+
+  useEffect(() => {
+    calculateValueBooks();
+  }, [form.purchaseDate, form.monthlyDepreciation]);
+
+  // input refs
+  const residualValueRef = useRef<HTMLInputElement>(null);
+  const annualDepreciationRef = useRef<HTMLInputElement>(null);
+  const monthlyDepreciationRef = useRef<HTMLInputElement>(null);
+  const valueBooksRef = useRef<HTMLInputElement>(null);
+
+  function calculareResValue() {
+    //  valor residual  =  valor * 0.1 (valor por 10 porciento)
+    const resValue = (form.value * formSettings.porcetaje1) / 100;
+    if (!residualValueRef.current) return;
+    residualValueRef.current.value = resValue.toString();
+    form.residualValue = resValue;
+  }
+
+  function depreciations() {
+    //  depresiacion anual = (valor - valor residual)/(meses/12)
+    //  depresiacion mensual = (valor - valor residual)/(meses)
+
+    const value = form.value - form.residualValue;
+    const annualDep = value / (form.depreciationTime / 12);
+
+    const mensualDep = value / form.depreciationTime;
+
+    if (!annualDepreciationRef.current || !monthlyDepreciationRef.current)
+      return;
+
+    if (isFinite(annualDep) || isFinite(mensualDep)) {
+      annualDepreciationRef.current.value = annualDep.toFixed(
+        formSettings.decialQuiantity
+      );
+      monthlyDepreciationRef.current.value = mensualDep.toFixed(
+        formSettings.decialQuiantity
+      );
+
+      form.annualDepreciation = Number(
+        annualDep.toFixed(formSettings.decialQuiantity)
+      );
+      form.monthlyDepreciation = Number(
+        mensualDep.toFixed(formSettings.decialQuiantity)
+      );
+    }
+  }
+
+  function calculateValueBooks() {
+    //  valor en libros = (fecha actual - fecha de adqusicion ) * depresiacion mensual
+
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay();
+    const currentMoth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
+
+    const adqusicionDate = new Date(form.purchaseDate);
+    const adqDay = adqusicionDate.getDay() + 1;
+    const adqMonth = adqusicionDate.getMonth() + 1;
+    const adqYear = adqusicionDate.getFullYear();
+
+    // operations
+    const days = currentDay - adqDay;
+    const yearsToMoths = (currentYear - adqYear) * 12;
+    let totalMonths = currentMoth - adqMonth + yearsToMoths;
+
+    let newValueBooks = 0;
+    if (days <= 0) {
+      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
+      if (totalMonths > form.depreciationTime) {
+        newValueBooks = form.residualValue;
+      }
+
+      form.valueBooks = newValueBooks;
+    } else {
+      totalMonths += 1;
+      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
+
+      if (totalMonths > form.depreciationTime) {
+        newValueBooks = form.residualValue;
+      }
+    }
+
+    isFinite(newValueBooks)
+      ? (form.valueBooks = Number(
+          newValueBooks.toFixed(formSettings.decialQuiantity)
+        ))
+      : "0";
+
+    if (valueBooksRef.current) {
+      valueBooksRef.current.value = newValueBooks.toFixed(
+        formSettings.decialQuiantity
+      );
+    }
+  }
 
   function logResults() {
     console.log(form);
@@ -72,18 +149,18 @@ export default function ElectronicEquipment() {
           name="name"
           placeholder="name"
           type="text"
-          value={name}
+          value={form.name}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
         >
-          name
+          Name
         </InputComponent>
         <InputComponent
           name="purchaseDate"
           placeholder="purchaseDate"
           type="date"
-          value={purchaseDate}
+          value={form.purchaseDate}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -94,7 +171,7 @@ export default function ElectronicEquipment() {
           name="responsible"
           placeholder="responsible"
           type="select"
-          value={responsible}
+          value={form.responsible}
           mapOptions={() => GetUsers()}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
@@ -106,7 +183,7 @@ export default function ElectronicEquipment() {
           name="supplier"
           placeholder="supplier"
           type="text"
-          value={supplier}
+          value={form.supplier}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -117,7 +194,7 @@ export default function ElectronicEquipment() {
           name="value"
           placeholder="value"
           type="number"
-          value={value}
+          value={form.value}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -128,7 +205,7 @@ export default function ElectronicEquipment() {
           name="depreciationTime"
           placeholder="depreciationTime"
           type="number"
-          value={depreciationTime}
+          value={form.depreciationTime}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -139,7 +216,9 @@ export default function ElectronicEquipment() {
           name="residualValue"
           placeholder="residualValue"
           type="number"
-          value={residualValue}
+          value={form.residualValue}
+          disabled={true}
+          reference={residualValueRef}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -147,21 +226,25 @@ export default function ElectronicEquipment() {
           Residual Value
         </InputComponent>
         <InputComponent
-          name="anualDepreciation"
-          placeholder="anualDepreciation"
+          name="annualDepreciation"
+          placeholder="annualDepreciation"
           type="number"
-          value={anualDepreciation}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
-          }
+          value={form.annualDepreciation}
+          disabled={true}
+          reference={annualDepreciationRef}
+          onChange={(e) => {
+            onChange(e.target.value, e.target.name as keyof AssetPlainData);
+          }}
         >
-          Anual Depreciation
+          Annual Depreciation
         </InputComponent>
         <InputComponent
           name="monthlyDepreciation"
           placeholder="monthlyDepreciation"
           type="number"
-          value={monthlyDepreciation}
+          value={form.monthlyDepreciation}
+          disabled={true}
+          reference={monthlyDepreciationRef}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -172,7 +255,9 @@ export default function ElectronicEquipment() {
           name="valueBooks"
           placeholder="value in books"
           type="text"
-          value={valueBooks}
+          value={form.valueBooks}
+          disabled={true}
+          reference={valueBooksRef}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -183,7 +268,7 @@ export default function ElectronicEquipment() {
           name="insured"
           placeholder="insured"
           type="number"
-          value={insured}
+          value={form.insured}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -194,7 +279,7 @@ export default function ElectronicEquipment() {
           name="active"
           placeholder="active"
           type="select"
-          value={active}
+          value={form.active}
           enumOptions={AssetActive}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
@@ -206,7 +291,7 @@ export default function ElectronicEquipment() {
           name="observation"
           placeholder="observation"
           type="text"
-          value={observation}
+          value={form.observation}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
@@ -221,7 +306,7 @@ export default function ElectronicEquipment() {
 
 export async function loadAssets(): Promise<AssetTypesData> {
   const data = await GetAllAssets();
-  console.log(data);
+
   return {
     ...data,
   };

@@ -10,8 +10,10 @@ interface InputComponentProps {
   placeholder: string;
   type: string;
   value: string | number;
-  mapOptions?: () => Promise<userSignUpData[] | undefined>;
+  disabled?: boolean;
+  reference?: React.RefObject<any>;
   enumOptions?: typeof AssetActive;
+  mapOptions?: () => Promise<userSignUpData[] | undefined>;
 }
 
 export default function InputComponent({
@@ -20,6 +22,7 @@ export default function InputComponent({
   name,
   mapOptions,
   enumOptions,
+  reference,
   ...tagInputProperties
 }: InputComponentProps & React.PropsWithChildren) {
   const [options, setOptions] = useState<userSignUpData[]>();
@@ -57,15 +60,19 @@ export default function InputComponent({
                 </option>
               ))}
 
-              {
-                enumOptions && Object.values(enumOptions).map(enumName => (
-                  <option key={enumName} value={enumName}>{enumName}</option>
-                ))
-              }
+            {enumOptions &&
+              Object.values(enumOptions).map((enumName) => (
+                <option key={enumName} value={enumName}>
+                  {enumName}
+                </option>
+              ))}
           </select>
         ) : (
           <input
-            className="border-2 border-slate-600 rounded-md p-1 px-2 outline-none focus:border-slate-900"
+            className={`border-2 border-slate-600 rounded-md p-1 px-2 outline-none focus:border-slate-900 ${
+              tagInputProperties.disabled ? "bg-slate-300" : "bg-white"
+            }`}
+            ref={reference || null}
             name={name}
             id={name}
             {...tagInputProperties}
