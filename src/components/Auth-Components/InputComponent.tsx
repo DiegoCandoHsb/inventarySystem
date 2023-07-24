@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { userSignUpData } from "../../interfaces/userSignUpData.interface";
 import { AssetActive } from "../../interfaces/enums/assetActive";
+import { CatalogOption } from "../../interfaces/catalog.interface";
 
 interface InputComponentProps {
   name: string;
@@ -13,7 +14,13 @@ interface InputComponentProps {
   disabled?: boolean;
   reference?: React.RefObject<any>;
   enumOptions?: typeof AssetActive;
-  mapOptions?: userSignUpData[];
+  mapOptions?: userSignUpData[] | CatalogOption[];
+}
+
+interface ElementProps {
+  value: string | number;
+  elementvalue: string;
+  key?: string | number;
 }
 
 export default function InputComponent({
@@ -25,7 +32,7 @@ export default function InputComponent({
   reference,
   ...tagInputProperties
 }: InputComponentProps & React.PropsWithChildren) {
-  const [options, setOptions] = useState<userSignUpData[]>();
+  const [options, setOptions] = useState<userSignUpData[] | CatalogOption[]>();
 
   useEffect(() => {
     if (mapOptions) {
@@ -33,6 +40,43 @@ export default function InputComponent({
     }
     return;
   }, []);
+
+  function generateOptions() {
+    if (!options) return <option>No Data</option>;
+    const optionsList = [];
+    let elementProps: ElementProps = { elementvalue: "", value: "" };
+
+    for (let i = 0; i < options.length; i++) {
+      let optionData = options[i];
+      if (typeof options[i].id === "string") {
+        optionData = optionData as userSignUpData;
+        elementProps = {
+          value: optionData.id,
+          key: optionData.id,
+          elementvalue: optionData.name.concat(
+            " ",
+            optionData.details.lastname
+          ),
+        };
+      } else if (typeof options[i].id === "number") {
+        optionData = optionData as CatalogOption;
+        elementProps = {
+          value: optionData.id,
+          key: optionData.id,
+          elementvalue: optionData.catalogDetail,
+        };
+      }
+
+      const option = React.createElement(
+        "option",
+        elementProps,
+        elementProps.elementvalue.toString()
+      );
+
+      optionsList.push(option);
+    }
+    return optionsList;
+  }
 
   return (
     <>
@@ -49,12 +93,7 @@ export default function InputComponent({
             {...tagInputProperties}
           >
             <option value=""></option>
-            {options &&
-              options.map((option) => (
-                <option key={option.id} value={option.id}>
-                  {option.name.concat(" ", option.details.lastname)}
-                </option>
-              ))}
+            {generateOptions()}
 
             {enumOptions &&
               Object.values(enumOptions).map((enumName) => (

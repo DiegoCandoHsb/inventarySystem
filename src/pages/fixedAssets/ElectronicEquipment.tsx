@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import InputComponent from "../../components/Auth-Components/InputComponent";
@@ -16,11 +17,10 @@ import {
 import { GetAllAssets } from "../../services/asset.service";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { GetUsers } from "../../services/user.service";
-
-//  valor en libros = (fecha actual - fecaha de adqusicion ) * depresiacion mensual
+import { GetCatalog } from "../../services/catalog.service";
+import { ElectronicEquipmentConfig } from "../../config/assets.config";
 
 export default function ElectronicEquipment() {
-  // const data = useLoaderData() as AssetTypesData;
   const [assets] = useState<AssetTypesData>(useLoaderData() as AssetTypesData);
 
   const [modal, setModal] = useState<boolean>(false);
@@ -57,9 +57,6 @@ export default function ElectronicEquipment() {
   }
 
   function depreciations() {
-    //  depresiacion anual = (valor - valor residual)/(meses/12)
-    //  depresiacion mensual = (valor - valor residual)/(meses)
-
     const value = form.value - form.residualValue;
     const annualDep = value / (form.depreciationTime / 12);
 
@@ -244,6 +241,18 @@ export default function ElectronicEquipment() {
           Purchase Date
         </InputComponent>
         <InputComponent
+          name="brand"
+          placeholder="brand"
+          type="select"
+          value={form.brand}
+          mapOptions={assets.catalog.catalogOptions}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          }
+        >
+          Brand
+        </InputComponent>
+        <InputComponent
           name="responsible"
           placeholder="responsible"
           type="select"
@@ -384,8 +393,15 @@ export async function loadAssets(): Promise<AssetTypesData> {
   const data = await GetAllAssets();
   const users = await GetUsers();
 
+  const catalogs = await GetCatalog();
+  const catalog = catalogs.filter(
+    (ctlg) =>
+      ctlg.catalogName === ElectronicEquipmentConfig.assetBrandCatalogName
+  )[0];
+
   return {
     ...data,
     users,
+    catalog,
   };
 }

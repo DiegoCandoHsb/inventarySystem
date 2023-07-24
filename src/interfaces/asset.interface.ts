@@ -1,3 +1,4 @@
+import { Catalog } from "./catalog.interface";
 import { AssetActive } from "./enums/assetActive";
 import { userSignUpData } from "./userSignUpData.interface";
 
@@ -6,6 +7,7 @@ export interface AssetData {
   name: string;
   details: {
     assetType: string;
+    brand: string;
     responsible: string;
     responsibleName: string | undefined;
     supplier: string;
@@ -27,12 +29,14 @@ export interface AssetTypesData {
   electronicEquipmentAssets: AssetData[];
   furnitureAndFixturesAssets: AssetData[];
   users?: userSignUpData[];
+  catalog: Catalog;
 }
 
 export interface AssetPlainData {
   name: string;
   purchaseDate: string;
   assetType: string;
+  brand: string;
   responsible: string;
   supplier: string;
   value: number;
@@ -46,10 +50,11 @@ export interface AssetPlainData {
   active: AssetActive;
 }
 
-export const defaultAssetData = {
+export const defaultAssetData: AssetPlainData = {
   name: "",
   purchaseDate: "",
   assetType: "",
+  brand: "",
   responsible: "",
   supplier: "",
   value: 0,
