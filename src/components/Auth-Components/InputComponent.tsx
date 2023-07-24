@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { userSignUpData } from "../../interfaces/userSignUpData.interface";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { CatalogOption } from "../../interfaces/catalog.interface";
+import { AssetType } from "../../interfaces/enums/assetType";
 
 interface InputComponentProps {
   name: string;
@@ -13,7 +14,7 @@ interface InputComponentProps {
   value: string | number;
   disabled?: boolean;
   reference?: React.RefObject<any>;
-  enumOptions?: typeof AssetActive;
+  enumOptions?: typeof AssetActive|typeof AssetType;
   mapOptions?: userSignUpData[] | CatalogOption[];
 }
 

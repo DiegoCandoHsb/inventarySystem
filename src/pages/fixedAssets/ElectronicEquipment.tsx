@@ -14,11 +14,12 @@ import {
   AssetTypesData,
   defaultAssetData,
 } from "../../interfaces/asset.interface";
-import { GetAllAssets } from "../../services/asset.service";
+import { CreateAsset, GetAllAssets } from "../../services/asset.service";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { GetUsers } from "../../services/user.service";
 import { GetCatalog } from "../../services/catalog.service";
 import { ElectronicEquipmentConfig } from "../../config/assets.config";
+import { AssetType } from "../../interfaces/enums/assetType";
 
 export default function ElectronicEquipment() {
   const [assets] = useState<AssetTypesData>(useLoaderData() as AssetTypesData);
@@ -134,6 +135,32 @@ export default function ElectronicEquipment() {
     console.log(form.responsible);
     return form.responsible.toString();
   }
+  // create asset
+  const createAsset = async () => {
+    const assetData = {
+      name: form.name,
+      details: {
+        assetType: form.assetType,
+        brand: form.brand,
+        responsible: form.responsible,
+        supplier: form.supplier,
+        value: Number(form.value),
+        depreciationTime: Number(form.depreciationTime),
+        residualValue: form.residualValue,
+        annualDepreciation: form.annualDepreciation,
+        monthlyDepreciation: form.monthlyDepreciation,
+        valueBooks: form.valueBooks,
+        observation: form.observation,
+        insured: Number(form.insured),
+        active: form.active,
+      },
+      purchaseDate: form.purchaseDate,
+    };
+    await CreateAsset(assetData);
+    setModal(false)
+    location.reload()
+
+  };
 
   return (
     <div>
@@ -361,6 +388,18 @@ export default function ElectronicEquipment() {
           Insured
         </InputComponent>
         <InputComponent
+          name="assetType"
+          placeholder="type"
+          type="select"
+          value={form.assetType}
+          enumOptions={AssetType}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          }
+        >
+          Asset Type
+        </InputComponent>
+        <InputComponent
           name="active"
           placeholder="active"
           type="select"
@@ -383,7 +422,7 @@ export default function ElectronicEquipment() {
         >
           observation
         </InputComponent>
-        <ButtonComponent title="Log" onclickButton={() => logResults()} />
+        <ButtonComponent title="Log" onclickButton={createAsset} />
       </Dialog>
     </div>
   );

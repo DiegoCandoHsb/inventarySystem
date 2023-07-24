@@ -3,4 +3,5 @@ export const ElectronicEquipmentConfig = {
 
   electronicEquipmentType: "ElectronicEquipment",
   furnitureAndFixtureType: "FurnitureAndFixtures",
+  expensesType:"Expenses"
 };

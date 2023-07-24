@@ -1,15 +1,16 @@
 import { Catalog } from "./catalog.interface";
 import { AssetActive } from "./enums/assetActive";
+import { AssetType } from "./enums/assetType";
 import { userSignUpData } from "./userSignUpData.interface";
 
 export interface AssetData {
-  id: number;
+  id?: number;
   name: string;
   details: {
-    assetType: string;
+    assetType: AssetType;
     brand: string;
     responsible: string;
-    responsibleName: string | undefined;
+    responsibleName?: string | undefined;
     supplier: string;
     value: number;
     depreciationTime: number;
@@ -35,7 +36,7 @@ export interface AssetTypesData {
 export interface AssetPlainData {
   name: string;
   purchaseDate: string;
-  assetType: string;
+  assetType: AssetType;
   brand: string;
   responsible: string;
   supplier: string;
@@ -53,7 +54,7 @@ export interface AssetPlainData {
 export const defaultAssetData: AssetPlainData = {
   name: "",
   purchaseDate: "",
-  assetType: "",
+  assetType: AssetType.electronicEquipment,
   brand: "",
   responsible: "",
   supplier: "",
