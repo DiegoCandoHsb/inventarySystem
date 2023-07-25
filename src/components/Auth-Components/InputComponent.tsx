@@ -2,10 +2,15 @@ import React, { useEffect, useState } from "react";
 import { userSignUpData } from "../../interfaces/userSignUpData.interface";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { CatalogOption } from "../../interfaces/catalog.interface";
+import {
+  Dropdown,
+  DropdownChangeEvent,
+  DropdownProps,
+} from "primereact/dropdown";
 
 interface InputComponentProps {
   name: string;
-  onChange: (
+  onChange?: (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => void;
   placeholder: string;
@@ -15,6 +20,9 @@ interface InputComponentProps {
   reference?: React.RefObject<any>;
   enumOptions?: typeof AssetActive;
   mapOptions?: userSignUpData[] | CatalogOption[];
+  optionlabel?: string;
+  onDropDownChange?: (e: DropdownChangeEvent) => void;
+  mapStringOptions?: string[];
 }
 
 interface ElementProps {
@@ -30,9 +38,13 @@ export default function InputComponent({
   mapOptions,
   enumOptions,
   reference,
+  onDropDownChange,
+  mapStringOptions,
   ...tagInputProperties
 }: InputComponentProps & React.PropsWithChildren) {
-  const [options, setOptions] = useState<userSignUpData[] | CatalogOption[]>();
+  const [options, setOptions] = useState<userSignUpData[] | CatalogOption[]>(
+    []
+  );
 
   useEffect(() => {
     if (mapOptions) {
@@ -42,7 +54,7 @@ export default function InputComponent({
   }, []);
 
   function generateOptions() {
-    if (!options) return <option>No Data</option>;
+    if (!options) return;
     const optionsList = [];
     let elementProps: ElementProps = { elementvalue: "", value: "" };
 
@@ -61,7 +73,7 @@ export default function InputComponent({
       } else if (typeof options[i].id === "number") {
         optionData = optionData as CatalogOption;
         elementProps = {
-          value: optionData.id,
+          value: optionData.catalogDetail,
           key: optionData.id,
           elementvalue: optionData.catalogDetail,
         };
@@ -70,11 +82,12 @@ export default function InputComponent({
       const option = React.createElement(
         "option",
         elementProps,
-        elementProps.elementvalue.toString()
+        elementProps.elementvalue
       );
 
       optionsList.push(option);
     }
+
     return optionsList;
   }
 
@@ -84,7 +97,20 @@ export default function InputComponent({
         <label htmlFor={name} className="text-lg font-semibold">
           {children}
         </label>
-        {tagInputProperties.type === "select" ? (
+        {tagInputProperties.type === "dropdown" && (
+          <Dropdown
+            name={name}
+            onChange={onDropDownChange}
+            options={mapStringOptions}
+            optionGroupChildren={"catalogDetail"}
+            filter
+            dataKey={"Razer"}
+            {...tagInputProperties}
+          />
+        )}
+
+        {/* select  */}
+        {tagInputProperties.type === "select" && (
           <select
             className="border-2 border-slate-600 rounded-md p-1 px-2 outline-none focus:border-slate-900"
             name={name}
@@ -95,6 +121,7 @@ export default function InputComponent({
             <option value=""></option>
             {generateOptions()}
 
+            {/* if options are a enum */}
             {enumOptions &&
               Object.values(enumOptions).map((enumName) => (
                 <option key={enumName} value={enumName}>
@@ -102,18 +129,22 @@ export default function InputComponent({
                 </option>
               ))}
           </select>
-        ) : (
-          <input
-            className={`border-2 border-slate-600 rounded-md p-1 px-2 outline-none focus:border-slate-900 ${
-              tagInputProperties.disabled ? "bg-slate-300" : "bg-white"
-            }`}
-            ref={reference || null}
-            name={name}
-            id={name}
-            {...tagInputProperties}
-            onChange={onChange}
-          />
         )}
+
+        {tagInputProperties.type !== "select" &&
+          tagInputProperties.type !== "dropdown" && (
+            // input
+            <input
+              className={`border-2 border-slate-600 rounded-md p-1 px-2 outline-none focus:border-slate-900 ${
+                tagInputProperties.disabled ? "bg-slate-300" : "bg-white"
+              }`}
+              ref={reference || null}
+              name={name}
+              id={name}
+              {...tagInputProperties}
+              onChange={onChange}
+            />
+          )}
       </div>
     </>
   );

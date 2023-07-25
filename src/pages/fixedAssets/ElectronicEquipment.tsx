@@ -131,7 +131,7 @@ export default function ElectronicEquipment() {
   }
 
   function logResults() {
-    console.log(form.responsible);
+    console.log(form.brand);
     return form.responsible.toString();
   }
 
@@ -241,14 +241,23 @@ export default function ElectronicEquipment() {
           Purchase Date
         </InputComponent>
         <InputComponent
-          name="brand"
+          name={"brand"}
           placeholder="brand"
-          type="select"
+          type="dropdown"
           value={form.brand}
-          mapOptions={assets.catalog.catalogOptions}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
-          }
+          mapStringOptions={assets.catalog.catalogOptions.map(option => option.catalogDetail)}
+          onDropDownChange={(e) => {
+            console.log(
+              e.originalEvent?.currentTarget.textContent,
+              e.target.name as keyof AssetPlainData,
+              e.value
+            );
+            onChange(
+              // e.originalEvent?.currentTarget.textContent as string,
+              e.value as string,
+              e.target.name as keyof AssetPlainData
+            );
+          }}
         >
           Brand
         </InputComponent>
