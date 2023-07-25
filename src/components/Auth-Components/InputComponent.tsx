@@ -2,12 +2,8 @@ import React, { useEffect, useState } from "react";
 import { userSignUpData } from "../../interfaces/userSignUpData.interface";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { CatalogOption } from "../../interfaces/catalog.interface";
-import {
-  Dropdown,
-  DropdownChangeEvent,
-  DropdownProps,
-} from "primereact/dropdown";
-import { AssetType } from "../../interfaces/enums/assetType";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
+import { AssetTypeConfig } from "../../config/assets.config";
 
 interface InputComponentProps {
   name: string;
@@ -19,7 +15,7 @@ interface InputComponentProps {
   value: string | number;
   disabled?: boolean;
   reference?: React.RefObject<any>;
-  enumOptions?: typeof AssetActive & typeof AssetType;
+  enumOptions?: typeof AssetActive | typeof AssetTypeConfig;
   mapOptions?: userSignUpData[] | CatalogOption[];
   optionlabel?: string;
   onDropDownChange?: (e: DropdownChangeEvent) => void;
@@ -124,7 +120,7 @@ export default function InputComponent({
 
             {/* if options are a enum */}
             {enumOptions &&
-              Object.values(enumOptions).map((enumName) => (
+              Object.values(enumOptions).map((enumName: string | number) => (
                 <option key={enumName} value={enumName}>
                   {enumName}
                 </option>

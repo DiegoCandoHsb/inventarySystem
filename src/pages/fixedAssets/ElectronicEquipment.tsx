@@ -1,3 +1,6 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router-dom";
@@ -18,15 +21,19 @@ import { CreateAsset, GetAllAssets } from "../../services/asset.service";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { GetUsers } from "../../services/user.service";
 import { GetCatalog } from "../../services/catalog.service";
-import { ElectronicEquipmentConfig } from "../../config/assets.config";
-import { AssetType } from "../../interfaces/enums/assetType";
+import {
+  AssetTypeConfig,
+  ElectronicEquipmentConfig,
+} from "../../config/assets.config";
 
 export default function ElectronicEquipment() {
-  const [assets] = useState<AssetTypesData>(useLoaderData() as AssetTypesData);
+  const [assets, setAssets] = useState<AssetTypesData>(
+    useLoaderData() as AssetTypesData
+  );
 
   const [modal, setModal] = useState<boolean>(false);
 
-  const [formSettings, setFormSettings] = useState({
+  const [formSettings] = useState({
     porcetaje1: 10,
     decialQuiantity: 2,
   });
@@ -131,12 +138,8 @@ export default function ElectronicEquipment() {
     }
   }
 
-  function logResults() {
-    console.log(form.brand);
-    return form.responsible.toString();
-  }
   // create asset
-  const createAsset = async () => {
+  const createAsset = () => {
     const assetData = {
       name: form.name,
       details: {
@@ -144,23 +147,32 @@ export default function ElectronicEquipment() {
         brand: form.brand,
         responsible: form.responsible,
         supplier: form.supplier,
-        value: Number(form.value),
-        depreciationTime: Number(form.depreciationTime),
         residualValue: form.residualValue,
         annualDepreciation: form.annualDepreciation,
         monthlyDepreciation: form.monthlyDepreciation,
         valueBooks: form.valueBooks,
         observation: form.observation,
-        insured: Number(form.insured),
         active: form.active,
+        depreciationTime: Number(form.depreciationTime),
+        insured: Number(form.insured),
+        value: Number(form.value),
       },
       purchaseDate: form.purchaseDate,
     };
-    await CreateAsset(assetData);
-    setModal(false)
-    location.reload()
 
+    CreateAsset(assetData)
+      .then(() => {
+        setModal(false);
+        location.reload();
+      })
+      .catch((err) => {
+        alert(err.response.data.message);
+      });
   };
+
+  async function getLoader(): Promise<AssetTypesData> {
+    return (await useLoaderData()) as AssetTypesData;
+  }
 
   return (
     <div>
@@ -272,7 +284,9 @@ export default function ElectronicEquipment() {
           placeholder="brand"
           type="dropdown"
           value={form.brand}
-          mapStringOptions={assets.catalog.catalogOptions.map(option => option.catalogDetail)}
+          mapStringOptions={assets.catalog.catalogOptions.map(
+            (option) => option.catalogDetail
+          )}
           onDropDownChange={(e) => {
             console.log(
               e.originalEvent?.currentTarget.textContent,
@@ -401,7 +415,7 @@ export default function ElectronicEquipment() {
           placeholder="type"
           type="select"
           value={form.assetType}
-          enumOptions={AssetType}
+          enumOptions={AssetTypeConfig}
           onChange={(e) =>
             onChange(e.target.value, e.target.name as keyof AssetPlainData)
           }
