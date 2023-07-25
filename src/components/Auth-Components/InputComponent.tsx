@@ -19,7 +19,7 @@ interface InputComponentProps {
   value: string | number;
   disabled?: boolean;
   reference?: React.RefObject<any>;
-  enumOptions?: typeof AssetActive|typeof AssetType;
+  enumOptions?: typeof AssetActive & typeof AssetType;
   mapOptions?: userSignUpData[] | CatalogOption[];
   optionlabel?: string;
   onDropDownChange?: (e: DropdownChangeEvent) => void;
