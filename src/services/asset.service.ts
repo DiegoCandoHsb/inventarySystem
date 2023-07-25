@@ -25,13 +25,21 @@ export async function GetAllAssets() {
   });
 }
 
-export const CreateAsset = async (data: AssetData): Promise<AssetData> => {
-  // try {
-  const asset = await HsbBaseApiDb.post<AssetData>("assets", data);
-
+export const CreateAsset = async ({id, ...Assetdata}: AssetData): Promise<AssetData> => {
+  const asset = await HsbBaseApiDb.post<AssetData>("assets", Assetdata);
   return asset.data;
-
-  // } catch (error: any) {
-  // alert(error.response.data.message);
-  // }
 };
+
+export async function UpdateAsset({
+  id,
+  ...assetData
+}: AssetData): Promise<AssetData> {
+  const res = await HsbBaseApiDb.patch<AssetData>(
+    `assets/${id!}`,
+    {
+      ...assetData,
+    }
+  );
+
+  return res.data;
+}

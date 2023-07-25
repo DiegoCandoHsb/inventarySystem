@@ -1,13 +1,13 @@
+import { AssetTypeConfig } from "../config/assets.config";
 import { Catalog } from "./catalog.interface";
 import { AssetActive } from "./enums/assetActive";
-import { AssetType } from "./enums/assetType";
 import { userSignUpData } from "./userSignUpData.interface";
 
 export interface AssetData {
   id?: number;
   name: string;
   details: {
-    assetType: AssetType;
+    assetType: AssetTypeConfig;
     brand: string;
     responsible: string;
     responsibleName?: string | undefined;
@@ -34,9 +34,10 @@ export interface AssetTypesData {
 }
 
 export interface AssetPlainData {
+  id?: number;
   name: string;
   purchaseDate: string;
-  assetType: AssetType;
+  assetType: AssetTypeConfig;
   brand: string;
   responsible: string;
   supplier: string;
@@ -52,9 +53,10 @@ export interface AssetPlainData {
 }
 
 export const defaultAssetData: AssetPlainData = {
+  id: 0,
   name: "",
   purchaseDate: "",
-  assetType: AssetType.electronicEquipment,
+  assetType: AssetTypeConfig.electronicEquipment,
   brand: "",
   responsible: "",
   supplier: "",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable react-refresh/only-export-components */
@@ -6,7 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router-dom";
 import InputComponent from "../../components/Auth-Components/InputComponent";
 import { Dialog } from "primereact/dialog";
-import { DataTable } from "primereact/datatable";
+import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
 import { Column } from "primereact/column";
 
 import { useForm } from "../../hooks/useForm";
@@ -17,7 +18,11 @@ import {
   AssetTypesData,
   defaultAssetData,
 } from "../../interfaces/asset.interface";
-import { CreateAsset, GetAllAssets } from "../../services/asset.service";
+import {
+  CreateAsset,
+  GetAllAssets,
+  UpdateAsset,
+} from "../../services/asset.service";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { GetUsers } from "../../services/user.service";
 import { GetCatalog } from "../../services/catalog.service";
@@ -33,9 +38,17 @@ export default function ElectronicEquipment() {
 
   const [modal, setModal] = useState<boolean>(false);
 
-  const [formSettings] = useState({
+  const [edit, setEdit] = useState<boolean>(false);
+
+  const [formSettings, setFormSettings] = useState({
+    defaultSettings: {
+      porcetaje1: 10,
+      decialQuiantity: 2,
+      submitButtonValue: "Create",
+    },
     porcetaje1: 10,
     decialQuiantity: 2,
+    submitButtonValue: "Create",
   });
 
   const { onChange, form, setState } =
@@ -55,6 +68,8 @@ export default function ElectronicEquipment() {
   const annualDepreciationRef = useRef<HTMLInputElement>(null);
   const monthlyDepreciationRef = useRef<HTMLInputElement>(null);
   const valueBooksRef = useRef<HTMLInputElement>(null);
+
+  const submitButtonRef = useRef<HTMLInputElement>(null);
 
   function calculareResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
@@ -138,9 +153,48 @@ export default function ElectronicEquipment() {
     }
   }
 
+  // open update modal
+  function updateModal(e: DataTableRowClickEvent) {
+    setEdit(true);
+    setModal(true);
+    const { details, ...assetData } = e.data as AssetData;
+    setState({
+      ...assetData,
+      ...details,
+      purchaseDate: assetData.purchaseDate.substring(0, 10),
+    } as AssetPlainData);
+
+    setFormSettings((currentValues) => ({
+      ...currentValues,
+      submitButtonValue: "Update",
+    }));
+  }
+
   // create asset
   const createAsset = () => {
+    if (!edit) {
+      CreateAsset(formatData())
+        .then(() => {
+          setModal(false);
+          location.reload();
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
+        });
+    } else if (edit) {
+      UpdateAsset(formatData())
+        .then(() => {
+          location.reload();
+        })
+        .catch((err) => {
+          alert(err.response.data.message);
+        });
+    }
+  };
+
+  function formatData() {
     const assetData = {
+      id: form.id,
       name: form.name,
       details: {
         assetType: form.assetType,
@@ -160,18 +214,7 @@ export default function ElectronicEquipment() {
       purchaseDate: form.purchaseDate,
     };
 
-    CreateAsset(assetData)
-      .then(() => {
-        setModal(false);
-        location.reload();
-      })
-      .catch((err) => {
-        alert(err.response.data.message);
-      });
-  };
-
-  async function getLoader(): Promise<AssetTypesData> {
-    return (await useLoaderData()) as AssetTypesData;
+    return assetData;
   }
 
   return (
@@ -181,7 +224,12 @@ export default function ElectronicEquipment() {
           title="Add"
           onclickButton={() => {
             setModal(true);
+            setEdit(false);
             setState(defaultAssetData);
+            setFormSettings((curretValues) => ({
+              ...curretValues,
+              submitButtonValue: curretValues.defaultSettings.submitButtonValue,
+            }));
           }}
         />
       </div>
@@ -200,15 +248,7 @@ export default function ElectronicEquipment() {
           emptyMessage={"No Assets found"}
           selectionMode="single"
           title="Electronic Equipments"
-          onRowDoubleClick={(e) => {
-            const { details, ...assetData } = e.data as AssetData;
-            setState({
-              ...assetData,
-              ...details,
-              purchaseDate: assetData.purchaseDate.substring(0, 10),
-            } as AssetPlainData);
-            setModal(true);
-          }}
+          onRowDoubleClick={(e) => updateModal(e)}
           paginator
           rows={25}
           rowsPerPageOptions={[25, 50, 75, 100]}
@@ -445,7 +485,11 @@ export default function ElectronicEquipment() {
         >
           observation
         </InputComponent>
-        <ButtonComponent title="Log" onclickButton={createAsset} />
+        <ButtonComponent
+          reference={submitButtonRef}
+          title={formSettings.submitButtonValue}
+          onclickButton={createAsset}
+        />
       </Dialog>
     </div>
   );
