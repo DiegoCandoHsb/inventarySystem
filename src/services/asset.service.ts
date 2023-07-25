@@ -12,11 +12,24 @@ export async function GetAllAssets() {
     const furnitureAndFixturesAssets = assetsList.filter(
       (asset) => asset.details.assetType === "FurnitureAndFixtures"
     );
+    const expensesAssets = assetsList.filter(
+      (asset) => asset.details.assetType === "Expenses"
+    );
 
     return {
       assetsList,
       electronicEquipmentAssets,
       furnitureAndFixturesAssets,
+      expensesAssets,
     };
   });
+}
+
+export const CreateAsset = async (data:AssetData)=>{
+  try {
+    const asset = await HsbBaseApiDb.post('assets',data)
+
+  } catch (error:any) {
+    alert(error.response.data.message)
+  }
 }

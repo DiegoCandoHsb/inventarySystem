@@ -7,6 +7,7 @@ import {
   DropdownChangeEvent,
   DropdownProps,
 } from "primereact/dropdown";
+import { AssetType } from "../../interfaces/enums/assetType";
 
 interface InputComponentProps {
   name: string;
@@ -18,7 +19,7 @@ interface InputComponentProps {
   value: string | number;
   disabled?: boolean;
   reference?: React.RefObject<any>;
-  enumOptions?: typeof AssetActive;
+  enumOptions?: typeof AssetActive|typeof AssetType;
   mapOptions?: userSignUpData[] | CatalogOption[];
   optionlabel?: string;
   onDropDownChange?: (e: DropdownChangeEvent) => void;
