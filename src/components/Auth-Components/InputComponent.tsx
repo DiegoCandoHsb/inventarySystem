@@ -4,6 +4,11 @@ import { AssetActive } from "../../interfaces/enums/assetActive";
 import { CatalogOption } from "../../interfaces/catalog.interface";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { AssetTypeConfig } from "../../config/assets.config";
+import {
+  AutoComplete,
+  AutoCompleteChangeEvent,
+  AutoCompleteCompleteEvent,
+} from "primereact/autocomplete";
 
 interface InputComponentProps {
   name: string;
@@ -18,7 +23,7 @@ interface InputComponentProps {
   enumOptions?: typeof AssetActive | typeof AssetTypeConfig;
   mapOptions?: userSignUpData[] | CatalogOption[];
   optionlabel?: string;
-  onDropDownChange?: (e: DropdownChangeEvent) => void;
+  onDropDownChange?: (e: AutoCompleteChangeEvent) => void;
   mapStringOptions?: string[];
 }
 
@@ -43,9 +48,15 @@ export default function InputComponent({
     []
   );
 
+  const [searchOptions, setSearchOptions] = useState<string[]>([]);
+
   useEffect(() => {
     if (mapOptions) {
       setOptions(mapOptions);
+    }
+
+    if (mapStringOptions) {
+      setSearchOptions(mapStringOptions);
     }
     return;
   }, []);
@@ -88,6 +99,16 @@ export default function InputComponent({
     return optionsList;
   }
 
+  function searchItems(e: AutoCompleteCompleteEvent) {
+    const currentOps = [...searchOptions];
+
+    const filteredOptions = mapStringOptions!.filter((opt) =>
+      opt.toLowerCase().includes(e.query.toLowerCase())
+    );
+
+    setSearchOptions(mapStringOptions ? filteredOptions : currentOps);
+  }
+
   return (
     <>
       <div className="w-full flex flex-col my-1 h-1/2">
@@ -95,14 +116,13 @@ export default function InputComponent({
           {children}
         </label>
         {tagInputProperties.type === "dropdown" && (
-          <Dropdown
-            name={name}
-            onChange={onDropDownChange}
-            options={mapStringOptions}
-            optionGroupChildren={"catalogDetail"}
-            filter
-            dataKey={"Razer"}
+          <AutoComplete
             {...tagInputProperties}
+            name={name}
+            suggestions={searchOptions}
+            completeMethod={searchItems}
+            dropdown
+            onChange={onDropDownChange}
           />
         )}
 

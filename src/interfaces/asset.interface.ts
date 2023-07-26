@@ -26,11 +26,11 @@ export interface AssetData {
 }
 
 export interface AssetTypesData {
-  assetsList: AssetData[];
-  electronicEquipmentAssets: AssetData[];
-  furnitureAndFixturesAssets: AssetData[];
+  assetsList?: AssetData[];
+  electronicEquipmentAssets?: AssetData[];
+  furnitureAndFixturesAssets?: AssetData[];
   users?: userSignUpData[];
-  catalog: Catalog;
+  catalog?: Catalog;
 }
 
 export interface AssetPlainData {
@@ -40,6 +40,7 @@ export interface AssetPlainData {
   assetType: AssetTypeConfig;
   brand: string;
   responsible: string;
+  responsibleName?: string | undefined;
   supplier: string;
   value: number;
   depreciationTime: number;

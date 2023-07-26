@@ -1,7 +1,19 @@
+import { ProgressSpinner } from "primereact/progressspinner";
+
 import { Outlet, useNavigation } from "react-router-dom";
 
 export default function AuthLayaout() {
   const { state } = useNavigation();
 
-  return <div>{state === "loading" ? <h1>Loading...</h1> : <Outlet />}</div>;
+  return (
+    <div>
+      {state === "loading" ? (
+        <div className="w-full h-96 flex justify-center content-center items-center">
+          <ProgressSpinner />
+        </div>
+      ) : (
+        <Outlet />
+      )}
+    </div>
+  );
 }

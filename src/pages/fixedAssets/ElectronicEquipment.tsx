@@ -30,6 +30,7 @@ import {
   AssetTypeConfig,
   ElectronicEquipmentConfig,
 } from "../../config/assets.config";
+import { plainData } from "../../interfaces/userSignUpData.interface";
 
 export default function ElectronicEquipment() {
   const [assets, setAssets] = useState<AssetTypesData>(
@@ -171,50 +172,48 @@ export default function ElectronicEquipment() {
   }
 
   // create asset
-  const createAsset = () => {
+  function createOrEditAsset() {
     if (!edit) {
-      CreateAsset(formatData())
-        .then(() => {
-          setModal(false);
-          location.reload();
-        })
+      CreateAsset(formatData("responsibleName", 'id'))
         .catch((err) => {
           alert(err.response.data.message);
-        });
+        })
+        .finally(async () => await setNewAssetsData());
     } else if (edit) {
-      UpdateAsset(formatData())
-        .then(() => {
-          location.reload();
-        })
+      UpdateAsset(formatData("responsibleName"))
         .catch((err) => {
           alert(err.response.data.message);
-        });
+        })
+        .finally(async () => await setNewAssetsData());
     }
-  };
+  }
 
-  function formatData() {
-    const assetData = {
-      id: form.id,
-      name: form.name,
+  async function setNewAssetsData() {
+    const newAssetsData = await GetAllAssets();
+    setAssets((currentAssets) => ({ ...currentAssets, ...newAssetsData }));
+    setModal(false);
+  }
+
+  function formatData(...propsToRemove: (keyof AssetPlainData)[]) {
+    const { id, name, purchaseDate, ...details } = form;
+    const data = {
+      id,
+      name,
+      purchaseDate,
       details: {
-        assetType: form.assetType,
-        brand: form.brand,
-        responsible: form.responsible,
-        supplier: form.supplier,
-        residualValue: form.residualValue,
-        annualDepreciation: form.annualDepreciation,
-        monthlyDepreciation: form.monthlyDepreciation,
-        valueBooks: form.valueBooks,
-        observation: form.observation,
-        active: form.active,
-        depreciationTime: Number(form.depreciationTime),
-        insured: Number(form.insured),
-        value: Number(form.value),
+        ...details,
       },
-      purchaseDate: form.purchaseDate,
     };
 
-    return assetData;
+    if (propsToRemove) {
+      for (let i = 0; i < propsToRemove.length; i++) {
+        delete data.details[propsToRemove[i] as keyof typeof details];
+        delete data[propsToRemove[i] as keyof AssetData];
+      }
+    }
+
+    console.log(data);
+    return data;
   }
 
   return (
@@ -237,14 +236,21 @@ export default function ElectronicEquipment() {
       <div className="card">
         <DataTable
           className="m-5 shadow-md"
-          value={assets.furnitureAndFixturesAssets.map((asset) => {
-            for (let i = 0; i < (assets.users ? assets.users.length : 1); i++) {
-              if (asset.details.responsible === assets.users![i].id) {
-                asset.details.responsibleName = assets.users![i].name;
+          value={
+            assets.furnitureAndFixturesAssets &&
+            assets.furnitureAndFixturesAssets.map((asset) => {
+              for (
+                let i = 0;
+                i < (assets.users ? assets.users.length : 1);
+                i++
+              ) {
+                if (asset.details.responsible === assets.users![i].id) {
+                  asset.details.responsibleName = assets.users![i].name;
+                }
               }
-            }
-            return asset;
-          })}
+              return asset;
+            })
+          }
           emptyMessage={"No Assets found"}
           selectionMode="single"
           title="Electronic Equipments"
@@ -324,20 +330,11 @@ export default function ElectronicEquipment() {
           placeholder="brand"
           type="dropdown"
           value={form.brand}
-          mapStringOptions={assets.catalog.catalogOptions.map(
+          mapStringOptions={assets.catalog!.catalogOptions.map(
             (option) => option.catalogDetail
           )}
           onDropDownChange={(e) => {
-            console.log(
-              e.originalEvent?.currentTarget.textContent,
-              e.target.name as keyof AssetPlainData,
-              e.value
-            );
-            onChange(
-              // e.originalEvent?.currentTarget.textContent as string,
-              e.value as string,
-              e.target.name as keyof AssetPlainData
-            );
+            onChange(e.value as string, e.target.name as keyof AssetPlainData);
           }}
         >
           Brand
@@ -488,7 +485,7 @@ export default function ElectronicEquipment() {
         <ButtonComponent
           reference={submitButtonRef}
           title={formSettings.submitButtonValue}
-          onclickButton={createAsset}
+          onclickButton={createOrEditAsset}
         />
       </Dialog>
     </div>
