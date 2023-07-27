@@ -5,7 +5,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState } from "react";
 import { useLoaderData } from "react-router-dom";
-import InputComponent from "../../components/Auth-Components/InputComponent";
 import { Dialog } from "primereact/dialog";
 import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -30,7 +29,7 @@ import {
   AssetTypeConfig,
   ElectronicEquipmentConfig,
 } from "../../config/assets.config";
-import { plainData } from "../../interfaces/userSignUpData.interface";
+import InputGroup from "../../components/InputGroup";
 
 export default function ElectronicEquipment() {
   const [assets, setAssets] = useState<AssetTypesData>(
@@ -64,51 +63,37 @@ export default function ElectronicEquipment() {
     calculateValueBooks();
   }, [form.purchaseDate, form.monthlyDepreciation]);
 
-  // input refs
-  const residualValueRef = useRef<HTMLInputElement>(null);
-  const annualDepreciationRef = useRef<HTMLInputElement>(null);
-  const monthlyDepreciationRef = useRef<HTMLInputElement>(null);
-  const valueBooksRef = useRef<HTMLInputElement>(null);
-
   const submitButtonRef = useRef<HTMLInputElement>(null);
 
   function calculareResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
     const resValue = (form.value * formSettings.porcetaje1) / 100;
-    if (!residualValueRef.current) return;
-    residualValueRef.current.value = resValue.toString();
-    form.residualValue = resValue;
+
+    setState((currentValues) => ({
+      ...currentValues,
+      residualValue: resValue,
+    }));
   }
 
   function depreciations() {
     const value = form.value - form.residualValue;
     const annualDep = value / (form.depreciationTime / 12);
-
     const mensualDep = value / form.depreciationTime;
 
-    if (!annualDepreciationRef.current || !monthlyDepreciationRef.current)
-      return;
+    setState((currentValues) => ({
+      ...currentValues,
+      annualDepreciation: validateNum(annualDep),
+      monthlyDepreciation: validateNum(mensualDep),
+    }));
+  }
 
-    if (isFinite(annualDep) || isFinite(mensualDep)) {
-      annualDepreciationRef.current.value = annualDep.toFixed(
-        formSettings.decialQuiantity
-      );
-      monthlyDepreciationRef.current.value = mensualDep.toFixed(
-        formSettings.decialQuiantity
-      );
-
-      form.annualDepreciation = Number(
-        annualDep.toFixed(formSettings.decialQuiantity)
-      );
-      form.monthlyDepreciation = Number(
-        mensualDep.toFixed(formSettings.decialQuiantity)
-      );
-    }
+  function validateNum(num: number) {
+    if (!isFinite(num)) return 0;
+    return Number(num.toFixed(formSettings.decialQuiantity));
   }
 
   function calculateValueBooks() {
     //  valor en libros = (fecha actual - fecha de adqusicion ) * depresiacion mensual
-
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
     const currentMoth = currentDate.getMonth() + 1;
@@ -130,8 +115,6 @@ export default function ElectronicEquipment() {
       if (totalMonths > form.depreciationTime) {
         newValueBooks = form.residualValue;
       }
-
-      form.valueBooks = newValueBooks;
     } else {
       totalMonths += 1;
       newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
@@ -141,17 +124,10 @@ export default function ElectronicEquipment() {
       }
     }
 
-    isFinite(newValueBooks)
-      ? (form.valueBooks = Number(
-          newValueBooks.toFixed(formSettings.decialQuiantity)
-        ))
-      : "0";
-
-    if (valueBooksRef.current) {
-      valueBooksRef.current.value = newValueBooks.toFixed(
-        formSettings.decialQuiantity
-      );
-    }
+    setState((currentState) => ({
+      ...currentState,
+      valueBooks: validateNum(newValueBooks),
+    }));
   }
 
   // open update modal
@@ -173,8 +149,9 @@ export default function ElectronicEquipment() {
 
   // create asset
   function createOrEditAsset() {
+    console.log(form);
     if (!edit) {
-      CreateAsset(formatData("responsibleName", 'id'))
+      CreateAsset(formatData("responsibleName", "id"))
         .catch((err) => {
           alert(err.response.data.message);
         })
@@ -232,6 +209,7 @@ export default function ElectronicEquipment() {
           }}
         />
       </div>
+
       {/* table */}
       <div className="card">
         <DataTable
@@ -303,185 +281,206 @@ export default function ElectronicEquipment() {
         className="w-1/3"
         onHide={() => setModal(false)}
       >
-        <InputComponent
+        <InputGroup
+          inputType="text"
+          label="Name"
           name="name"
-          placeholder="name"
-          type="text"
+          placeholder="Pc"
           value={form.name}
           onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }
-        >
-          Name
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="date"
+          label="Purchase Date"
           name="purchaseDate"
-          placeholder="purchaseDate"
-          type="date"
+          placeholder="Purchase Date"
           value={form.purchaseDate}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
-          }
-        >
-          Purchase Date
-        </InputComponent>
-        <InputComponent
-          name={"brand"}
-          placeholder="brand"
-          type="dropdown"
+          onDateChange={(e) => {
+            onChange(
+              new Date(e.value as Date).toISOString().split("T")[0],
+              e.target.id as keyof AssetPlainData
+            );
+          }}
+        />
+        <InputGroup
+          inputType="searchDropdown"
+          label="Brand"
+          name="brand"
+          placeholder="Asus"
           value={form.brand}
-          mapStringOptions={assets.catalog!.catalogOptions.map(
+          options={assets.catalog!.catalogOptions.map(
             (option) => option.catalogDetail
           )}
-          onDropDownChange={(e) => {
-            onChange(e.value as string, e.target.name as keyof AssetPlainData);
-          }}
-        >
-          Brand
-        </InputComponent>
-        <InputComponent
+          onDropDownFilterChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          }
+        />
+        <InputGroup
+          inputType="dropdown"
+          label="Responsible"
           name="responsible"
-          placeholder="responsible"
-          type="select"
+          placeholder="Michael Ortiz"
           value={form.responsible}
-          mapOptions={assets.users}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          options={assets.users}
+          optionLabel={"name"}
+          optionValue={"id"}
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof AssetPlainData)
           }
-        >
-          Responsible
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="text"
+          label="Supplier"
           name="supplier"
-          placeholder="supplier"
-          type="text"
+          placeholder="Gato"
           value={form.supplier}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
-          }
-        >
-          Supplier
-        </InputComponent>
-        <InputComponent
+          onChange={(e) => {
+            console.log(e.target.id);
+            onChange(e.target.value, e.target.id as keyof AssetPlainData);
+          }}
+        />
+        <InputGroup
+          inputType="decimal"
+          label="Value"
           name="value"
-          placeholder="value"
-          type="number"
+          placeholder="120.50"
           value={form.value}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
-          }
-        >
-          value
-        </InputComponent>
-        <InputComponent
+          decimalQuliantity={2} // Setting
+          onNumberChange={(e) => {
+            console.log();
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            );
+          }}
+        />
+        <InputGroup
+          inputType="number"
+          label="Depreciation Time"
           name="depreciationTime"
-          placeholder="depreciationTime"
-          type="number"
+          placeholder="10"
           value={form.depreciationTime}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
           }
-        >
-          Depreciation Time
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="number"
+          label="Residual Value"
           name="residualValue"
-          placeholder="residualValue"
-          type="number"
+          placeholder="0"
           value={form.residualValue}
           disabled={true}
-          reference={residualValueRef}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
           }
-        >
-          Residual Value
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="decimal"
+          label="Annual Depreciation"
           name="annualDepreciation"
-          placeholder="annualDepreciation"
-          type="number"
+          placeholder="0"
           value={form.annualDepreciation}
+          decimalQuliantity={2}
           disabled={true}
-          reference={annualDepreciationRef}
-          onChange={(e) => {
-            onChange(e.target.value, e.target.name as keyof AssetPlainData);
-          }}
-        >
-          Annual Depreciation
-        </InputComponent>
-        <InputComponent
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
+          }
+        />
+        <InputGroup
+          inputType="decimal"
+          label="Monthly Depreciation"
           name="monthlyDepreciation"
-          placeholder="monthlyDepreciation"
-          type="number"
+          placeholder="0"
           value={form.monthlyDepreciation}
+          decimalQuliantity={2}
           disabled={true}
-          reference={monthlyDepreciationRef}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
           }
-        >
-          Monthly Depreciation
-        </InputComponent>
-        <InputComponent
-          name="valueBooks"
-          placeholder="value in books"
-          type="text"
+        />
+        <InputGroup
+          inputType="decimal"
+          label="value in books"
+          name="monthlyDepreciation"
+          placeholder="0"
           value={form.valueBooks}
+          decimalQuliantity={2}
           disabled={true}
-          reference={valueBooksRef}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
           }
-        >
-          Value in Books
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="decimal"
+          label="Insured"
           name="insured"
-          placeholder="insured"
-          type="number"
+          placeholder="0"
           value={form.insured}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          decimalQuliantity={2}
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
           }
-        >
-          Insured
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="dropdown"
+          label="Type"
           name="assetType"
-          placeholder="type"
-          type="select"
+          placeholder="Select asset type"
           value={form.assetType}
-          enumOptions={AssetTypeConfig}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          options={Object.values(AssetTypeConfig)}
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof AssetPlainData)
           }
-        >
-          Asset Type
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="dropdown"
+          label="Status"
           name="active"
-          placeholder="active"
-          type="select"
+          placeholder="new"
           value={form.active}
-          enumOptions={AssetActive}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+          options={Object.values(AssetActive)}
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof AssetPlainData)
           }
-        >
-          Active
-        </InputComponent>
-        <InputComponent
+        />
+        <InputGroup
+          inputType="textarea"
+          label="Observations"
           name="observation"
-          placeholder="observation"
-          type="text"
           value={form.observation}
           onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }
-        >
-          observation
-        </InputComponent>
+        />
+        {/* otros */}
         <ButtonComponent
           reference={submitButtonRef}
           title={formSettings.submitButtonValue}

@@ -57,7 +57,7 @@ export const defaultAssetData: AssetPlainData = {
   id: 0,
   name: "",
   purchaseDate: "",
-  assetType: AssetTypeConfig.electronicEquipment,
+  assetType: AssetTypeConfig.ElectronicEquipment,
   brand: "",
   responsible: "",
   supplier: "",
