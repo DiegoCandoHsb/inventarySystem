@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { AssetTypeConfig } from "../config/assets.config";
 import { Catalog } from "./catalog.interface";
 import { AssetActive } from "./enums/assetActive";
@@ -29,6 +30,7 @@ export interface AssetTypesData {
   assetsList?: AssetData[];
   electronicEquipmentAssets?: AssetData[];
   furnitureAndFixturesAssets?: AssetData[];
+  expensesAssets?:AssetData[];
   users?: userSignUpData[];
   catalog?: Catalog;
 }

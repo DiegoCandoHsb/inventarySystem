@@ -12,7 +12,7 @@ export default function Activities() {
     {
       img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYDLhIUQpb0KRFPjXYblduUheJFNDE5Ou-dEHR84VjNg&s",
       title: "Expenses",
-      navigateTo: "/",
+      navigateTo: "/expenses",
     },
     {
       img: "https://www.petlife.mx/u/fotografias/m/2023/5/16/f768x1-2048_2175_5050.jpg",

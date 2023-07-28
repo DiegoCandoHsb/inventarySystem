@@ -7,6 +7,7 @@ import Activities, { ActivitiesLoader } from "../pages/Activities";
 import AuthLayaout from "../common/AuthLayaout";
 import FixedAssetsMenu from "../pages/fixedAssets/FixedAssetsMenu";
 import ElectronicEquipment, { loadAssets } from "../pages/fixedAssets/ElectronicEquipment";
+import Expenses from "../pages/expenses/expenses";
 
 export const routes = createBrowserRouter([
   {
@@ -18,6 +19,11 @@ export const routes = createBrowserRouter([
         index: true,
         loader: ActivitiesLoader,
         element: <Activities />,
+      },
+      {
+        path:"/expenses",
+        loader:loadAssets,
+        element:<Expenses />
       },
       {
         path: "/fixedAssets",
@@ -36,6 +42,7 @@ export const routes = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/auth",
     element: <AuthLayaout />,

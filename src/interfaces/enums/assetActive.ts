@@ -7,3 +7,9 @@ export enum AssetActive {
   obsoletedDonated = "obsoleted donated",
   obsoletedDiscarded = "obsoleted discarded",
 }
+
+
+export enum ExpensesStatus {
+  using = "using",
+  discarded = 'discarded'
+}
