@@ -1,6 +1,8 @@
+import { Button } from "primereact/button";
 import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
 import InputComponent from "../../components/Auth-Components/InputComponent";
 import RegisterForm from "../../components/Auth-Components/RegisterForm";
+import InputGroup from "../../components/InputGroup";
 import { useForm } from "../../hooks/useForm";
 import {
   plainData,
@@ -8,8 +10,11 @@ import {
 } from "../../interfaces/userSignUpData.interface";
 import { SignUp } from "../../services/auth.service";
 import { AxiosError } from "axios";
+import { useNavigate } from "react-router-dom";
 
 export function Component() {
+  const navigate = useNavigate();
+
   const {
     email,
     id,
@@ -29,7 +34,7 @@ export function Component() {
     confirmPassword: "",
   });
 
-  async function signUp(): Promise<userSignUpData | undefined> {
+  function createUser() {
     const userTransformedData: userSignUpData = {
       id: id.toString(),
       name,
@@ -41,91 +46,113 @@ export function Component() {
       },
     };
 
-    try {
-      const data = await SignUp(userTransformedData);
-      console.log(data);
-      return data;
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      alert(axiosError.response?.data);
-      console.error(axiosError.response?.data);
-    }
+    SignUp(userTransformedData)
+      .then((data) => {
+        console.log(data);
+        navigate("/");
+        return data;
+      })
+      .catch((axiosError: AxiosError) => {
+        // const axiosError = error as AxiosError;
+        alert(axiosError.response?.data);
+        console.error(axiosError.response?.data);
+      });
+
+    // try {
+    //   const data = await SignUp(userTransformedData);
+    // } catch (error) {
+    //   const axiosError = error as AxiosError;
+    //   alert(axiosError.response?.data);
+    //   console.error(axiosError.response?.data);
+    // }
   }
   return (
     <section>
       <RegisterForm title="Sign Up">
         {/* first name */}
-        <InputComponent
-          type="text"
+        <InputGroup
+          inputType="text"
+          label="Name"
           name="name"
-          placeholder="Sebastian"
+          placeholder="Michael"
           value={name}
-          onChange={(e) => onChange(e.target.value, "name")}
-        >
-          Name
-        </InputComponent>
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof plainData)
+          }
+        />
         {/* last name */}
-        <InputComponent
-          type="text"
+        <InputGroup
+          inputType="text"
+          label="Lastname"
           name="lastname"
           placeholder="Ortiz"
           value={lastname}
-          onChange={(e) => onChange(e.target.value, "lastname")}
-        >
-          Last Name
-        </InputComponent>
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof plainData)
+          }
+        />
         {/* id number */}
-        <InputComponent
-          type="number"
+        <InputGroup
+          inputType="text"
+          label="Id Number"
           name="id"
-          placeholder="1234567890"
+          placeholder="1754253142"
+          keyfilter="number"
           value={id}
-          onChange={(e) => onChange(e.target.value.toString(), "id")}
-        >
-          Id Number
-        </InputComponent>
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof plainData)
+          }
+        />
         {/* Phone */}
-        <InputComponent
-          type="number"
+        <InputGroup
+          inputType="text"
+          label="Phone"
           name="phone"
-          placeholder="0992889124"
+          placeholder="0992881929"
+          keyfilter="number"
           value={phone}
-          onChange={(e) => onChange(e.target.value.toString(), "phone")}
-        >
-          Phone
-        </InputComponent>
+          onChange={(e) =>
+            onChange(Number(e.target.value), e.target.id as keyof plainData)
+          }
+        />
         {/* Email */}
-        <InputComponent
-          type="email"
+        <InputGroup
+          inputType="text"
+          label="Email"
           name="email"
           placeholder="example@exp.com"
           value={email}
-          onChange={(e) => onChange(e.target.value, "email")}
-        >
-          Email
-        </InputComponent>
+          keyfilter="email"
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof plainData)
+          }
+        />
         {/* password */}
-        <InputComponent
-          type="password"
+        <InputGroup
+          inputType="password"
+          label="Password"
           name="password"
-          placeholder="*******"
+          placeholder="***********"
           value={password}
-          onChange={(e) => onChange(e.target.value, "password")}
-        >
-          Password
-        </InputComponent>
+          onChange={(e) =>
+            onChange(e.target.value, e.target.name as keyof plainData)
+          }
+        />
         {/* confirm password */}
-        <InputComponent
-          type="password"
+        <InputGroup
+          inputType="password"
+          label="Confirm Password"
           name="confirmPassword"
-          placeholder="*******"
+          placeholder="***********"
           value={confirmPassword}
-          onChange={(e) => onChange(e.target.value, "confirmPassword")}
-        >
-          Confirm Password
-        </InputComponent>
+          onChange={(e) =>
+            onChange(e.target.value, e.target.name as keyof plainData)
+          }
+        />
         {/* Submit */}
-        <ButtonComponent title="Sign Up" onclickButton={signUp} />
+        <div className="my-3">
+          <Button label="Sign Up" className="w-full" onClick={createUser} />
+        </div>
       </RegisterForm>
     </section>
   );

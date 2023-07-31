@@ -1,25 +1,26 @@
 import { useState } from "react";
 import ActivitiesCardcomponent from "../../components/ActivitiesCardComponent";
 import { ActivitiesMenuOptions } from "../../interfaces/activitiesMenus.interface";
-import { Outlet } from "react-router-dom";
+import defaultImg from "../../assets/images/defaultimg.jpg";
+import { NavigationRoutes } from "../../config/navigationRoutes";
 
 export default function FixedAssetsMenu() {
   const [activitiesMenuOptions] = useState<ActivitiesMenuOptions[]>([
     {
-      img: "https://i.pinimg.com/550x/09/90/fe/0990fe16f61df266c4fc0923bff98c3b.jpg",
+      img: defaultImg,
       title: "Electronic Equipment",
-      navigateTo: "/fixedAssets/electronicEquipment",
+      navigateTo: NavigationRoutes.elecEquiPath,
     },
     {
-      img: "https://i.pinimg.com/550x/09/90/fe/0990fe16f61df266c4fc0923bff98c3b.jpg",
+      img: defaultImg,
       title: "Human Resources",
-      navigateTo: "/fixedAssets/",
+      navigateTo: NavigationRoutes.furnAndMixPath,
     },
   ]);
 
   return (
     <section>
-      <ul className="flex flex-row w-full h-screen justify-evenly items-center">
+      <ul className="w-screen h-screen flex flex-row mx-auto justify-center items-center">
         {activitiesMenuOptions.map((activitie) => (
           <ActivitiesCardcomponent
             key={activitie.title}

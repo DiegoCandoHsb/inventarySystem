@@ -1,34 +1,36 @@
 import { useState } from "react";
 import ActivitiesCardcomponent from "../components/ActivitiesCardComponent";
 import { ActivitiesMenuOptions } from "../interfaces/activitiesMenus.interface";
+import DefaultImg from "../assets/images/defaultimg.jpg";
+import { NavigationRoutes } from "../config/navigationRoutes";
 
 export default function Activities() {
   const [activitiesMenuOptions] = useState<ActivitiesMenuOptions[]>([
     {
-      img: "https://i.pinimg.com/550x/09/90/fe/0990fe16f61df266c4fc0923bff98c3b.jpg",
+      img: DefaultImg,
       title: "Human Resources",
-      navigateTo: "/",
+      navigateTo: NavigationRoutes.homePath,
     },
+    // {
+    //   img: DefaultImg,
+    //   title: "Expenses",
+    //   navigateTo: NavigationRoutes.expensesPath,
+    // },
     {
-      img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRYDLhIUQpb0KRFPjXYblduUheJFNDE5Ou-dEHR84VjNg&s",
-      title: "Expenses",
-      navigateTo: "/expenses",
-    },
-    {
-      img: "https://www.petlife.mx/u/fotografias/m/2023/5/16/f768x1-2048_2175_5050.jpg",
+      img: DefaultImg,
       title: "Fixed Assets",
-      navigateTo: "/fixedAssets",
+      navigateTo: NavigationRoutes.fixedAssetsPath,
     },
     {
-      img: "https://1.bp.blogspot.com/-iCnFX7eWVjs/XR9NQutHXcI/AAAAAAAAJ9k/ISWH3UXgJF8QJdsV6P9wh3agzOwOF_aYgCLcBGAs/s1600/cat-1285634_1920.png",
+      img: DefaultImg,
       title: "Electronic Items",
-      navigateTo: "/",
+      navigateTo: NavigationRoutes.homePath,
     },
   ]);
 
   return (
     <section>
-      <ul className="flex flex-row w-full h-screen items-center">
+      <ul className="w-full h-screen flex flex-row mx-auto justify-center items-center">
         {activitiesMenuOptions.map((activitie) => (
           <ActivitiesCardcomponent
             key={activitie.title}

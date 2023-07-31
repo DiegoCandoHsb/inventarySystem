@@ -9,6 +9,8 @@ import { useForm } from "../../hooks/useForm";
 import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
 import { SignIn } from "../../services/auth.service";
 import { LoginResponseData } from "../../interfaces/userSignUpData.interface";
+import InputGroup from "../../components/InputGroup";
+import { Button } from "primereact/button";
 
 export function Component() {
   const navigate = useNavigate();
@@ -18,46 +20,51 @@ export function Component() {
     password: "",
   });
 
-  async function signIn(): Promise<LoginResponseData | undefined> {
-    try {
-      console.log({ email, password });
-      const data = await SignIn({ email, password });
-
-      navigate("/");
-      console.log(data);
-      return data;
-    } catch (error: any) {
-      alert(error.response?.data.message);
-      console.error(error.response?.data);
-    }
+  function signIn(): void {
+    SignIn({ email, password })
+      .then((data) => {
+        navigate("/");
+        console.log(data);
+        return data;
+      })
+      .catch((error) => {
+        alert(error.response?.data.message);
+        console.error(error.response?.data);
+        return;
+      });
   }
 
   return (
     <section>
       <RegisterForm title="Sign In">
         {/* email */}
-        <InputComponent
-          onChange={(e) => onChange(e.target.value, e.target.name as keyof userSignInData)}
-          type="email"
+        <InputGroup
+          inputType="text"
+          label="Email"
           name="email"
           placeholder="example@exp.com"
           value={email}
-        >
-          Email
-        </InputComponent>
+          keyfilter="email"
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof userSignInData)
+          }
+        />
 
         {/* password */}
-        <InputComponent
-          onChange={(e) => onChange(e.target.value, "password")}
-          type="password"
+        <InputGroup
+          inputType="password"
+          label="Password"
           name="password"
-          placeholder="********"
+          placeholder="***********"
           value={password}
-        >
-          Password
-        </InputComponent>
+          onChange={(e) =>
+            onChange(e.target.value, e.target.name as keyof userSignInData)
+          }
+        />
 
-        <ButtonComponent title="Sign Up" onclickButton={signIn} />
+        <div className="my-3">
+          <Button label="Sign Up" className="w-full" onClick={signIn} />
+        </div>
       </RegisterForm>
     </section>
   );
@@ -65,6 +72,5 @@ export function Component() {
 
 export default function loginLoader() {
   sessionStorage.removeItem("token");
-  console.log("Token Eliminado");
   return { hola: true };
 }

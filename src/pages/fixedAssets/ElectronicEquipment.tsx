@@ -298,7 +298,7 @@ export default function ElectronicEquipment() {
       {/* modal */}
       <Dialog
         header="Create Asset"
-        draggable={false}
+        // draggable={false}
         visible={modal}
         className="w-1/3"
         onHide={() => setModal(false)}

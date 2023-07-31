@@ -6,12 +6,15 @@ import NotFoundPage from "../common/NotFoundPage";
 import Activities, { ActivitiesLoader } from "../pages/Activities";
 import AuthLayaout from "../common/AuthLayaout";
 import FixedAssetsMenu from "../pages/fixedAssets/FixedAssetsMenu";
-import ElectronicEquipment, { loadAssets } from "../pages/fixedAssets/ElectronicEquipment";
+import ElectronicEquipment, {
+  loadAssets,
+} from "../pages/fixedAssets/ElectronicEquipment";
 import Expenses from "../pages/expenses/expenses";
+import { NavigationRoutes } from "../config/navigationRoutes";
 
 export const routes = createBrowserRouter([
   {
-    path: "/",
+    path: NavigationRoutes.basePath,
     element: <Layaout />,
     errorElement: <NotFoundPage />,
     children: [
@@ -21,12 +24,12 @@ export const routes = createBrowserRouter([
         element: <Activities />,
       },
       {
-        path:"/expenses",
-        loader:loadAssets,
-        element:<Expenses />
+        path: NavigationRoutes.expensesPath,
+        loader: loadAssets,
+        element: <Expenses />,
       },
       {
-        path: "/fixedAssets",
+        path: NavigationRoutes.fixedAssetsPath,
         element: <AuthLayaout />,
         children: [
           {
@@ -34,7 +37,7 @@ export const routes = createBrowserRouter([
             element: <FixedAssetsMenu />,
           },
           {
-            path: "/fixedAssets/electronicEquipment",
+            path: NavigationRoutes.elecEquiPath,
             loader: loadAssets,
             element: <ElectronicEquipment />,
           },

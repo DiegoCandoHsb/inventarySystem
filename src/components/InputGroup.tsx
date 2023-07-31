@@ -11,6 +11,7 @@ import { userSignUpData } from "../interfaces/userSignUpData.interface";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { InputTextarea } from "primereact/inputtextarea";
+import { Password } from "primereact/password";
 
 interface InputGroupProps {
   inputType:
@@ -20,7 +21,8 @@ interface InputGroupProps {
     | "searchDropdown"
     | "dropdown"
     | "decimal"
-    | "textarea";
+    | "textarea"
+    | "password";
   label: string;
   name: string;
   value: string | number;
@@ -30,6 +32,7 @@ interface InputGroupProps {
   optionValue?: string;
   decimalQuliantity?: number;
   disabled?: boolean;
+  keyfilter?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onDateChange?: (e: CalendarChangeEvent) => void;
   onDropDownFilterChange?: (e: AutoCompleteChangeEvent) => void;
@@ -37,7 +40,7 @@ interface InputGroupProps {
   onNumberChange?: (e: InputNumberChangeEvent) => void;
 }
 
-const defautlInputStyle = "w-full";
+const defautlInputStyle = "w-full flex items-center";
 
 export default function InputGroup({
   inputType,
@@ -172,6 +175,18 @@ export default function InputGroup({
             {...commonInputProps}
             value={value.toString()}
             onChange={onChange}
+          />
+        );
+
+      case "password":
+        return (
+          <Password
+            {...commonInputProps}
+            value={value}
+            onChange={onChange}
+            feedback={false}
+            inputClassName={commonInputProps.className}
+            toggleMask
           />
         );
       default:
