@@ -60,7 +60,7 @@ export default function NavComponent() {
   }
 
   return (
-    <nav className="fixed top-0 z-10">
+    <nav className="fixed m-1 z-10">
       <Fieldset>
         <section className="flex justify-between w-full items-center">
           <Link to={NavigationRoutes.homePath} className="w-1/12 h-full">
