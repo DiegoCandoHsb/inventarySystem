@@ -347,17 +347,13 @@ export default function ElectronicEquipment() {
           }}
         />
         <InputGroup
-          inputType="number"
+          inputType="text"
           label="Serial Number"
           name="serialNumber"
-          placeholder="1052218648"
+          placeholder="123ADS23LK1"
           value={form.serialNumber}
-          onNumberChange={(e) =>
-            onChange(
-              e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
-            )
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }
         />
         <InputGroup
@@ -379,6 +375,16 @@ export default function ElectronicEquipment() {
           name="model"
           placeholder=""
           value={form.model}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          }
+        />
+        <InputGroup
+          inputType="text"
+          label="Color"
+          name="color"
+          placeholder="red"
+          value={form.color}
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }

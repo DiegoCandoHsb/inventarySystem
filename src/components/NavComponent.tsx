@@ -49,7 +49,7 @@ export default function NavComponent() {
     const nodes = menuItemsData.map((itemData) => {
       const { path, title } = itemData;
       const button = React.createElement(
-        "a",
+        "button",
         {
           key: title,
           className: buttonClasses,
@@ -62,7 +62,7 @@ export default function NavComponent() {
   }
 
   return (
-    <nav className="fixed m-1 z-10 w-full">
+    <nav className="m-1 z-10 w-full">
       <Fieldset>
         <section className="flex justify-between w-full items-center">
           <Link to={NavigationRoutes.homePath} className="w-1/12 h-full border p-3 border-slate-400 rounded-md">
