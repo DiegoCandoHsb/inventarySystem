@@ -216,6 +216,16 @@ export default function ElectronicEquipment() {
     updateModal,
   } = useAssetForm();
 
+  function calculateDepreTime(date: string) {
+    const acDate = new Date(date);
+    const current = new Date();
+
+    const dateBeforeDepre = acDate.setMonth(acDate.getMonth() + 58);
+
+    if (Number(current) >= Number(dateBeforeDepre)) return true;
+    return false;
+  }
+
   return (
     <div>
       <div className="w-1/12">
@@ -236,7 +246,7 @@ export default function ElectronicEquipment() {
       {/* table */}
       <div className="card">
         <DataTable
-          className="m-5 shadow-md"
+          className="m-5 shadow-md bg-red-700"
           value={
             assets.electronicEquipmentAssets &&
             assets.electronicEquipmentAssets.map((asset) => {
@@ -248,7 +258,10 @@ export default function ElectronicEquipment() {
                 if (asset.details.responsible === assets.users![i].id) {
                   asset.details.responsibleName = assets.users![i].name;
                 }
+
+                const deprecated = calculateDepreTime(asset.purchaseDate);
               }
+
               return asset;
             })
           }
@@ -257,9 +270,16 @@ export default function ElectronicEquipment() {
           title="Electronic Equipments"
           onRowDoubleClick={(e) => updateModal(e)}
           paginator
+          filters={{}}
           rows={25}
           rowsPerPageOptions={[25, 50, 75, 100]}
           tableStyle={{ minWidth: "50rem" }}
+          cellClassName={(e, { ...data }) => {
+            const depre = calculateDepreTime(
+              data.props.value![data.rowIndex].purchaseDate
+            );
+            return depre ? "bg-rose-300" : "";
+          }}
         >
           <Column header="ID" field="id" style={{ width: "15%" }}></Column>
           <Column
@@ -304,12 +324,28 @@ export default function ElectronicEquipment() {
       <div className="w-full  flex justify-center">
         <Card className="w-1/2">
           <div className="flex justify-evenly">
-              <h1 className="bg-slate-100 p-2 rounded-md font-bold">
-                Total Annual Depreciation: <span className="font-normal">0.00</span>
-              </h1>
-              <h1 className="bg-slate-100 p-2 rounded-md font-bold">
-                Total Monthly Depreciation: <span className="font-normal">0.00</span>
-              </h1>
+            <h1 className="bg-slate-100 p-2 rounded-md font-bold">
+              Total Annual Depreciation:{" "}
+              <span className="font-normal">
+                {assets.electronicEquipmentAssets
+                  ? assets.electronicEquipmentAssets
+                      .map((asset) => asset.details.annualDepreciation)
+                      .reduce((x, y) => x + y, 0)
+                      .toFixed(formSettings.decialQuiantity)
+                  : 0}
+              </span>
+            </h1>
+            <h1 className="bg-slate-100 p-2 rounded-md font-bold">
+              Total Monthly Depreciation:{" "}
+              <span className="font-normal">
+                {assets.electronicEquipmentAssets
+                  ? assets.electronicEquipmentAssets
+                      .map((asset) => asset.details.monthlyDepreciation)
+                      .reduce((x, y) => x + y, 0)
+                      .toFixed(formSettings.decialQuiantity)
+                  : 0}
+              </span>
+            </h1>
           </div>
         </Card>
       </div>
@@ -317,7 +353,6 @@ export default function ElectronicEquipment() {
       {/* modal */}
       <Dialog
         header="Create Asset"
-        // draggable={false}
         visible={modal}
         className="w-1/3"
         onHide={() => setModal(false)}
@@ -572,7 +607,6 @@ export async function loadAssets(): Promise<AssetTypesData> {
     (ctlg) =>
       ctlg.catalogName === ElectronicEquipmentConfig.assetBrandCatalogName
   )[0];
-
   return {
     ...data,
     users,
