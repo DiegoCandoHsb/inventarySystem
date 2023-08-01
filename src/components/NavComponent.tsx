@@ -5,6 +5,8 @@ import { NavigationRoutes } from "../config/navigationRoutes";
 import React from "react";
 import { Avatar } from "primereact/avatar";
 
+import HSBlogo from "../assets/images/hsblogo.svg";
+
 type dataItem = { title: string; path: string };
 export default function NavComponent() {
   const navigate = useNavigate();
@@ -60,14 +62,11 @@ export default function NavComponent() {
   }
 
   return (
-    <nav className="fixed m-1 z-10">
+    <nav className="fixed m-1 z-10 w-full">
       <Fieldset>
         <section className="flex justify-between w-full items-center">
-          <Link to={NavigationRoutes.homePath} className="w-1/12 h-full">
-            <img
-              src="https://assets.stickpng.com/images/580b57fcd9996e24bc43c51f.png"
-              className="w-full h-full object-center"
-            />
+          <Link to={NavigationRoutes.homePath} className="w-1/12 h-full border p-3 border-slate-400 rounded-md">
+            <img src={HSBlogo} className="w-full h-full object-center" />
           </Link>
           <div className="w-7/12 flex justify-evenly">{menuOptions()}</div>
           <div className="w-2/12 flex justify-end">
