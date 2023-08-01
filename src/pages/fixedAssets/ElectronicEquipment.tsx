@@ -4,11 +4,11 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-
 // import { useEffect, useRef, useState } from "react";
 // import { useLoaderData } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
-import { DataTable,
+import {
+  DataTable,
   // DataTableRowClickEvent
 } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -213,10 +213,7 @@ export default function ElectronicEquipment() {
     setState,
     submitButtonRef,
     updateModal,
-
   } = useAssetForm();
-
-
 
   return (
     <div>
@@ -264,7 +261,11 @@ export default function ElectronicEquipment() {
           tableStyle={{ minWidth: "50rem" }}
         >
           <Column header="ID" field="id" style={{ width: "15%" }}></Column>
-          <Column header="Item Name" field="name" style={{ width: "15%" }}></Column>
+          <Column
+            header="Item Name"
+            field="name"
+            style={{ width: "15%" }}
+          ></Column>
           <Column
             header="Acq. Date"
             field="purchaseDate"
@@ -331,17 +332,13 @@ export default function ElectronicEquipment() {
           }}
         />
         <InputGroup
-          inputType="number"
+          inputType="text"
           label="Serial Number"
           name="serialNumber"
-          placeholder="1052218648"
+          placeholder="123ADS23LK1"
           value={form.serialNumber}
-          onNumberChange={(e) =>
-            onChange(
-              e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
-            )
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }
         />
         <InputGroup
@@ -363,6 +360,16 @@ export default function ElectronicEquipment() {
           name="model"
           placeholder=""
           value={form.model}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          }
+        />
+        <InputGroup
+          inputType="text"
+          label="Color"
+          name="color"
+          placeholder="red"
+          value={form.color}
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }

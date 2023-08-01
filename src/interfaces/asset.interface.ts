@@ -10,8 +10,9 @@ export interface AssetData {
   details: {
     assetType: AssetTypeConfig;
     brand: string;
-    serialNumber: number;
+    serialNumber: string;
     model: string;
+    color: string;
     responsible: string;
     responsibleName?: string | undefined;
     supplier: string;
@@ -42,9 +43,10 @@ export interface AssetPlainData {
   name: string;
   purchaseDate: string;
   assetType: AssetTypeConfig;
-  serialNumber: number;
+  serialNumber: string;
   brand: string;
   model: string;
+  color: string;
   responsible: string;
   responsibleName?: string | undefined;
   supplier: string;
@@ -64,9 +66,10 @@ export const defaultAssetData: AssetPlainData = {
   name: "",
   purchaseDate: "",
   assetType: AssetTypeConfig.ElectronicEquipment,
-  serialNumber: 0,
+  serialNumber: "",
   brand: "",
   model: "",
+  color: "",
   responsible: "",
   supplier: "",
   value: 0,
