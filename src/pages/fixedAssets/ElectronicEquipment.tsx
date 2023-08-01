@@ -4,11 +4,11 @@
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
 
-
 // import { useEffect, useRef, useState } from "react";
 // import { useLoaderData } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
-import { DataTable,
+import {
+  DataTable,
   // DataTableRowClickEvent
 } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -35,7 +35,8 @@ import {
 } from "../../config/assets.config";
 import InputGroup from "../../components/InputGroup";
 import useAssetForm from "../../hooks/useAssetForm";
-import { useEffect } from "react";
+import { Card } from "primereact/card";
+
 // import Activities from "../Activities";
 
 export default function ElectronicEquipment() {
@@ -213,10 +214,7 @@ export default function ElectronicEquipment() {
     setState,
     submitButtonRef,
     updateModal,
-
   } = useAssetForm();
-
-
 
   return (
     <div>
@@ -264,7 +262,11 @@ export default function ElectronicEquipment() {
           tableStyle={{ minWidth: "50rem" }}
         >
           <Column header="ID" field="id" style={{ width: "15%" }}></Column>
-          <Column header="Item Name" field="name" style={{ width: "15%" }}></Column>
+          <Column
+            header="Item Name"
+            field="name"
+            style={{ width: "15%" }}
+          ></Column>
           <Column
             header="Acq. Date"
             field="purchaseDate"
@@ -296,6 +298,20 @@ export default function ElectronicEquipment() {
             style={{ width: "15" }}
           ></Column>
         </DataTable>
+      </div>
+
+      {/* total depreciation */}
+      <div className="w-full  flex justify-center">
+        <Card className="w-1/2">
+          <div className="flex justify-evenly">
+              <h1 className="bg-slate-100 p-2 rounded-md font-bold">
+                Total Annual Depreciation: <span className="font-normal">0.00</span>
+              </h1>
+              <h1 className="bg-slate-100 p-2 rounded-md font-bold">
+                Total Monthly Depreciation: <span className="font-normal">0.00</span>
+              </h1>
+          </div>
+        </Card>
       </div>
 
       {/* modal */}
