@@ -31,7 +31,7 @@ const useAssetForm = () => {
   const { onChange, form, setState } =
     useForm<AssetPlainData>(defaultAssetData);
     useEffect(() => {
-      calculareResValue();
+      calculateResValue();
       depreciations();
     }, [form.value, form.depreciationTime]);
 
@@ -41,7 +41,7 @@ const useAssetForm = () => {
 
     const submitButtonRef = useRef<HTMLInputElement>(null);
 
-    function calculareResValue() {
+    function calculateResValue() {
       //  valor residual  =  valor * 0.1 (valor por 10 porciento)
       const resValue = (form.value * formSettings.porcetaje1) / 100;
 
@@ -125,7 +125,7 @@ const useAssetForm = () => {
 
     // create asset
     function createOrEditAsset() {
-      // console.log(form);
+      console.log(form);
       if (!edit) {
         CreateAsset(formatData("responsibleName", "id"))
           .catch((err) => {

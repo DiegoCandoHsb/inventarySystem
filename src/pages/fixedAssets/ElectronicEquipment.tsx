@@ -35,6 +35,7 @@ import {
 } from "../../config/assets.config";
 import InputGroup from "../../components/InputGroup";
 import useAssetForm from "../../hooks/useAssetForm";
+import { useEffect } from "react";
 // import Activities from "../Activities";
 
 export default function ElectronicEquipment() {
@@ -215,6 +216,8 @@ export default function ElectronicEquipment() {
 
   } = useAssetForm();
 
+
+
   return (
     <div>
       <div className="w-1/12">
@@ -261,7 +264,7 @@ export default function ElectronicEquipment() {
           tableStyle={{ minWidth: "50rem" }}
         >
           <Column header="ID" field="id" style={{ width: "15%" }}></Column>
-          <Column header="Name" field="name" style={{ width: "15%" }}></Column>
+          <Column header="Item Name" field="name" style={{ width: "15%" }}></Column>
           <Column
             header="Acq. Date"
             field="purchaseDate"
@@ -273,12 +276,12 @@ export default function ElectronicEquipment() {
             style={{ width: "15%" }}
           ></Column>
           <Column
-            header="Monthly Dep"
+            header="Monthly Dep."
             field="details.monthlyDepreciation"
             style={{ width: "15" }}
           ></Column>
           <Column
-            header="Val Books"
+            header="Val. Books"
             field="details.valueBooks"
             style={{ width: "15" }}
           ></Column>
@@ -305,7 +308,7 @@ export default function ElectronicEquipment() {
       >
         <InputGroup
           inputType="text"
-          label="Name"
+          label="Item Name"
           name="name"
           placeholder="Pc"
           value={form.name}
@@ -313,6 +316,7 @@ export default function ElectronicEquipment() {
             onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }
         />
+
         <InputGroup
           inputType="date"
           label="Purchase Date"
@@ -327,6 +331,20 @@ export default function ElectronicEquipment() {
           }}
         />
         <InputGroup
+          inputType="number"
+          label="Serial Number"
+          name="serialNumber"
+          placeholder="1052218648"
+          value={form.serialNumber}
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof AssetPlainData
+            )
+          }
+        />
+        <InputGroup
           inputType="searchDropdown"
           label="Brand"
           name="brand"
@@ -337,6 +355,16 @@ export default function ElectronicEquipment() {
           )}
           onDropDownFilterChange={(e) =>
             onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          }
+        />
+        <InputGroup
+          inputType="text"
+          label="Model"
+          name="model"
+          placeholder=""
+          value={form.model}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof AssetPlainData)
           }
         />
         <InputGroup
