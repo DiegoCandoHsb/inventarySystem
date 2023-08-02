@@ -229,9 +229,10 @@ export default function ElectronicEquipment() {
 
   return (
     <div>
-      <div className="w-1/12">
+      <div className="w-full flex ml-5">
         <Button
           label="Add"
+          className=""
           onClick={() => {
             setModal(true);
             setEdit(false);
