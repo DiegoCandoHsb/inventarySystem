@@ -36,6 +36,7 @@ import {
 import InputGroup from "../../components/InputGroup";
 import useAssetForm from "../../hooks/useAssetForm";
 import { Card } from "primereact/card";
+import { Button } from "primereact/button";
 
 // import Activities from "../Activities";
 
@@ -229,7 +230,19 @@ export default function ElectronicEquipment() {
   return (
     <div>
       <div className="w-1/12">
-        <ButtonComponent
+        <Button
+          label="Add"
+          onClick={() => {
+            setModal(true);
+            setEdit(false);
+            setState(defaultAssetData);
+            setFormSettings((curretValues) => ({
+              ...curretValues,
+              submitButtonValue: curretValues.defaultSettings.submitButtonValue,
+            }));
+          }}
+        />
+        {/* <ButtonComponent
           title="Add"
           onclickButton={() => {
             setModal(true);
@@ -240,7 +253,7 @@ export default function ElectronicEquipment() {
               submitButtonValue: curretValues.defaultSettings.submitButtonValue,
             }));
           }}
-        />
+        /> */}
       </div>
 
       {/* table */}
@@ -588,11 +601,19 @@ export default function ElectronicEquipment() {
           }
         />
         {/* otros */}
-        <ButtonComponent
+        <div className="w-full  flex justify-center mt-5">
+          <Button
+            ref={() => submitButtonRef}
+            label={formSettings.submitButtonValue}
+            onClick={createOrEditAsset}
+            className="w-1/2"
+          />
+        </div>
+        {/* <ButtonComponent
           reference={submitButtonRef}
           title={formSettings.submitButtonValue}
           onclickButton={createOrEditAsset}
-        />
+        /> */}
       </Dialog>
     </div>
   );
