@@ -5,6 +5,8 @@ export interface userSignUpData {
   password: string;
   details: {
     lastname: string;
+    secondname: string;
+    secondlastname: string;
     phone: string;
   };
 }
@@ -12,6 +14,8 @@ export interface userSignUpData {
 export interface plainData {
   name: string;
   lastname: string;
+  secondname: string;
+  secondlastname: string;
   id: number;
   phone: number;
   email: string;
@@ -27,6 +31,8 @@ export interface LoginResponseData {
     password: string;
     details: {
       lastname: string;
+      secondname: string;
+      secondlastname: string;
       phone: string;
     };
   };

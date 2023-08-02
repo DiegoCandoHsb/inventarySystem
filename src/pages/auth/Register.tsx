@@ -20,6 +20,8 @@ export function Component() {
     id,
     lastname,
     name,
+    secondname,
+    secondlastname,
     password,
     phone,
     confirmPassword,
@@ -27,6 +29,8 @@ export function Component() {
   } = useForm<plainData>({
     name: "",
     lastname: "",
+    secondname: "",
+    secondlastname: "",
     id: 0,
     phone: 0,
     email: "",
@@ -42,6 +46,8 @@ export function Component() {
       password,
       details: {
         lastname,
+        secondname,
+        secondlastname,
         phone: phone.toString(),
       },
     };
@@ -80,6 +86,17 @@ export function Component() {
             onChange(e.target.value, e.target.id as keyof plainData)
           }
         />
+        {/* second name */}
+        <InputGroup
+          inputType="text"
+          label="Second Name"
+          name="secondname"
+          placeholder="Sebastián"
+          value={secondname}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof plainData)
+          }
+        />
         {/* last name */}
         <InputGroup
           inputType="text"
@@ -87,6 +104,17 @@ export function Component() {
           name="lastname"
           placeholder="Ortiz"
           value={lastname}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof plainData)
+          }
+        />
+        {/* second lastname */}
+        <InputGroup
+          inputType="text"
+          label="Second Lastname"
+          name="secondlastname"
+          placeholder="Jarrin"
+          value={secondlastname}
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof plainData)
           }
