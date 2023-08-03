@@ -12,7 +12,7 @@ export default function NavComponent() {
   const navigate = useNavigate();
 
   const buttonClasses =
-    "p-2 m-0 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer";
+    "p-3 m-0 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer";
 
   const menuItemsData: dataItem[] = [
     {
@@ -23,13 +23,17 @@ export default function NavComponent() {
       path: NavigationRoutes.expensesPath,
       title: "Expenses",
     },
+    // {
+    //   path: NavigationRoutes.elecEquiPath,
+    //   title: "Electronic Equipment",
+    // },
+    // {
+    //   path: NavigationRoutes.furnAndMixPath,
+    //   title: "Furniture and Fixtures",
+    // },
     {
-      path: NavigationRoutes.elecEquiPath,
-      title: "Electronic Equipment",
-    },
-    {
-      path: NavigationRoutes.furnAndMixPath,
-      title: "Furniture and Mixtures",
+      path: NavigationRoutes.fixedAssetsPath,
+      title: "Assets",
     },
     {
       path: NavigationRoutes.login,
@@ -50,11 +54,10 @@ export default function NavComponent() {
       const { path, title } = itemData;
       const button = React.createElement(
         "button",
-        {
-          key: title,
-          className: buttonClasses,
-        },
-        <Link to={path}>{title}</Link>
+        { key: title },
+        <Link to={path} className={buttonClasses}>
+          {title}
+        </Link>
       );
       return button;
     });
@@ -65,11 +68,19 @@ export default function NavComponent() {
     <nav className="m-1 z-10 w-full">
       <Fieldset>
         <section className="flex justify-between w-full items-center">
-          <Link to={NavigationRoutes.homePath} className="w-1/12 h-full border p-3 border-slate-400 rounded-md">
-            <img src={HSBlogo} className="w-full h-full object-center" />
+          {/* left side */}
+          <Link
+            to={NavigationRoutes.homePath}
+            className="w-3/12 h-full p-3 rounded-md flex justify-center"
+          >
+            <div className="w-1/2">
+              <img src={HSBlogo} className="w-full h-full object-center" />
+            </div>
           </Link>
-          <div className="w-7/12 flex justify-evenly">{menuOptions()}</div>
-          <div className="w-2/12 flex justify-end">
+          {/* mid side */}
+          <div className="w-6/12 flex justify-evenly">{menuOptions()}</div>
+          {/* right side */}
+          <div className="w-3/12 flex justify-end">
             <Avatar
               label="S"
               shape="circle"
