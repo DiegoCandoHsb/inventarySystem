@@ -1,6 +1,4 @@
 import { Button } from "primereact/button";
-import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
-import InputComponent from "../../components/Auth-Components/InputComponent";
 import RegisterForm from "../../components/Auth-Components/RegisterForm";
 import InputGroup from "../../components/InputGroup";
 import { useForm } from "../../hooks/useForm";
@@ -73,7 +71,7 @@ export function Component() {
     // }
   }
   return (
-    <section>
+    <section className="flex justify-center">
       <RegisterForm title="Sign Up">
         {/* first name */}
         <InputGroup

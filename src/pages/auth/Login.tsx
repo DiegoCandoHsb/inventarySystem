@@ -35,37 +35,39 @@ export function Component() {
   }
 
   return (
-    <section>
-      <RegisterForm title="Sign In">
-        {/* email */}
-        <InputGroup
-          inputType="text"
-          label="Email"
-          name="email"
-          placeholder="example@exp.com"
-          value={email}
-          keyfilter="email"
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof userSignInData)
-          }
-        />
+    <section className=" flex h-screen items-center">
+      <div className=" flex w-full h-82 justify-center ">
+        <RegisterForm title="Sign In">
+          {/* email */}
+          <InputGroup
+            inputType="text"
+            label="Email"
+            name="email"
+            placeholder="example@exp.com"
+            value={email}
+            keyfilter="email"
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof userSignInData)
+            }
+          />
 
-        {/* password */}
-        <InputGroup
-          inputType="password"
-          label="Password"
-          name="password"
-          placeholder="***********"
-          value={password}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof userSignInData)
-          }
-        />
+          {/* password */}
+          <InputGroup
+            inputType="password"
+            label="Password"
+            name="password"
+            placeholder="***********"
+            value={password}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.name as keyof userSignInData)
+            }
+          />
 
-        <div className="my-3">
-          <Button label="Sign Up" className="w-full" onClick={signIn} />
-        </div>
-      </RegisterForm>
+          <div className="my-3">
+            <Button label="Sign Up" className="w-full" onClick={signIn} />
+          </div>
+        </RegisterForm>
+      </div>
     </section>
   );
 }
