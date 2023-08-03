@@ -37,6 +37,7 @@ import InputGroup from "../../components/InputGroup";
 import useAssetForm from "../../hooks/useAssetForm";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
 
 // import Activities from "../Activities";
 
@@ -214,6 +215,7 @@ export default function ElectronicEquipment() {
     setModal,
     setState,
     submitButtonRef,
+    toastRef,
     updateModal,
   } = useAssetForm();
 
@@ -229,6 +231,7 @@ export default function ElectronicEquipment() {
 
   return (
     <div>
+      <Toast ref={toastRef} position="top-right" />
       <div className="w-full flex ml-5">
         <Button
           label="Add"
@@ -256,7 +259,6 @@ export default function ElectronicEquipment() {
           }}
         /> */}
       </div>
-
       {/* table */}
       <div className="card">
         <DataTable
@@ -270,10 +272,15 @@ export default function ElectronicEquipment() {
                 i++
               ) {
                 if (asset.details.responsible === assets.users![i].id) {
-                  asset.details.responsibleName = assets.users![i].name;
+                  asset.details.responsibleName = assets.users![i].name.concat(
+                    " ",
+                    assets.users![i].details.secondname,
+                    " ",
+                    assets.users![i].details.lastname,
+                    " ",
+                    assets.users![i].details.secondlastname
+                  );
                 }
-
-                const deprecated = calculateDepreTime(asset.purchaseDate);
               }
 
               return asset;
@@ -288,14 +295,14 @@ export default function ElectronicEquipment() {
           rows={25}
           rowsPerPageOptions={[25, 50, 75, 100]}
           tableStyle={{ minWidth: "50rem" }}
-          cellClassName={(e, { ...data }) => {
+          cellClassName={(_, { ...data }) => {
             const depre = calculateDepreTime(
               data.props.value![data.rowIndex].purchaseDate
             );
             return depre ? "bg-rose-300" : "";
           }}
         >
-          <Column header="ID" field="id" style={{ width: "15%" }}></Column>
+          <Column header="ID" field="id" style={{ width: "5%" }}></Column>
           <Column
             header="Item Name"
             field="name"
@@ -304,7 +311,7 @@ export default function ElectronicEquipment() {
           <Column
             header="Acq. Date"
             field="purchaseDate"
-            style={{ width: "15%" }}
+            style={{ width: "10%" }}
           ></Column>
           <Column
             header="Brand"
@@ -314,12 +321,12 @@ export default function ElectronicEquipment() {
           <Column
             header="Monthly Dep."
             field="details.monthlyDepreciation"
-            style={{ width: "15" }}
+            style={{ width: "10" }}
           ></Column>
           <Column
             header="Val. Books"
             field="details.valueBooks"
-            style={{ width: "15" }}
+            style={{ width: "10" }}
           ></Column>
           <Column
             header="Insured"
@@ -333,7 +340,6 @@ export default function ElectronicEquipment() {
           ></Column>
         </DataTable>
       </div>
-
       {/* total depreciation */}
       <div className="w-full  flex justify-center">
         <Card className="w-1/2">
@@ -363,7 +369,6 @@ export default function ElectronicEquipment() {
           </div>
         </Card>
       </div>
-
       {/* modal */}
       <Dialog
         header="Create Asset"
@@ -602,12 +607,12 @@ export default function ElectronicEquipment() {
           }
         />
         {/* otros */}
-        <div className="w-full  flex justify-center mt-5">
+        <div className="w-full flex justify-center mt-5">
           <Button
             ref={() => submitButtonRef}
             label={formSettings.submitButtonValue}
             onClick={createOrEditAsset}
-            className="w-1/2"
+            className="w-full"
           />
         </div>
         {/* <ButtonComponent

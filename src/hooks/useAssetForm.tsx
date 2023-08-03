@@ -3,12 +3,23 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useRef } from 'react';
-import { AssetPlainData, AssetTypesData, defaultAssetData, AssetData } from '../interfaces/asset.interface';
+import { useState, useEffect, useRef } from "react";
+import {
+  AssetPlainData,
+  AssetTypesData,
+  defaultAssetData,
+  AssetData,
+} from "../interfaces/asset.interface";
 import { useLoaderData } from "react-router-dom";
 import { useForm } from "./useForm";
-import { DataTableRowClickEvent } from 'primereact/datatable';
-import { CreateAsset, GetAllAssets, UpdateAsset } from '../services/asset.service';
+import { DataTableRowClickEvent } from "primereact/datatable";
+import {
+  CreateAsset,
+  GetAllAssets,
+  UpdateAsset,
+} from "../services/asset.service";
+import { Toast } from "primereact/toast";
+import React from "react";
 
 const useAssetForm = () => {
   const [assets, setAssets] = useState<AssetTypesData>(
@@ -28,145 +39,167 @@ const useAssetForm = () => {
     decialQuiantity: 2,
     submitButtonValue: "Create",
   });
+
   const { onChange, form, setState } =
     useForm<AssetPlainData>(defaultAssetData);
-    useEffect(() => {
-      calculateResValue();
-      depreciations();
-    }, [form.value, form.depreciationTime]);
+  useEffect(() => {
+    calculateResValue();
+    depreciations();
+  }, [form.value, form.depreciationTime]);
 
-    useEffect(() => {
-      calculateValueBooks();
-    }, [form.purchaseDate, form.monthlyDepreciation]);
+  useEffect(() => {
+    calculateValueBooks();
+  }, [form.purchaseDate, form.monthlyDepreciation]);
 
-    const submitButtonRef = useRef<HTMLInputElement>(null);
+  const submitButtonRef = useRef<HTMLInputElement>(null);
+  const toastRef = useRef<Toast>(null);
 
-    function calculateResValue() {
-      //  valor residual  =  valor * 0.1 (valor por 10 porciento)
-      const resValue = (form.value * formSettings.porcetaje1) / 100;
+  function calculateResValue() {
+    //  valor residual  =  valor * 0.1 (valor por 10 porciento)
+    const resValue = (form.value * formSettings.porcetaje1) / 100;
 
-      setState((currentValues) => ({
-        ...currentValues,
-        residualValue: resValue,
-      }));
-    }
+    setState((currentValues) => ({
+      ...currentValues,
+      residualValue: resValue,
+    }));
+  }
 
-    function depreciations() {
-      const value = form.value - form.residualValue;
-      const annualDep = value / (form.depreciationTime / 12);
-      const mensualDep = value / form.depreciationTime;
+  function depreciations() {
+    const value = form.value - form.residualValue;
+    const annualDep = value / (form.depreciationTime / 12);
+    const mensualDep = value / form.depreciationTime;
 
-      setState((currentValues) => ({
-        ...currentValues,
-        annualDepreciation: validateNum(annualDep),
-        monthlyDepreciation: validateNum(mensualDep),
-      }));
-    }
+    setState((currentValues) => ({
+      ...currentValues,
+      annualDepreciation: validateNum(annualDep),
+      monthlyDepreciation: validateNum(mensualDep),
+    }));
+  }
 
-    function validateNum(num: number) {
-      if (!isFinite(num)) return 0;
-      return Number(num.toFixed(formSettings.decialQuiantity));
-    }
+  function validateNum(num: number) {
+    if (!isFinite(num)) return 0;
+    return Number(num.toFixed(formSettings.decialQuiantity));
+  }
 
-    function calculateValueBooks() {
-      //  valor en libros = (fecha actual - fecha de adqusicion ) * depresiacion mensual
-      const currentDate = new Date();
-      const currentDay = currentDate.getDay();
-      const currentMoth = currentDate.getMonth() + 1;
-      const currentYear = currentDate.getFullYear();
+  function calculateValueBooks() {
+    //  valor en libros = (fecha actual - fecha de adqusicion ) * depresiacion mensual
+    const currentDate = new Date();
+    const currentDay = currentDate.getDay();
+    const currentMoth = currentDate.getMonth() + 1;
+    const currentYear = currentDate.getFullYear();
 
-      const adqusicionDate = new Date(form.purchaseDate);
-      const adqDay = adqusicionDate.getDay() + 1;
-      const adqMonth = adqusicionDate.getMonth() + 1;
-      const adqYear = adqusicionDate.getFullYear();
+    const adqusicionDate = new Date(form.purchaseDate);
+    const adqDay = adqusicionDate.getDay() + 1;
+    const adqMonth = adqusicionDate.getMonth() + 1;
+    const adqYear = adqusicionDate.getFullYear();
 
-      // operations
-      const days = currentDay - adqDay;
-      const yearsToMoths = (currentYear - adqYear) * 12;
-      let totalMonths = currentMoth - adqMonth + yearsToMoths;
+    // operations
+    const days = currentDay - adqDay;
+    const yearsToMoths = (currentYear - adqYear) * 12;
+    let totalMonths = currentMoth - adqMonth + yearsToMoths;
 
-      let newValueBooks = 0;
-      if (days <= 0) {
-        newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
-        if (totalMonths > form.depreciationTime) {
-          newValueBooks = form.residualValue;
-        }
-      } else {
-        totalMonths += 1;
-        newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
-
-        if (totalMonths > form.depreciationTime) {
-          newValueBooks = form.residualValue;
-        }
+    let newValueBooks = 0;
+    if (days <= 0) {
+      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
+      if (totalMonths > form.depreciationTime) {
+        newValueBooks = form.residualValue;
       }
+    } else {
+      totalMonths += 1;
+      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
 
-      setState((currentState) => ({
-        ...currentState,
-        valueBooks: validateNum(newValueBooks),
-      }));
+      if (totalMonths > form.depreciationTime) {
+        newValueBooks = form.residualValue;
+      }
     }
 
-    // open update modal
-    function updateModal(e: DataTableRowClickEvent) {
-      setEdit(true);
-      setModal(true);
-      const { details, ...assetData } = e.data as AssetData;
-      setState({
-        ...assetData,
+    setState((currentState) => ({
+      ...currentState,
+      valueBooks: validateNum(newValueBooks),
+    }));
+  }
+
+  // open update modal
+  function updateModal(e: DataTableRowClickEvent) {
+    setEdit(true);
+    setModal(true);
+    const { details, ...assetData } = e.data as AssetData;
+    setState({
+      ...assetData,
+      ...details,
+      purchaseDate: assetData.purchaseDate.substring(0, 10),
+    } as AssetPlainData);
+
+    setFormSettings((currentValues) => ({
+      ...currentValues,
+      submitButtonValue: "Update",
+    }));
+  }
+
+  // create asset
+  function createOrEditAsset() {
+    console.log(form);
+    if (!edit) {
+      CreateAsset(formatData("responsibleName", "id"))
+        .catch((err) => {
+          // alert(err.response.data.message);
+          showErrorMessage(err);
+        })
+        .finally(async () => await setNewAssetsData());
+    } else if (edit) {
+      UpdateAsset(formatData("responsibleName"))
+        .catch((err) => {
+          alert(err.response.data.message);
+        })
+        .finally(async () => await setNewAssetsData());
+    }
+  }
+
+  async function setNewAssetsData() {
+    const newAssetsData = await GetAllAssets();
+    setAssets((currentAssets) => ({ ...currentAssets, ...newAssetsData }));
+    setModal(false);
+  }
+
+  function showErrorMessage(error: any) {
+    const errorStrings: string[] = (
+      error.response.data.message as string[]
+    ).map((str) => str.split("details.").join(" ").trim());
+
+    const errorNodeList = [];
+    for (let i = 0; i < errorStrings.length; i++) {
+      const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+      errorNodeList.push(errorP);
+    }
+
+    toastRef.current?.show({
+      severity: "error",
+      summary: `Error ${error.response.status as number}`,
+      detail: errorNodeList,
+      life: 7000,
+    });
+  }
+
+  function formatData(...propsToRemove: (keyof AssetPlainData)[]) {
+    const { id, name, purchaseDate, ...details } = form;
+    const data = {
+      id,
+      name,
+      purchaseDate,
+      details: {
         ...details,
-        purchaseDate: assetData.purchaseDate.substring(0, 10),
-      } as AssetPlainData);
+      },
+    };
 
-      setFormSettings((currentValues) => ({
-        ...currentValues,
-        submitButtonValue: "Update",
-      }));
-    }
-
-    // create asset
-    function createOrEditAsset() {
-      console.log(form);
-      if (!edit) {
-        CreateAsset(formatData("responsibleName", "id"))
-          .catch((err) => {
-            alert(err.response.data.message);
-          })
-          .finally(async () => await setNewAssetsData());
-      } else if (edit) {
-        UpdateAsset(formatData("responsibleName"))
-          .catch((err) => {
-            alert(err.response.data.message);
-          })
-          .finally(async () => await setNewAssetsData());
+    if (propsToRemove) {
+      for (let i = 0; i < propsToRemove.length; i++) {
+        delete data.details[propsToRemove[i] as keyof typeof details];
+        delete data[propsToRemove[i] as keyof AssetData];
       }
     }
-
-    async function setNewAssetsData() {
-      const newAssetsData = await GetAllAssets();
-      setAssets((currentAssets) => ({ ...currentAssets, ...newAssetsData }));
-      setModal(false);
-    }
-
-    function formatData(...propsToRemove: (keyof AssetPlainData)[]) {
-      const { id, name, purchaseDate, ...details } = form;
-      const data = {
-        id,
-        name,
-        purchaseDate,
-        details: {
-          ...details,
-        },
-      };
-
-      if (propsToRemove) {
-        for (let i = 0; i < propsToRemove.length; i++) {
-          delete data.details[propsToRemove[i] as keyof typeof details];
-          delete data[propsToRemove[i] as keyof AssetData];
-        }
-      }
-      console.log(data)
-      return data;
-    }
+    console.log(data);
+    return data;
+  }
 
   return {
     assets,
@@ -182,7 +215,8 @@ const useAssetForm = () => {
     setState,
     submitButtonRef,
     createOrEditAsset,
-    updateModal
+    updateModal,
+    toastRef,
   };
 };
 
