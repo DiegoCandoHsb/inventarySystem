@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RegisterForm from "../../components/Auth-Components/RegisterForm";
-import InputComponent from "../../components/Auth-Components/InputComponent";
 import { userSignInData } from "../../interfaces/userSingInData.interface";
 import { useForm } from "../../hooks/useForm";
-import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
 import { SignIn } from "../../services/auth.service";
-import { LoginResponseData } from "../../interfaces/userSignUpData.interface";
 import InputGroup from "../../components/InputGroup";
 import { Button } from "primereact/button";
+import { Divider } from "primereact/divider";
+import { NavigationRoutes } from "../../config/navigationRoutes";
 
 export function Component() {
   const navigate = useNavigate();
@@ -50,7 +49,6 @@ export function Component() {
               onChange(e.target.value, e.target.id as keyof userSignInData)
             }
           />
-
           {/* password */}
           <InputGroup
             inputType="password"
@@ -62,10 +60,18 @@ export function Component() {
               onChange(e.target.value, e.target.name as keyof userSignInData)
             }
           />
-
           <div className="my-3">
-            <Button label="Sign Up" className="w-full" onClick={signIn} />
+            <Button label="Sign In" className="w-full" onClick={signIn} />
           </div>
+          <Divider layout="horizontal" align="center">
+            or
+          </Divider>
+          <Link
+            to={NavigationRoutes.register}
+            className="w-full flex justify-center"
+          >
+            <Button label="Sign Up" link className="w-1/2" />
+          </Link>
         </RegisterForm>
       </div>
     </section>

@@ -23,7 +23,7 @@ export default function Activities() {
     },
     {
       img: DefaultImg,
-      title: "Electronic Items",
+      title: "Electronic Docs",
       navigateTo: NavigationRoutes.homePath,
     },
   ]);

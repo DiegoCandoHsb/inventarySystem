@@ -15,7 +15,7 @@ export const NavigationRoutes = {
     return this.fixedAssetsPath.concat("furnitureAndMixtures/");
   },
   // auth
-  authBasePath: "auth/",
+  authBasePath: "/auth/",
   get login() {
     return this.authBasePath.concat('login/')
   },

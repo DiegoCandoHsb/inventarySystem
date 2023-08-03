@@ -47,18 +47,19 @@ export const routes = createBrowserRouter([
   },
 
   {
-    path: "/auth",
+    path: NavigationRoutes.authBasePath,
     element: <AuthLayaout />,
     errorElement: <NotFoundPage />,
     children: [
       {
         index: true,
         loader: () => {
-          return redirect("/auth/login");
+          console.log(NavigationRoutes.register);
+          return redirect(NavigationRoutes.login);
         },
       },
       {
-        path: "/auth/login",
+        path: NavigationRoutes.login,
         loader: () =>
           import("../pages/auth/Login").then((component) =>
             component.default()
@@ -66,7 +67,7 @@ export const routes = createBrowserRouter([
         lazy: () => import("../pages/auth/Login"),
       },
       {
-        path: "/auth/register",
+        path: NavigationRoutes.register,
         loader: () =>
           import("../pages/auth/Login").then((component) =>
             component.default()

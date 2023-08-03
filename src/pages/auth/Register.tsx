@@ -8,7 +8,9 @@ import {
 } from "../../interfaces/userSignUpData.interface";
 import { SignUp } from "../../services/auth.service";
 import { AxiosError } from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { NavigationRoutes } from "../../config/navigationRoutes";
+import { Divider } from "primereact/divider";
 
 export function Component() {
   const navigate = useNavigate();
@@ -123,7 +125,7 @@ export function Component() {
           label="Id Number"
           name="id"
           placeholder="1754253142"
-          keyfilter="number"
+          keyfilter="pint"
           value={id}
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof plainData)
@@ -135,10 +137,10 @@ export function Component() {
           label="Phone"
           name="phone"
           placeholder="0992881929"
-          keyfilter="number"
+          keyfilter="pint"
           value={phone}
           onChange={(e) =>
-            onChange(Number(e.target.value), e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof plainData)
           }
         />
         {/* Email */}
@@ -179,6 +181,15 @@ export function Component() {
         <div className="my-3">
           <Button label="Sign Up" className="w-full" onClick={createUser} />
         </div>
+        <Divider layout="horizontal" align="center">
+          or
+        </Divider>
+        <Link
+          to={NavigationRoutes.login}
+          className="w-full flex justify-center"
+        >
+          <Button label="Sign In" link className="w-1/2" />
+        </Link>
       </RegisterForm>
     </section>
   );

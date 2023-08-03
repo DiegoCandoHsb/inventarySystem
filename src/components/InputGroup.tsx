@@ -12,6 +12,7 @@ import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Password } from "primereact/password";
+import { KeyFilterType } from "primereact/keyfilter";
 
 interface InputGroupProps {
   inputType:
@@ -32,7 +33,7 @@ interface InputGroupProps {
   optionValue?: string;
   decimalQuliantity?: number;
   disabled?: boolean;
-  keyfilter?: string;
+  keyfilter?: KeyFilterType | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onDateChange?: (e: CalendarChangeEvent) => void;
   onDropDownFilterChange?: (e: AutoCompleteChangeEvent) => void;
@@ -41,6 +42,8 @@ interface InputGroupProps {
 }
 
 const defautlInputStyle = "w-full flex items-center";
+const labelClassname = "font-semibold";
+const containerClassname = "my-2";
 
 export default function InputGroup({
   inputType,
@@ -108,6 +111,7 @@ export default function InputGroup({
             {...commonInputProps}
             value={value as string}
             onChange={onChange}
+            keyfilter={OtherProps.keyfilter}
           />
         );
 
@@ -195,9 +199,11 @@ export default function InputGroup({
   }
 
   return (
-    <>
-      <label htmlFor={name}>{label}</label>
+    <div className={containerClassname}>
+      <label htmlFor={name} className={labelClassname}>
+        {label}
+      </label>
       {slectInputByType()}
-    </>
+    </div>
   );
 }

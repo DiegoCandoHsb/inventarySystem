@@ -232,10 +232,10 @@ export default function ElectronicEquipment() {
   return (
     <div>
       <Toast ref={toastRef} position="top-right" />
-      <div className="w-full flex ml-5">
+      {/* table */}
+      <div className="card m-5">
         <Button
           label="Add"
-          className=""
           onClick={() => {
             setModal(true);
             setEdit(false);
@@ -246,23 +246,8 @@ export default function ElectronicEquipment() {
             }));
           }}
         />
-        {/* <ButtonComponent
-          title="Add"
-          onclickButton={() => {
-            setModal(true);
-            setEdit(false);
-            setState(defaultAssetData);
-            setFormSettings((curretValues) => ({
-              ...curretValues,
-              submitButtonValue: curretValues.defaultSettings.submitButtonValue,
-            }));
-          }}
-        /> */}
-      </div>
-      {/* table */}
-      <div className="card">
         <DataTable
-          className="m-5 shadow-md bg-red-700"
+          className="shadow-md"
           value={
             assets.electronicEquipmentAssets &&
             assets.electronicEquipmentAssets.map((asset) => {

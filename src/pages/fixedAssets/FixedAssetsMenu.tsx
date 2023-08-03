@@ -13,7 +13,7 @@ export default function FixedAssetsMenu() {
     },
     {
       img: defaultImg,
-      title: "Human Resources",
+      title: "Furnitures and Fixtures",
       navigateTo: NavigationRoutes.furnAndMixPath,
     },
   ]);

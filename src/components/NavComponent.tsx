@@ -6,6 +6,7 @@ import React from "react";
 import { Avatar } from "primereact/avatar";
 
 import HSBlogo from "../assets/images/hsblogo.svg";
+import { Button } from "primereact/button";
 
 type dataItem = { title: string; path: string };
 export default function NavComponent() {
@@ -35,14 +36,14 @@ export default function NavComponent() {
       path: NavigationRoutes.fixedAssetsPath,
       title: "Assets",
     },
-    {
-      path: NavigationRoutes.login,
-      title: "Login",
-    },
-    {
-      path: NavigationRoutes.register,
-      title: "Register",
-    },
+    // {
+    //   path: NavigationRoutes.login,
+    //   title: "Login",
+    // },
+    // {
+    //   path: NavigationRoutes.register,
+    //   title: "Register",
+    // },
   ];
 
   function navigateTo(path: string) {
@@ -65,8 +66,8 @@ export default function NavComponent() {
   }
 
   return (
-    <nav className="m-1 z-10 w-full">
-      <Fieldset>
+    <nav className="mt-1 z-10 w-full px-1">
+      <Fieldset style={{ padding: "0" }}>
         <section className="flex justify-between w-full items-center">
           {/* left side */}
           <Link
@@ -85,8 +86,14 @@ export default function NavComponent() {
               label="S"
               shape="circle"
               size="large"
-              className="relative"
+              className="relative w-3/4"
             />
+            <Link
+              to={NavigationRoutes.login}
+              className="flex w-1/4 items-center justify-center font-bold text-blue-700 hover:underline hover:text-blue-900"
+            >
+              <span>Log Out</span>
+            </Link>
           </div>
         </section>
       </Fieldset>
