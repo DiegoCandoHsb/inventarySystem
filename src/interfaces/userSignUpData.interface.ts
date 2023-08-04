@@ -11,7 +11,7 @@ export interface userSignUpData {
   };
 }
 
-export interface plainData {
+export interface UserPlainData {
   name: string;
   lastname: string;
   secondname: string;
@@ -37,4 +37,16 @@ export interface LoginResponseData {
     };
   };
   token: string;
+}
+
+export const defaultUserData: UserPlainData = {
+  name: "",
+  lastname: "",
+  secondname: "",
+  secondlastname: "",
+  id: 0,
+  phone: 0,
+  email: "",
+  password: "",
+  confirmPassword: ""
 }

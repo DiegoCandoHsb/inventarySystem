@@ -21,6 +21,10 @@ export default function NavComponent() {
       title: "Home",
     },
     {
+      path: NavigationRoutes.humanResourcesPath,
+      title: "Human Resources",
+    },
+    {
       path: NavigationRoutes.expensesPath,
       title: "Expenses",
     },

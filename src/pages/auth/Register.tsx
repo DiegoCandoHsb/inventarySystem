@@ -3,7 +3,7 @@ import RegisterForm from "../../components/Auth-Components/RegisterForm";
 import InputGroup from "../../components/InputGroup";
 import { useForm } from "../../hooks/useForm";
 import {
-  plainData,
+  UserPlainData,
   userSignUpData,
 } from "../../interfaces/userSignUpData.interface";
 import { SignUp } from "../../services/auth.service";
@@ -26,7 +26,7 @@ export function Component() {
     phone,
     confirmPassword,
     onChange,
-  } = useForm<plainData>({
+  } = useForm<UserPlainData>({
     name: "",
     lastname: "",
     secondname: "",
@@ -83,7 +83,7 @@ export function Component() {
           placeholder="Michael"
           value={name}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* second name */}
@@ -94,7 +94,7 @@ export function Component() {
           placeholder="Sebastián"
           value={secondname}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* last name */}
@@ -105,7 +105,7 @@ export function Component() {
           placeholder="Ortiz"
           value={lastname}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* second lastname */}
@@ -116,7 +116,7 @@ export function Component() {
           placeholder="Jarrin"
           value={secondlastname}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* id number */}
@@ -128,7 +128,7 @@ export function Component() {
           keyfilter="pint"
           value={id}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* Phone */}
@@ -140,7 +140,7 @@ export function Component() {
           keyfilter="pint"
           value={phone}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* Email */}
@@ -152,7 +152,7 @@ export function Component() {
           value={email}
           keyfilter="email"
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof plainData)
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
         />
         {/* password */}
@@ -163,7 +163,7 @@ export function Component() {
           placeholder="***********"
           value={password}
           onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof plainData)
+            onChange(e.target.value, e.target.name as keyof UserPlainData)
           }
         />
         {/* confirm password */}
@@ -174,7 +174,7 @@ export function Component() {
           placeholder="***********"
           value={confirmPassword}
           onChange={(e) =>
-            onChange(e.target.value, e.target.name as keyof plainData)
+            onChange(e.target.value, e.target.name as keyof UserPlainData)
           }
         />
         {/* Submit */}

@@ -11,6 +11,7 @@ import ElectronicEquipment, {
 } from "../pages/fixedAssets/ElectronicEquipment";
 import Expenses from "../pages/expenses/expenses";
 import { NavigationRoutes } from "../config/navigationRoutes";
+import HumanResources, { HumanResourcesLoader } from "../pages/humanResources/humanResources";
 
 export const routes = createBrowserRouter([
   {
@@ -27,6 +28,11 @@ export const routes = createBrowserRouter([
         path: NavigationRoutes.expensesPath,
         loader: loadAssets,
         element: <Expenses />,
+      },
+      {
+        path: NavigationRoutes.humanResourcesPath,
+        loader: HumanResourcesLoader,
+        element: <HumanResources />,
       },
       {
         path: NavigationRoutes.fixedAssetsPath,

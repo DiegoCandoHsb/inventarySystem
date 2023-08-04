@@ -202,7 +202,6 @@ export default function ElectronicEquipment() {
   //   console.log(data);
   //   return data;
   // }
-
   const {
     assets,
     createOrEditAsset,
@@ -233,7 +232,7 @@ export default function ElectronicEquipment() {
     <div>
       <Toast ref={toastRef} position="top-right" />
       {/* table */}
-      <div className="card m-5">
+      <div className="m-5">
         <Button
           label="Add"
           onClick={() => {

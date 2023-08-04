@@ -9,7 +9,7 @@ export default function Activities() {
     {
       img: DefaultImg,
       title: "Human Resources",
-      navigateTo: NavigationRoutes.homePath,
+      navigateTo: NavigationRoutes.humanResourcesPath,
     },
     // {
     //   img: DefaultImg,

@@ -14,12 +14,16 @@ export const NavigationRoutes = {
   get furnAndMixPath() {
     return this.fixedAssetsPath.concat("furnitureAndMixtures/");
   },
+  // human resoruces
+  get humanResourcesPath() {
+    return this.basePath.concat("humanResouces");
+  },
   // auth
   authBasePath: "/auth/",
   get login() {
-    return this.authBasePath.concat('login/')
+    return this.authBasePath.concat("login/");
   },
   get register() {
-    return this.authBasePath.concat('register/')
-  }
+    return this.authBasePath.concat("register/");
+  },
 };
