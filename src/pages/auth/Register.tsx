@@ -4,6 +4,7 @@ import InputGroup from "../../components/InputGroup";
 import { useForm } from "../../hooks/useForm";
 import {
   UserPlainData,
+  defaultUserData,
   userSignUpData,
 } from "../../interfaces/userSignUpData.interface";
 import { SignUp } from "../../services/auth.service";
@@ -26,17 +27,7 @@ export function Component() {
     phone,
     confirmPassword,
     onChange,
-  } = useForm<UserPlainData>({
-    name: "",
-    lastname: "",
-    secondname: "",
-    secondlastname: "",
-    id: 0,
-    phone: 0,
-    email: "",
-    password: "",
-    confirmPassword: "",
-  });
+  } = useForm<UserPlainData>(defaultUserData);
 
   function createUser() {
     const userTransformedData: userSignUpData = {

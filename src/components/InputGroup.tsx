@@ -35,6 +35,7 @@ interface InputGroupProps {
   disabled?: boolean;
   keyfilter?: KeyFilterType | undefined;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  className?: string;
   onDateChange?: (e: CalendarChangeEvent) => void;
   onDropDownFilterChange?: (e: AutoCompleteChangeEvent) => void;
   onDropDownChange?: (e: DropdownChangeEvent) => void;
@@ -199,7 +200,11 @@ export default function InputGroup({
   }
 
   return (
-    <div className={containerClassname}>
+    <div
+      className={
+        OtherProps.className ? OtherProps.className : containerClassname
+      }
+    >
       <label htmlFor={name} className={labelClassname}>
         {label}
       </label>

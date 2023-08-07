@@ -12,6 +12,7 @@ import { useState } from "react";
 import { HumanResourcesLoader } from "../../interfaces/humanResLoader.interface";
 import { Dialog } from "primereact/dialog";
 import { useForm } from "../../hooks/useForm";
+import InputGroup from "../../components/InputGroup";
 
 export default function HumanResources() {
   const [users] = useState<userSignUpData[]>(
@@ -19,18 +20,19 @@ export default function HumanResources() {
   );
 
   const [modal, setModal] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
+
+  const { form, onChange } = useForm<UserPlainData>(defaultUserData);
 
   function updateModal(e: DataTableRowClickEvent) {
     console.log(e.data);
-    setModal(true);
+    setEdit(true);
   }
-
-  const { id } = useForm<UserPlainData>(defaultUserData);
 
   return (
     <div>
       <div className="m-5">
-        <Button label="Add" />
+        <Button label="Add" onClick={() => setModal(true)} />
         <DataTable
           className="shadow-md"
           value={
@@ -66,11 +68,224 @@ export default function HumanResources() {
       </div>
       {/* modal to update user */}
       <Dialog
-        visible={modal}
-        onHide={() => setModal(false)}
+        visible={edit}
+        onHide={() => setEdit(false)}
         header="Edit User"
         className="w-2/5"
-      ></Dialog>
+      >
+        <div className="flex justify-between">
+          <InputGroup
+            inputType="text"
+            keyfilter={"pint"}
+            label="Identification"
+            name="id"
+            placeholder="1728548544"
+            value={form.id}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2"
+          />
+          <InputGroup
+            inputType="text"
+            keyfilter={"pint"}
+            label="Phone"
+            name="phone"
+            placeholder="0979301325"
+            value={form.phone}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2 "
+          />
+        </div>
+        <div className="flex justify-between">
+          <InputGroup
+            inputType="text"
+            label="First Name"
+            name="name"
+            placeholder="David"
+            value={form.name}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2"
+          />
+          <InputGroup
+            inputType="text"
+            label="Second Name"
+            name="secondname"
+            placeholder="Mateo"
+            value={form.secondname}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2 "
+          />
+        </div>
+        <div className="flex justify-between">
+          <InputGroup
+            inputType="text"
+            label="Surname"
+            name="lastname"
+            placeholder="Castro"
+            value={form.lastname}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2"
+          />
+          <InputGroup
+            inputType="text"
+            label="Second Surname"
+            name="secondlastname"
+            placeholder="Castro"
+            value={form.secondlastname}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2 "
+          />
+        </div>
+        <div className="flex">
+          <InputGroup
+            inputType="text"
+            keyfilter={"email"}
+            label="Email"
+            name="email"
+            placeholder="example@exam.com"
+            value={form.email}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="p-2 w-4/6"
+          />
+          {/* falta check box aqui */}
+        </div>
+      </Dialog>
+      {/* Modal to create user */}
+      <Dialog
+        visible={modal}
+        onHide={() => setModal(false)}
+        header="Create User"
+        className="w-2/5 flex"
+      >
+        <div className="flex justify-between">
+          <InputGroup
+            inputType="text"
+            keyfilter={"pint"}
+            label="Identification"
+            name="id"
+            placeholder="1728548544"
+            value={form.id}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2"
+          />
+          <InputGroup
+            inputType="text"
+            keyfilter={"pint"}
+            label="Phone"
+            name="phone"
+            placeholder="0979301325"
+            value={form.phone}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2 "
+          />
+        </div>
+        <div className="flex justify-between">
+          <InputGroup
+            inputType="text"
+            label="First Name"
+            name="name"
+            placeholder="David"
+            value={form.name}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2"
+          />
+          <InputGroup
+            inputType="text"
+            label="Second Name"
+            name="secondname"
+            placeholder="Mateo"
+            value={form.secondname}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2 "
+          />
+        </div>
+        <div className="flex justify-between">
+          <InputGroup
+            inputType="text"
+            label="Surname"
+            name="lastname"
+            placeholder="Castro"
+            value={form.lastname}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2"
+          />
+          <InputGroup
+            inputType="text"
+            label="Second Surname"
+            name="secondlastname"
+            placeholder="Castro"
+            value={form.secondlastname}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            className="w-1/2 p-2 "
+          />
+        </div>
+        <InputGroup
+          inputType="text"
+          keyfilter={"email"}
+          label="Email"
+          name="email"
+          placeholder="example@exam.com"
+          value={form.email}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
+          }
+          className="p-2"
+        />
+        <InputGroup
+          inputType="text"
+          label="Password"
+          name="password"
+          placeholder="*******"
+          value={form.password}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
+          }
+          className="p-2"
+        />
+        <InputGroup
+          inputType="text"
+          label="Confirm Password"
+          name="confirmPassword"
+          placeholder="*******"
+          value={form.confirmPassword}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof UserPlainData)
+          }
+          className="p-2"
+        />
+        <div className="w-full p-2 mt-2">
+          <Button
+            label="Create User"
+            className="w-full p-2"
+            onClick={() => console.log(form)}
+          />
+        </div>
+      </Dialog>
     </div>
   );
 }
