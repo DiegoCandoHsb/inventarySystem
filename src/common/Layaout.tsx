@@ -5,7 +5,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 export default function Layaout() {
   const { state } = useNavigation();
   return (
-    <div>
+    <div className="bg-level-3">
       <nav>
         <NavComponent />
       </nav>

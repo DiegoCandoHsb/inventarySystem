@@ -228,6 +228,14 @@ export default function ElectronicEquipment() {
     return false;
   }
 
+  function customTableHeader() {
+    return (
+      // settings
+      <>
+        <h1 className="font-bold text-center text-2xl">Electronic Equipment</h1>
+      </>
+    );
+  }
   return (
     <div>
       <Toast ref={toastRef} position="top-right" />
@@ -247,7 +255,7 @@ export default function ElectronicEquipment() {
         />
         <DataTable
           className="shadow-md"
-          stripedRows
+          header={customTableHeader}
           value={
             assets.electronicEquipmentAssets &&
             assets.electronicEquipmentAssets.map((asset) => {
@@ -286,8 +294,9 @@ export default function ElectronicEquipment() {
             const depre = calculateDepreTime(
               data.props.value![data.rowIndex].purchaseDate
             );
-            return depre ? "bg-rose-300" : "";
+            return depre ? "bg-warning" : "";
           }}
+          stripedRows
         >
           <Column header="ID" field="id" style={{ width: "5%" }}></Column>
           <Column
@@ -329,9 +338,9 @@ export default function ElectronicEquipment() {
       </div>
       {/* total depreciation */}
       <div className="w-full  flex justify-center">
-        <Card className="w-1/2">
+        <Card className="w-1/2 bg-level-2">
           <div className="flex justify-evenly">
-            <h1 className="bg-slate-100 p-2 rounded-md font-bold">
+            <h1 className="bg-level-1 p-2 rounded-md font-bold">
               Total Annual Depreciation:{" "}
               <span className="font-normal">
                 {assets.electronicEquipmentAssets
@@ -342,7 +351,7 @@ export default function ElectronicEquipment() {
                   : 0}
               </span>
             </h1>
-            <h1 className="bg-slate-100 p-2 rounded-md font-bold">
+            <h1 className="bg-level-1 p-2 rounded-md font-bold">
               Total Monthly Depreciation:{" "}
               <span className="font-normal">
                 {assets.electronicEquipmentAssets
@@ -424,7 +433,7 @@ export default function ElectronicEquipment() {
           inputType="text"
           label="Color"
           name="color"
-          placeholder="red"
+          placeholder="Red"
           value={form.color}
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof AssetPlainData)

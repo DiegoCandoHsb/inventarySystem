@@ -70,7 +70,11 @@ export function Component() {
             to={NavigationRoutes.register}
             className="w-full flex justify-center"
           >
-            <Button label="Sign Up" link className="w-1/2" />
+            <Button
+              label="Sign Up"
+              link
+              className="w-1/2"
+            />
           </Link>
         </RegisterForm>
       </div>
