@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
@@ -13,9 +15,15 @@ import { HumanResourcesLoader } from "../../interfaces/humanResLoader.interface"
 import { Dialog } from "primereact/dialog";
 import { useForm } from "../../hooks/useForm";
 import InputGroup from "../../components/InputGroup";
+import { createUser } from "../../services/humanResources.service";
+import {
+  Hsbuser,
+  hsbUserPlainData,
+  humanResDefData,
+} from "../../interfaces/humanResources.interface";
 
 export default function HumanResources() {
-  const [users] = useState<userSignUpData[]>(
+  const [users, setUsers] = useState<userSignUpData[]>(
     (useLoaderData() as HumanResourcesLoader).users
   );
 
@@ -23,11 +31,55 @@ export default function HumanResources() {
   const [edit, setEdit] = useState<boolean>(false);
 
   const { form, onChange } = useForm<UserPlainData>(defaultUserData);
+  const {
+    form: updateForm,
+    onChange: upOnChange,
+    setState: upSetState,
+  } = useForm<hsbUserPlainData>(humanResDefData);
 
   function updateModal(e: DataTableRowClickEvent) {
     console.log(e.data);
+    const { details, ...hsbData } = e.data as Hsbuser;
+    upSetState({
+      ...hsbData,
+      ...details,
+      name: hsbData.name.split(" ")[0],
+    } as hsbUserPlainData);
     setEdit(true);
   }
+
+  const AddUser = () => {
+    const userTransformedData: userSignUpData = {
+      id: form.id.toString(),
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      details: {
+        lastname: form.lastname,
+        secondname: form.secondname,
+        secondlastname: form.secondlastname,
+        phone: form.phone.toString(),
+      },
+    };
+    createUser(userTransformedData)
+      .then((data) => {
+        console.log(data);
+        setModal(false);
+        console.log(users);
+        return data;
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(async () => await setNewUser());
+  };
+
+  const setNewUser = async () => {
+    const newUsers = await GetUsers();
+    console.log(newUsers);
+    setUsers((currentUsers) => ({ ...currentUsers, ...newUsers }));
+    setModal(false);
+  };
 
   return (
     <div>
@@ -35,6 +87,7 @@ export default function HumanResources() {
         <Button label="Add" onClick={() => setModal(true)} />
         <DataTable
           className="shadow-md"
+          stripedRows
           value={
             users
               ? users.map(({ name, ...userData }: userSignUpData) => {
@@ -80,9 +133,9 @@ export default function HumanResources() {
             label="Identification"
             name="id"
             placeholder="1728548544"
-            value={form.id}
+            value={updateForm.id}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="w-1/2 p-2"
           />
@@ -92,9 +145,9 @@ export default function HumanResources() {
             label="Phone"
             name="phone"
             placeholder="0979301325"
-            value={form.phone}
+            value={updateForm.phone}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="w-1/2 p-2 "
           />
@@ -105,9 +158,9 @@ export default function HumanResources() {
             label="First Name"
             name="name"
             placeholder="David"
-            value={form.name}
+            value={updateForm.name}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="w-1/2 p-2"
           />
@@ -116,9 +169,9 @@ export default function HumanResources() {
             label="Second Name"
             name="secondname"
             placeholder="Mateo"
-            value={form.secondname}
+            value={updateForm.secondname}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="w-1/2 p-2 "
           />
@@ -129,9 +182,9 @@ export default function HumanResources() {
             label="Surname"
             name="lastname"
             placeholder="Castro"
-            value={form.lastname}
+            value={updateForm.lastname}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="w-1/2 p-2"
           />
@@ -140,9 +193,9 @@ export default function HumanResources() {
             label="Second Surname"
             name="secondlastname"
             placeholder="Castro"
-            value={form.secondlastname}
+            value={updateForm.secondlastname}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="w-1/2 p-2 "
           />
@@ -154,9 +207,9 @@ export default function HumanResources() {
             label="Email"
             name="email"
             placeholder="example@exam.com"
-            value={form.email}
+            value={updateForm.email}
             onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
+              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
             }
             className="p-2 w-4/6"
           />
@@ -282,7 +335,7 @@ export default function HumanResources() {
           <Button
             label="Create User"
             className="w-full p-2"
-            onClick={() => console.log(form)}
+            onClick={AddUser}
           />
         </div>
       </Dialog>
