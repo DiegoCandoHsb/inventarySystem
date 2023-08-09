@@ -13,11 +13,11 @@ export default function ActivitiesCardComponent({
   navigateTo,
 }: ActivitiesCardComponentProps) {
   const cardHeader = (
-    <img
-      src={img}
-      alt={title}
-      className="rounded-t-md w-full h-72 object-center"
-    />
+    // <img
+    // src={img}
+    // alt={title}
+    // />
+    <div className="rounded-t-md w-full h-72 object-center">Icon</div>
   );
 
   return (

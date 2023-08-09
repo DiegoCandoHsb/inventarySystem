@@ -7,13 +7,14 @@ import { Avatar } from "primereact/avatar";
 
 import HSBlogo from "../assets/images/hsblogo.svg";
 import { Button } from "primereact/button";
+import { SelectButton } from "primereact/selectbutton";
 
 type dataItem = { title: string; path: string };
 export default function NavComponent() {
   const navigate = useNavigate();
 
   const buttonClasses =
-    "p-3 m-0 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer";
+    "p-3 m-0 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer visited:bg-red-700";
 
   const menuItemsData: dataItem[] = [
     {
@@ -68,33 +69,40 @@ export default function NavComponent() {
     });
     return nodes;
   }
+  const navOptions = menuOptions();
 
   return (
-    <nav className="mt-1 z-10 w-full px-1">
-      <Fieldset style={{ padding: "0" }}>
+    <nav className="mt-1 w-full px-1">
+      <Fieldset className="bg-level-1 bg-level-3">
         <section className="flex justify-between w-full items-center">
           {/* left side */}
-          <Link
-            to={NavigationRoutes.homePath}
-            className="w-3/12 h-full p-3 rounded-md flex justify-center"
-          >
-            <div className="w-1/2">
+          <div className="w-3/12 h-full rounded-md flex justify-between">
+            <Link
+              to={NavigationRoutes.homePath}
+              className="w-2/5 p-4 rounded-md bg-level-1"
+            >
               <img src={HSBlogo} className="w-full h-full object-center" />
-            </div>
-          </Link>
+            </Link>
+            <h1 className="w-3/5 text-lg flex justify-end items-center font-bold">
+              {"INVENTORY SYSTEM"}
+            </h1>
+          </div>
           {/* mid side */}
-          <div className="w-6/12 flex justify-evenly">{menuOptions()}</div>
+          <div className="w-6/12 flex justify-evenly">
+            {menuOptions()}
+            {/* <SelectButton options={navOptions as string[]} /> */}
+          </div>
           {/* right side */}
-          <div className="w-3/12 flex justify-end">
+          <div className="w-3/12 flex justify-end items-center">
             <Avatar
               label="S"
               shape="circle"
               size="large"
-              className="relative w-3/4"
+              className="relative w-3/5"
             />
             <Link
               to={NavigationRoutes.login}
-              className="flex w-1/4 items-center justify-center font-bold text-blue-700 hover:underline hover:text-blue-900"
+              className="flex w-1/4 items-center justify-center font-bold color-link hover:underline"
             >
               <span>Log Out</span>
             </Link>

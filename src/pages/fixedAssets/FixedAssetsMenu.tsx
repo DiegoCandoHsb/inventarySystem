@@ -19,8 +19,8 @@ export default function FixedAssetsMenu() {
   ]);
 
   return (
-    <section>
-      <ul className="w-full h-screen flex flex-row mx-auto justify-center items-start my-10">
+    <section className="w-full my-10">
+      <ul className="w-full z-1 flex flex-row mx-auto justify-center items-center">
         {activitiesMenuOptions.map((activitie) => (
           <ActivitiesCardcomponent
             key={activitie.title}
