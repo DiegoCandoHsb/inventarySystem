@@ -16,11 +16,6 @@ import { Dialog } from "primereact/dialog";
 import { useForm } from "../../hooks/useForm";
 import InputGroup from "../../components/InputGroup";
 import { createUser } from "../../services/humanResources.service";
-import {
-  Hsbuser,
-  hsbUserPlainData,
-  humanResDefData,
-} from "../../interfaces/humanResources.interface";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -30,21 +25,21 @@ export default function HumanResources() {
   const [modal, setModal] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
 
-  const { form, onChange } = useForm<UserPlainData>(defaultUserData);
-  const {
-    form: updateForm,
-    onChange: upOnChange,
-    setState: upSetState,
-  } = useForm<hsbUserPlainData>(humanResDefData);
+  const { form, onChange, setState } = useForm<UserPlainData>(defaultUserData);
+
+  function openModal() {
+    setState(defaultUserData);
+    setModal(true);
+  }
 
   function updateModal(e: DataTableRowClickEvent) {
-    console.log(e.data);
-    const { details, ...hsbData } = e.data as Hsbuser;
-    upSetState({
+    const { details, ...hsbData } = e.data as userSignUpData;
+
+    setState({
       ...hsbData,
       ...details,
       name: hsbData.name.split(" ")[0],
-    } as hsbUserPlainData);
+    } as UserPlainData);
     setEdit(true);
   }
 
@@ -61,9 +56,9 @@ export default function HumanResources() {
         phone: form.phone.toString(),
       },
     };
+
     createUser(userTransformedData)
       .then((data) => {
-        console.log(data);
         setModal(false);
         console.log(users);
         return data;
@@ -77,14 +72,14 @@ export default function HumanResources() {
   const setNewUser = async () => {
     const newUsers = await GetUsers();
     console.log(newUsers);
-    setUsers((currentUsers) => ({ ...currentUsers, ...newUsers }));
+    setUsers([...newUsers]);
     setModal(false);
   };
 
   return (
     <div>
       <div className="m-5">
-        <Button label="Add" onClick={() => setModal(true)} />
+        <Button label="Add" onClick={openModal} />
         <DataTable
           className="shadow-md"
           stripedRows
@@ -133,9 +128,9 @@ export default function HumanResources() {
             label="Identification"
             name="id"
             placeholder="1728548544"
-            value={updateForm.id}
+            value={form.id}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="w-1/2 p-2"
           />
@@ -145,9 +140,9 @@ export default function HumanResources() {
             label="Phone"
             name="phone"
             placeholder="0979301325"
-            value={updateForm.phone}
+            value={form.phone}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="w-1/2 p-2 "
           />
@@ -158,9 +153,9 @@ export default function HumanResources() {
             label="First Name"
             name="name"
             placeholder="David"
-            value={updateForm.name}
+            value={form.name}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="w-1/2 p-2"
           />
@@ -169,9 +164,9 @@ export default function HumanResources() {
             label="Second Name"
             name="secondname"
             placeholder="Mateo"
-            value={updateForm.secondname}
+            value={form.secondname}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="w-1/2 p-2 "
           />
@@ -182,9 +177,9 @@ export default function HumanResources() {
             label="Surname"
             name="lastname"
             placeholder="Castro"
-            value={updateForm.lastname}
+            value={form.lastname}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="w-1/2 p-2"
           />
@@ -193,9 +188,9 @@ export default function HumanResources() {
             label="Second Surname"
             name="secondlastname"
             placeholder="Castro"
-            value={updateForm.secondlastname}
+            value={form.secondlastname}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="w-1/2 p-2 "
           />
@@ -207,9 +202,9 @@ export default function HumanResources() {
             label="Email"
             name="email"
             placeholder="example@exam.com"
-            value={updateForm.email}
+            value={form.email}
             onChange={(e) =>
-              upOnChange(e.target.value, e.target.id as keyof hsbUserPlainData)
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
             className="p-2 w-4/6"
           />

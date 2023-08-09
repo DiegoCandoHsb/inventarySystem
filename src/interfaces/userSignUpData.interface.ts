@@ -1,6 +1,6 @@
 export interface userSignUpData {
-  name: string;
   id: string;
+  name: string;
   email: string;
   password: string;
   details: {
@@ -15,9 +15,9 @@ export interface UserPlainData {
   name: string;
   lastname: string;
   secondname: string;
+  id: string;
   secondlastname: string;
-  id: number;
-  phone: number;
+  phone: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -44,8 +44,8 @@ export const defaultUserData: UserPlainData = {
   lastname: "",
   secondname: "",
   secondlastname: "",
-  id: 0,
-  phone: 0,
+  id: "",
+  phone: "",
   email: "",
   password: "",
   confirmPassword: ""

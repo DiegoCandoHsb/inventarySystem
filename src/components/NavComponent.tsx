@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Fieldset } from "primereact/fieldset";
 
 import { NavigationRoutes } from "../config/navigationRoutes";
-import React from "react";
+import React, { useState } from "react";
 import { Avatar } from "primereact/avatar";
 
 import HSBlogo from "../assets/images/hsblogo.svg";
@@ -54,8 +54,9 @@ export default function NavComponent() {
   function navigateTo(path: string) {
     navigate(path);
   }
+  const [navValue, setNavValue] = useState(menuOptions()[0]);
 
-  function menuOptions(): React.ReactNode {
+  function menuOptions(): React.ReactNode[] {
     const nodes = menuItemsData.map((itemData) => {
       const { path, title } = itemData;
       const button = React.createElement(
@@ -67,10 +68,11 @@ export default function NavComponent() {
       );
       return button;
     });
-    return nodes;
+    return nodes || [];
   }
-  const navOptions = menuOptions();
 
+  const navOptions = menuOptions();
+  console.log(navOptions);
   return (
     <nav className="mt-1 w-full px-1">
       <Fieldset className="bg-level-1 bg-level-3">
@@ -90,7 +92,7 @@ export default function NavComponent() {
           {/* mid side */}
           <div className="w-6/12 flex justify-evenly">
             {menuOptions()}
-            {/* <SelectButton options={navOptions as string[]} /> */}
+            {/* <SelectButton value={navValue} options={navOptions as string[]} /> */}
           </div>
           {/* right side */}
           <div className="w-3/12 flex justify-end items-center">

@@ -39,7 +39,7 @@ export function Component() {
         lastname,
         secondname,
         secondlastname,
-        phone: phone.toString(),
+        phone,
       },
     };
 
