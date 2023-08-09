@@ -54,14 +54,6 @@ export function Component() {
         alert(axiosError.response?.data);
         console.error(axiosError.response?.data);
       });
-
-    // try {
-    //   const data = await SignUp(userTransformedData);
-    // } catch (error) {
-    //   const axiosError = error as AxiosError;
-    //   alert(axiosError.response?.data);
-    //   console.error(axiosError.response?.data);
-    // }
   }
   return (
     <section className="flex justify-center">

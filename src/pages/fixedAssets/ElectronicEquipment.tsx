@@ -247,6 +247,7 @@ export default function ElectronicEquipment() {
         />
         <DataTable
           className="shadow-md"
+          stripedRows
           value={
             assets.electronicEquipmentAssets &&
             assets.electronicEquipmentAssets.map((asset) => {
@@ -278,7 +279,9 @@ export default function ElectronicEquipment() {
           filters={{}}
           rows={25}
           rowsPerPageOptions={[25, 50, 75, 100]}
-          tableStyle={{ minWidth: "50rem" }}
+          tableStyle={{
+            minWidth: "50rem",
+          }}
           cellClassName={(_, { ...data }) => {
             const depre = calculateDepreTime(
               data.props.value![data.rowIndex].purchaseDate

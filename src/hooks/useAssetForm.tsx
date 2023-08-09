@@ -42,6 +42,7 @@ const useAssetForm = () => {
 
   const { onChange, form, setState } =
     useForm<AssetPlainData>(defaultAssetData);
+
   useEffect(() => {
     calculateResValue();
     depreciations();
@@ -138,7 +139,7 @@ const useAssetForm = () => {
 
   // create asset
   function createOrEditAsset() {
-    console.log(form);
+    // console.log(form);
     if (!edit) {
       CreateAsset(formatData("responsibleName", "id"))
         .catch((err) => {
