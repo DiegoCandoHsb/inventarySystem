@@ -38,6 +38,7 @@ import useAssetForm from "../../hooks/useAssetForm";
 import { Card } from "primereact/card";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
+import TableHeaderComponent from "../../components/TableHeaderComponent";
 
 // import Activities from "../Activities";
 
@@ -228,34 +229,30 @@ export default function ElectronicEquipment() {
     return false;
   }
 
-  function customTableHeader() {
-    return (
-      // settings
-      <>
-        <h1 className="font-bold text-center text-2xl">Electronic Equipment</h1>
-      </>
-    );
-  }
   return (
     <div>
       <Toast ref={toastRef} position="top-right" />
       {/* table */}
-      <div className="m-5">
-        <Button
-          label="Add"
-          onClick={() => {
-            setModal(true);
-            setEdit(false);
-            setState(defaultAssetData);
-            setFormSettings((curretValues) => ({
-              ...curretValues,
-              submitButtonValue: curretValues.defaultSettings.submitButtonValue,
-            }));
-          }}
-        />
+      <section className="mx-2">
+        <div className="my-5">
+          <Button
+            label="Add"
+            onClick={() => {
+              setModal(true);
+              setEdit(false);
+              setState(defaultAssetData);
+              setFormSettings((curretValues) => ({
+                ...curretValues,
+                submitButtonValue:
+                  curretValues.defaultSettings.submitButtonValue,
+              }));
+            }}
+          />
+        </div>
+
         <DataTable
           className="shadow-md"
-          header={customTableHeader}
+          header={<TableHeaderComponent headerTitle="Electronic Equipment" />}
           value={
             assets.electronicEquipmentAssets &&
             assets.electronicEquipmentAssets.map((asset) => {
@@ -335,9 +332,9 @@ export default function ElectronicEquipment() {
             style={{ width: "15" }}
           ></Column>
         </DataTable>
-      </div>
+      </section>
       {/* total depreciation */}
-      <div className="w-full  flex justify-center">
+      <div className="w-full  flex justify-center my-3">
         <Card className="w-1/2 bg-level-2">
           <div className="flex justify-evenly">
             <h1 className="bg-level-1 p-2 rounded-md font-bold">

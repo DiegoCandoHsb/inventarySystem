@@ -5,24 +5,24 @@ import DefaultImg from "../assets/images/defaultimg.jpg";
 import { NavigationRoutes } from "../config/navigationRoutes";
 
 export default function Activities() {
+  const iconStyles: React.CSSProperties = {
+    fontSize: "12rem",
+    textAlign: "center",
+  };
+
   const [activitiesMenuOptions] = useState<ActivitiesMenuOptions[]>([
     {
-      img: DefaultImg,
+      icon: <i className="pi pi-users" style={iconStyles}></i>,
       title: "Human Resources",
       navigateTo: NavigationRoutes.humanResourcesPath,
     },
-    // {
-    //   img: DefaultImg,
-    //   title: "Expenses",
-    //   navigateTo: NavigationRoutes.expensesPath,
-    // },
     {
-      img: DefaultImg,
+      icon: <i className="pi pi-list" style={iconStyles}></i>,
       title: "Fixed Assets",
       navigateTo: NavigationRoutes.fixedAssetsPath,
     },
     {
-      img: DefaultImg,
+      icon: <i className="pi pi-file" style={iconStyles}></i>,
       title: "Electronic Docs",
       navigateTo: NavigationRoutes.homePath,
     },
@@ -34,7 +34,7 @@ export default function Activities() {
         {activitiesMenuOptions.map((activitie) => (
           <ActivitiesCardcomponent
             key={activitie.title}
-            img={activitie.img}
+            icon={activitie.icon}
             title={activitie.title}
             navigateTo={activitie.navigateTo}
           />

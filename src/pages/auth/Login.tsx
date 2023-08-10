@@ -34,8 +34,8 @@ export function Component() {
   }
 
   return (
-    <section className=" flex h-screen items-center">
-      <div className=" flex w-full h-82 justify-center ">
+    <section className="flex h-screen items-center">
+      <div className="flex w-full h-82 justify-center ">
         <RegisterForm title="Sign In">
           {/* email */}
           <InputGroup
@@ -70,11 +70,7 @@ export function Component() {
             to={NavigationRoutes.register}
             className="w-full flex justify-center"
           >
-            <Button
-              label="Sign Up"
-              link
-              className="w-1/2"
-            />
+            <Button label="Sign Up" link className="w-1/2" />
           </Link>
         </RegisterForm>
       </div>

@@ -6,7 +6,7 @@ export default function AuthLayaout() {
   const { state } = useNavigation();
 
   return (
-    <div>
+    <div className="bg-level-3">
       {state === "loading" ? (
         <div className="w-full h-96 flex justify-center content-center items-center">
           <ProgressSpinner />

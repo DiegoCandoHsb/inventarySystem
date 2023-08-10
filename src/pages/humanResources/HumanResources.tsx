@@ -16,6 +16,7 @@ import { Dialog } from "primereact/dialog";
 import { useForm } from "../../hooks/useForm";
 import InputGroup from "../../components/InputGroup";
 import { createUser } from "../../services/humanResources.service";
+import TableHeaderComponent from "../../components/TableHeaderComponent";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -78,10 +79,13 @@ export default function HumanResources() {
 
   return (
     <div>
-      <div className="m-5">
-        <Button label="Add" onClick={openModal} />
+      <section className="mx-2">
+        <div className="my-5">
+          <Button label="Add" onClick={openModal} />
+        </div>
         <DataTable
           className="shadow-md"
+          header={<TableHeaderComponent headerTitle="Human Resources" />}
           stripedRows
           value={
             users
@@ -113,7 +117,7 @@ export default function HumanResources() {
           <Column header="Email" field="email" style={{ width: "20%" }} />
           <Column header="Active" field="active" style={{ width: "20%" }} />
         </DataTable>
-      </div>
+      </section>
       {/* modal to update user */}
       <Dialog
         visible={edit}

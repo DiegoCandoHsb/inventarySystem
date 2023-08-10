@@ -1,5 +1,5 @@
 export interface ActivitiesMenuOptions {
-  img: string;
+  icon: JSX.Element;
   title: string;
   navigateTo: string;
 }

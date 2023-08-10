@@ -9,7 +9,7 @@ const RegisterForm = ({
   title,
 }: React.PropsWithChildren & RegisterFormProps) => {
   return (
-    <Panel className="rounded-md w-2/6 min-w-min my-3 h-auto border-2  shadow-md bg-slate-200 ">
+    <Panel className="rounded-md w-2/6 min-w-min my-3 h-auto bg-level-3">
       <h1 className="text-3xl font-bold text-center">{title}</h1>
       {children}
     </Panel>

@@ -5,14 +5,20 @@ import defaultImg from "../../assets/images/defaultimg.jpg";
 import { NavigationRoutes } from "../../config/navigationRoutes";
 
 export default function FixedAssetsMenu() {
+  const iconStyles: React.CSSProperties = {
+    fontSize: "12rem",
+    textAlign: "center",
+  };
+
   const [activitiesMenuOptions] = useState<ActivitiesMenuOptions[]>([
     {
-      img: defaultImg,
+      icon: <i className="pi pi-desktop" style={iconStyles}></i>,
+
       title: "Electronic Equipment",
       navigateTo: NavigationRoutes.elecEquiPath,
     },
     {
-      img: defaultImg,
+      icon: <i className="pi pi-box" style={iconStyles}></i>,
       title: "Furnitures and Fixtures",
       navigateTo: NavigationRoutes.furnAndMixPath,
     },
@@ -24,7 +30,7 @@ export default function FixedAssetsMenu() {
         {activitiesMenuOptions.map((activitie) => (
           <ActivitiesCardcomponent
             key={activitie.title}
-            img={activitie.img}
+            icon={activitie.icon}
             title={activitie.title}
             navigateTo={activitie.navigateTo}
           />

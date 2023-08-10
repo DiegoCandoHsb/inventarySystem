@@ -4994,7 +4994,7 @@
 .p-panel .p-panel-content {
   padding: 1.25rem;
   border: 1px solid #dee2e6;
-  background: #fff;
+  background: var(--color-level-2);
   color: #495057;
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
@@ -5003,13 +5003,13 @@
 .p-panel .p-panel-footer {
   padding: 0.75rem 1.25rem;
   border: 1px solid #dee2e6;
-  background: #fff;
+  background: var(--color-level-2);
   color: #495057;
   border-top: 0 none;
 }
 .p-splitter {
   border: 1px solid #dee2e6;
-  background: #fff;
+  background: var(--color-level-2);
   border-radius: 6px;
   color: #495057;
 }

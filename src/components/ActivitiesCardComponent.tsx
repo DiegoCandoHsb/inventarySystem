@@ -3,21 +3,19 @@ import { Card } from "primereact/card";
 
 interface ActivitiesCardComponentProps {
   title: string;
-  img: string;
+  icon: JSX.Element;
   navigateTo: string;
 }
 
 export default function ActivitiesCardComponent({
-  img,
+  icon,
   title,
   navigateTo,
 }: ActivitiesCardComponentProps) {
   const cardHeader = (
-    // <img
-    // src={img}
-    // alt={title}
-    // />
-    <div className="rounded-t-md w-full h-72 object-center">Icon</div>
+    <div className="rounded-t-md w-full h-72 flex items-center justify-center">
+      {icon}
+    </div>
   );
 
   return (
