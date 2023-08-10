@@ -14,7 +14,7 @@ export default function NavComponent() {
   const navigate = useNavigate();
 
   const buttonClasses =
-    "p-3 m-0 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer visited:bg-red-700";
+    "p-3 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer visited:bg-red-700";
 
   const menuItemsData: dataItem[] = [
     {
@@ -29,26 +29,10 @@ export default function NavComponent() {
       path: NavigationRoutes.expensesPath,
       title: "Expenses",
     },
-    // {
-    //   path: NavigationRoutes.elecEquiPath,
-    //   title: "Electronic Equipment",
-    // },
-    // {
-    //   path: NavigationRoutes.furnAndMixPath,
-    //   title: "Furniture and Fixtures",
-    // },
     {
       path: NavigationRoutes.fixedAssetsPath,
       title: "Assets",
     },
-    // {
-    //   path: NavigationRoutes.login,
-    //   title: "Login",
-    // },
-    // {
-    //   path: NavigationRoutes.register,
-    //   title: "Register",
-    // },
   ];
 
   function navigateTo(path: string) {
@@ -74,7 +58,7 @@ export default function NavComponent() {
   const navOptions = menuOptions();
   console.log(navOptions);
   return (
-    <nav className="mt-1 w-full px-1">
+    <nav className="pt-1 w-full px-1">
       <Fieldset className="bg-level-1 bg-level-3">
         <section className="flex justify-between w-full items-center">
           {/* left side */}
