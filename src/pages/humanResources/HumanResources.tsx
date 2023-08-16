@@ -103,6 +103,7 @@ export default function HumanResources() {
         return data;
       })
       .catch((err) => {
+        console.log(err)
         showErrorMessage(err);
       })
       .finally(async () => await setNewUser());
@@ -110,7 +111,6 @@ export default function HumanResources() {
 
   const setNewUser = async () => {
     const newUsers = await GetUsers();
-    console.log(newUsers);
     setUsers([...newUsers]);
     setModal(false);
   };
