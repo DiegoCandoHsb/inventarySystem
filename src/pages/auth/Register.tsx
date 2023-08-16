@@ -64,6 +64,7 @@ export function Component() {
         secondlastname,
         phone,
       },
+      active: true
     };
 
     SignUp(userTransformedData)
