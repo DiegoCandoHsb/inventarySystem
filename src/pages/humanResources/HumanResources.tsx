@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Button } from "primereact/button";
@@ -10,7 +12,7 @@ import {
   userSignUpData,
 } from "../../interfaces/userSignUpData.interface";
 import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { HumanResourcesLoader } from "../../interfaces/humanResLoader.interface";
 import { Dialog } from "primereact/dialog";
 import { useForm } from "../../hooks/useForm";
@@ -18,7 +20,7 @@ import InputGroup from "../../components/InputGroup";
 import { createUser } from "../../services/humanResources.service";
 import TableHeaderComponent from "../../components/TableHeaderComponent";
 import React from "react";
-import { classNames } from "primereact/utils";
+import { Toast } from "primereact/toast";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -29,6 +31,7 @@ export default function HumanResources() {
   const [edit, setEdit] = useState<boolean>(false);
 
   const { form, onChange, setState } = useForm<UserPlainData>(defaultUserData);
+  const toastRef = useRef<Toast>(null);
 
   function openModal() {
     setState(defaultUserData);
@@ -44,6 +47,25 @@ export default function HumanResources() {
       name: hsbData.name.split(" ")[0],
     } as UserPlainData);
     setEdit(true);
+  }
+
+  function showErrorMessage(error: any) {
+    const errorStrings: string[] = (
+      error.response.data.message as string[]
+    ).map((str) => str.split("details.").join(" ").trim());
+
+    const errorNodeList = [];
+    for (let i = 0; i < errorStrings.length; i++) {
+      const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+      errorNodeList.push(errorP);
+    }
+
+    toastRef.current?.show({
+      severity: "error",
+      summary: `Error ${error.response.status as number}`,
+      detail: errorNodeList,
+      life: 7000,
+    });
   }
 
   const AddUser = () => {
@@ -68,7 +90,7 @@ export default function HumanResources() {
         return data;
       })
       .catch((err) => {
-        console.log(err);
+        showErrorMessage(err);
       })
       .finally(async () => await setNewUser());
   };
@@ -83,6 +105,7 @@ export default function HumanResources() {
   return (
     <div>
       <section className="mx-2">
+        <Toast ref={toastRef} position="top-right" />
         <div className="my-5">
           <Button label="Add" onClick={openModal} />
         </div>
@@ -104,7 +127,9 @@ export default function HumanResources() {
 
                   const userActive = userData.active;
                   const activeSymbol = React.createElement("div", {
-                    className: `w-5 h-5 rounded-full ${userActive ? "bg-lime-600" : "bg-red-700"}`,
+                    className: `w-5 h-5 rounded-full ${
+                      userActive ? "bg-lime-600" : "bg-red-700"
+                    }`,
                   });
 
                   return {
