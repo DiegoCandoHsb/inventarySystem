@@ -16,7 +16,6 @@ export default function Layaout() {
       ) : (
         <Outlet />
       )}
-      <footer>footer xd</footer>
     </div>
   );
 }

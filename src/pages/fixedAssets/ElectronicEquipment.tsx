@@ -228,7 +228,7 @@ export default function ElectronicEquipment() {
     if (Number(current) >= Number(dateBeforeDepre)) return true;
     return false;
   }
-
+  console.log(assets);
   return (
     <div>
       <Toast ref={toastRef} position="top-right" />
@@ -608,11 +608,6 @@ export default function ElectronicEquipment() {
             className="w-full"
           />
         </div>
-        {/* <ButtonComponent
-          reference={submitButtonRef}
-          title={formSettings.submitButtonValue}
-          onclickButton={createOrEditAsset}
-        /> */}
       </Dialog>
     </div>
   );
@@ -623,10 +618,14 @@ export async function loadAssets(): Promise<AssetTypesData> {
   const users = await GetUsers();
 
   const catalogs = await GetCatalog();
-  const catalog = catalogs.filter(
+  let catalog = catalogs.filter(
     (ctlg) =>
       ctlg.catalogName === ElectronicEquipmentConfig.assetBrandCatalogName
   )[0];
+
+  if (!catalog) {
+    catalog = { catalogName: "", catalogOptions: [] };
+  }
   return {
     ...data,
     users,

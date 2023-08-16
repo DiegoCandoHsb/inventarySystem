@@ -8,6 +8,7 @@ import { Avatar } from "primereact/avatar";
 import HSBlogo from "../assets/images/hsblogo.svg";
 import { Button } from "primereact/button";
 import { SelectButton } from "primereact/selectbutton";
+import { NavBarConfig } from "../config/navBar.config";
 
 type dataItem = { title: string; path: string };
 export default function NavComponent() {
@@ -56,7 +57,6 @@ export default function NavComponent() {
   }
 
   const navOptions = menuOptions();
-  console.log(navOptions);
   return (
     <nav className="pt-1 w-full px-1">
       <Fieldset className="bg-level-1 bg-level-3">
@@ -70,7 +70,7 @@ export default function NavComponent() {
               <img src={HSBlogo} className="w-full h-full object-center" />
             </Link>
             <h1 className="w-3/5 text-lg flex justify-end items-center font-bold">
-              {"INVENTORY SYSTEM"}
+              {NavBarConfig.AppName}
             </h1>
           </div>
           {/* mid side */}

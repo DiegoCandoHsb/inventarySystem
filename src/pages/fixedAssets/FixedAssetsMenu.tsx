@@ -1,7 +1,6 @@
 import { useState } from "react";
 import ActivitiesCardcomponent from "../../components/ActivitiesCardComponent";
 import { ActivitiesMenuOptions } from "../../interfaces/activitiesMenus.interface";
-import defaultImg from "../../assets/images/defaultimg.jpg";
 import { NavigationRoutes } from "../../config/navigationRoutes";
 
 export default function FixedAssetsMenu() {

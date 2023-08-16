@@ -46,6 +46,9 @@
 .color-link {
   color: var(--link-color);
 }
+.color-base {
+  color: var(--orange-1);
+}
 .p-component {
   font-family: Segoe UI;
   font-size: 1rem;
