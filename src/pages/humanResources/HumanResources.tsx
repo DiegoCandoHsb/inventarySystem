@@ -104,9 +104,7 @@ export default function HumanResources() {
 
                   const userActive = userData.active;
                   const activeSymbol = React.createElement("div", {
-                    className: `w-5 h-5 rounded-full ${
-                      userActive ? "bg-lime-600" : "bg-red-700"
-                    }`,
+                    className: `w-5 h-5 rounded-full ${userActive ? "bg-lime-600" : "bg-red-700"}`,
                   });
 
                   return {

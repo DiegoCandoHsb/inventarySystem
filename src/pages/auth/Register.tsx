@@ -10,7 +10,6 @@ import {
   userSignUpData,
 } from "../../interfaces/userSignUpData.interface";
 import { SignUp } from "../../services/auth.service";
-import { AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { NavigationRoutes } from "../../config/navigationRoutes";
 import { Divider } from "primereact/divider";
@@ -74,8 +73,8 @@ export function Component() {
         return data;
       })
       .catch((err) => {
-        // showErrorMessage(err);
-        console.log(err);
+        showErrorMessage(err);
+        // console.log(err);
       });
   }
   return (
