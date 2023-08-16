@@ -1,19 +1,15 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Fieldset } from "primereact/fieldset";
 
 import { NavigationRoutes } from "../config/navigationRoutes";
-import React, { useState } from "react";
+import React from "react";
 import { Avatar } from "primereact/avatar";
 
-import HSBlogo from "../assets/images/hsblogo.svg";
-import { Button } from "primereact/button";
-import { SelectButton } from "primereact/selectbutton";
+import HSBlogo from "../assets/images/hsbLogo.svg";
 import { NavBarConfig } from "../config/navBar.config";
 
 type dataItem = { title: string; path: string };
 export default function NavComponent() {
-  const navigate = useNavigate();
-
   const buttonClasses =
     "p-3 rounded-md font-bold text-md hover:text-slate-800 transition-all cursor-pointer visited:bg-red-700";
 
@@ -36,11 +32,6 @@ export default function NavComponent() {
     },
   ];
 
-  function navigateTo(path: string) {
-    navigate(path);
-  }
-  const [navValue, setNavValue] = useState(menuOptions()[0]);
-
   function menuOptions(): React.ReactNode[] {
     const nodes = menuItemsData.map((itemData) => {
       const { path, title } = itemData;
@@ -56,7 +47,6 @@ export default function NavComponent() {
     return nodes || [];
   }
 
-  const navOptions = menuOptions();
   return (
     <nav className="pt-1 w-full px-1">
       <Fieldset className="bg-level-1 bg-level-3">
