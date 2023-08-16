@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -22,6 +23,25 @@ export function Component() {
     password: "",
   });
 
+  // function showErrorMessage(error: any) {
+  //   const errorStrings: string[] = (
+  //     [error.response.data.message] as string[]
+  //   ).map((str) => str.split("details.").join(" ").trim());
+
+  //   const errorNodeList = [];
+  //   for (let i = 0; i < errorStrings.length; i++) {
+  //     const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+  //     errorNodeList.push(errorP);
+  //   }
+
+  //   toastRef.current?.show({
+  //     severity: "error",
+  //     summary: `Error ${error.response.status as number}`,
+  //     detail: errorNodeList,
+  //     life: 7000,
+  //   });
+  // }
+
   function showErrorMessage(error: any) {
     const errorStrings: string | string[] = error.response.data.message as
       | string
@@ -32,9 +52,18 @@ export function Component() {
 
       const errorNodeList = [];
       for (let i = 0; i < errorStrings.length; i++) {
-        const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+        const errorP = React.createElement("h1", { key: i }, errorStrings[i]);
         errorNodeList.push(errorP);
       }
+      console.log(errorNodeList);
+      toastRef.current?.show({
+        severity: "error",
+        summary: `Error ${error.response.status as number}`,
+        detail: errorNodeList,
+        life: 7000,
+      });
+
+      return;
     }
 
     toastRef.current?.show({

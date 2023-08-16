@@ -74,8 +74,8 @@ export function Component() {
         return data;
       })
       .catch((err) => {
-        showErrorMessage(err);
-        // console.log(err);
+        // showErrorMessage(err);
+        console.log(err);
       });
   }
   return (
