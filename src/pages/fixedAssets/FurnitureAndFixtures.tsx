@@ -153,8 +153,8 @@ export default function FurnitureAndFixtures() {
             <h1 className="bg-level-1 p-2 rounded-md font-bold">
               Total Annual Depreciation:{" "}
               <span className="font-normal">
-                {assets.electronicEquipmentAssets
-                  ? assets.electronicEquipmentAssets
+                {assets[assetName]
+                  ? assets[assetName]
                       .map((asset) => asset.details.annualDepreciation)
                       .reduce((x, y) => x + y, 0)
                       .toFixed(formSettings.decialQuiantity)
@@ -164,8 +164,8 @@ export default function FurnitureAndFixtures() {
             <h1 className="bg-level-1 p-2 rounded-md font-bold">
               Total Monthly Depreciation:{" "}
               <span className="font-normal">
-                {assets.electronicEquipmentAssets
-                  ? assets.electronicEquipmentAssets
+                {assets[assetName]
+                  ? assets[assetName]
                       .map((asset) => asset.details.monthlyDepreciation)
                       .reduce((x, y) => x + y, 0)
                       .toFixed(formSettings.decialQuiantity)
