@@ -3,36 +3,17 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable react-hooks/exhaustive-deps */
-
-// import { useEffect, useRef, useState } from "react";
-// import { useLoaderData } from "react-router-dom";
 import { Dialog } from "primereact/dialog";
-import {
-  DataTable,
-  // DataTableRowClickEvent
-} from "primereact/datatable";
+import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
-// import { useForm } from "../../hooks/useForm";
-import { ButtonComponent } from "../../components/Auth-Components/ButtonComponent";
 import {
-  // AssetData,
   AssetPlainData,
-  AssetTypesData,
   defaultAssetData,
 } from "../../interfaces/asset.interface";
-import {
-  // CreateAsset,
-  GetAllAssets,
-  // UpdateAsset,
-} from "../../services/asset.service";
+import "../../services/asset.service";
 import { AssetActive } from "../../interfaces/enums/assetActive";
-import { GetUsers } from "../../services/user.service";
-import { GetCatalog } from "../../services/catalog.service";
-import {
-  AssetTypeConfig,
-  ElectronicEquipmentConfig,
-} from "../../config/assets.config";
+import { AssetTypeConfig } from "../../config/assets.config";
 import InputGroup from "../../components/InputGroup";
 import useAssetForm from "../../hooks/useAssetForm";
 import { Card } from "primereact/card";
@@ -40,169 +21,8 @@ import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import TableHeaderComponent from "../../components/TableHeaderComponent";
 
-// import Activities from "../Activities";
-
 export default function ElectronicEquipment() {
-  // const [assets, setAssets] = useState<AssetTypesData>(
-  //   useLoaderData() as AssetTypesData
-  // );
-
-  // const [modal, setModal] = useState<boolean>(false);
-
-  // const [edit, setEdit] = useState<boolean>(false);
-
-  // const [formSettings, setFormSettings] = useState({
-  //   defaultSettings: {
-  //     porcetaje1: 10,
-  //     decialQuiantity: 2,
-  //     submitButtonValue: "Create",
-  //   },
-  //   porcetaje1: 10,
-  //   decialQuiantity: 2,
-  //   submitButtonValue: "Create",
-  // });
-
-  // const { onChange, form, setState } =
-  //   useForm<AssetPlainData>(defaultAssetData);
-
-  // useEffect(() => {
-  //   calculareResValue();
-  //   depreciations();
-  // }, [form.value, form.depreciationTime]);
-
-  // useEffect(() => {
-  //   calculateValueBooks();
-  // }, [form.purchaseDate, form.monthlyDepreciation]);
-
-  // const submitButtonRef = useRef<HTMLInputElement>(null);
-
-  // function calculareResValue() {
-  //   //  valor residual  =  valor * 0.1 (valor por 10 porciento)
-  //   const resValue = (form.value * formSettings.porcetaje1) / 100;
-
-  //   setState((currentValues) => ({
-  //     ...currentValues,
-  //     residualValue: resValue,
-  //   }));
-  // }
-
-  // function depreciations() {
-  //   const value = form.value - form.residualValue;
-  //   const annualDep = value / (form.depreciationTime / 12);
-  //   const mensualDep = value / form.depreciationTime;
-
-  //   setState((currentValues) => ({
-  //     ...currentValues,
-  //     annualDepreciation: validateNum(annualDep),
-  //     monthlyDepreciation: validateNum(mensualDep),
-  //   }));
-  // }
-
-  // function validateNum(num: number) {
-  //   if (!isFinite(num)) return 0;
-  //   return Number(num.toFixed(formSettings.decialQuiantity));
-  // }
-
-  // function calculateValueBooks() {
-  //   //  valor en libros = (fecha actual - fecha de adqusicion ) * depresiacion mensual
-  //   const currentDate = new Date();
-  //   const currentDay = currentDate.getDay();
-  //   const currentMoth = currentDate.getMonth() + 1;
-  //   const currentYear = currentDate.getFullYear();
-
-  //   const adqusicionDate = new Date(form.purchaseDate);
-  //   const adqDay = adqusicionDate.getDay() + 1;
-  //   const adqMonth = adqusicionDate.getMonth() + 1;
-  //   const adqYear = adqusicionDate.getFullYear();
-
-  //   // operations
-  //   const days = currentDay - adqDay;
-  //   const yearsToMoths = (currentYear - adqYear) * 12;
-  //   let totalMonths = currentMoth - adqMonth + yearsToMoths;
-
-  //   let newValueBooks = 0;
-  //   if (days <= 0) {
-  //     newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
-  //     if (totalMonths > form.depreciationTime) {
-  //       newValueBooks = form.residualValue;
-  //     }
-  //   } else {
-  //     totalMonths += 1;
-  //     newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
-
-  //     if (totalMonths > form.depreciationTime) {
-  //       newValueBooks = form.residualValue;
-  //     }
-  //   }
-
-  //   setState((currentState) => ({
-  //     ...currentState,
-  //     valueBooks: validateNum(newValueBooks),
-  //   }));
-  // }
-
-  // // open update modal
-  // function updateModal(e: DataTableRowClickEvent) {
-  //   setEdit(true);
-  //   setModal(true);
-  //   const { details, ...assetData } = e.data as AssetData;
-  //   setState({
-  //     ...assetData,
-  //     ...details,
-  //     purchaseDate: assetData.purchaseDate.substring(0, 10),
-  //   } as AssetPlainData);
-
-  //   setFormSettings((currentValues) => ({
-  //     ...currentValues,
-  //     submitButtonValue: "Update",
-  //   }));
-  // }
-
-  // // create asset
-  // function createOrEditAsset() {
-  //   console.log(form);
-  //   if (!edit) {
-  //     CreateAsset(formatData("responsibleName", "id"))
-  //       .catch((err) => {
-  //         alert(err.response.data.message);
-  //       })
-  //       .finally(async () => await setNewAssetsData());
-  //   } else if (edit) {
-  //     UpdateAsset(formatData("responsibleName"))
-  //       .catch((err) => {
-  //         alert(err.response.data.message);
-  //       })
-  //       .finally(async () => await setNewAssetsData());
-  //   }
-  // }
-
-  // async function setNewAssetsData() {
-  //   const newAssetsData = await GetAllAssets();
-  //   setAssets((currentAssets) => ({ ...currentAssets, ...newAssetsData }));
-  //   setModal(false);
-  // }
-
-  // function formatData(...propsToRemove: (keyof AssetPlainData)[]) {
-  //   const { id, name, purchaseDate, ...details } = form;
-  //   const data = {
-  //     id,
-  //     name,
-  //     purchaseDate,
-  //     details: {
-  //       ...details,
-  //     },
-  //   };
-
-  //   if (propsToRemove) {
-  //     for (let i = 0; i < propsToRemove.length; i++) {
-  //       delete data.details[propsToRemove[i] as keyof typeof details];
-  //       delete data[propsToRemove[i] as keyof AssetData];
-  //     }
-  //   }
-
-  //   console.log(data);
-  //   return data;
-  // }
+  const assetName = "electronicEquipmentAssets";
   const {
     assets,
     createOrEditAsset,
@@ -254,8 +74,8 @@ export default function ElectronicEquipment() {
           className="shadow-md"
           header={<TableHeaderComponent headerTitle="Electronic Equipment" />}
           value={
-            assets.electronicEquipmentAssets &&
-            assets.electronicEquipmentAssets.map((asset) => {
+            assets[assetName] &&
+            assets[assetName].map((asset) => {
               for (
                 let i = 0;
                 i < (assets.users ? assets.users.length : 1);
@@ -611,24 +431,4 @@ export default function ElectronicEquipment() {
       </Dialog>
     </div>
   );
-}
-
-export async function loadAssets(): Promise<AssetTypesData> {
-  const data = await GetAllAssets();
-  const users = await GetUsers();
-
-  const catalogs = await GetCatalog();
-  let catalog = catalogs.filter(
-    (ctlg) =>
-      ctlg.catalogName === ElectronicEquipmentConfig.assetBrandCatalogName
-  )[0];
-
-  if (!catalog) {
-    catalog = { catalogName: "", catalogOptions: [] };
-  }
-  return {
-    ...data,
-    users,
-    catalog,
-  };
 }

@@ -1,17 +1,16 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import Layaout from "../common/Layaout";
-// import Register from "../pages/auth/Register";
-// import Login, { loginLoader } from "../pages/auth/Login";
 import NotFoundPage from "../common/NotFoundPage";
 import Activities, { ActivitiesLoader } from "../pages/Activities";
 import AuthLayaout from "../common/AuthLayaout";
 import FixedAssetsMenu from "../pages/fixedAssets/FixedAssetsMenu";
-import ElectronicEquipment, {
-  loadAssets,
-} from "../pages/fixedAssets/ElectronicEquipment";
-import Expenses from "../pages/expenses/expenses";
 import { NavigationRoutes } from "../config/navigationRoutes";
-import HumanResources, { HumanResourcesLoader } from "../pages/humanResources/humanResources";
+
+import { AssetDataLoader } from "../common/loaders/AssetsLoader";
+import HumanResources, { HumanResourcesLoader } from "../pages/humanResources/HumanResources";
+import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
+import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
+import Expenses from "../pages/expenses/expenses";
 
 export const routes = createBrowserRouter([
   {
@@ -26,7 +25,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: NavigationRoutes.expensesPath,
-        loader: loadAssets,
+        loader: AssetDataLoader,
         element: <Expenses />,
       },
       {
@@ -44,8 +43,13 @@ export const routes = createBrowserRouter([
           },
           {
             path: NavigationRoutes.elecEquiPath,
-            loader: loadAssets,
+            loader: AssetDataLoader,
             element: <ElectronicEquipment />,
+          },
+          {
+            path: NavigationRoutes.furnAndMixPath,
+            loader: AssetDataLoader,
+            element: <FurnitureAndFixtures />,
           },
         ],
       },
