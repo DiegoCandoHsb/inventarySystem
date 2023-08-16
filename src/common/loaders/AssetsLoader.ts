@@ -5,6 +5,7 @@ import { GetCatalog } from "../../services/catalog.service";
 import { GetUsers } from "../../services/user.service";
 
 export async function AssetDataLoader(): Promise<AssetTypesData> {
+
   const data = await GetAllAssets();
   const users = await GetUsers();
 
