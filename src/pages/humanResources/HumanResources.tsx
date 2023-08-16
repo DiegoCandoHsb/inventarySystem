@@ -17,6 +17,8 @@ import { useForm } from "../../hooks/useForm";
 import InputGroup from "../../components/InputGroup";
 import { createUser } from "../../services/humanResources.service";
 import TableHeaderComponent from "../../components/TableHeaderComponent";
+import React from "react";
+import { classNames } from "primereact/utils";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -56,6 +58,7 @@ export default function HumanResources() {
         secondlastname: form.secondlastname,
         phone: form.phone.toString(),
       },
+      active: form.active,
     };
 
     createUser(userTransformedData)
@@ -99,7 +102,18 @@ export default function HumanResources() {
                     userData.details.secondlastname
                   );
 
-                  return { ...userData, name: userFullName };
+                  const userActive = userData.active;
+                  const activeSymbol = React.createElement("div", {
+                    className: `w-5 h-5 rounded-full ${
+                      userActive ? "bg-lime-600" : "bg-red-700"
+                    }`,
+                  });
+
+                  return {
+                    ...userData,
+                    name: userFullName,
+                    userActive: activeSymbol,
+                  };
                 })
               : []
           }
@@ -115,7 +129,7 @@ export default function HumanResources() {
           <Column header="Idetification" field="id" style={{ width: "15%" }} />
           <Column header="User Name" field="name" style={{ width: "20%" }} />
           <Column header="Email" field="email" style={{ width: "20%" }} />
-          <Column header="Active" field="active" style={{ width: "20%" }} />
+          <Column header="Active" field="userActive" style={{ width: "20%" }} />
         </DataTable>
       </section>
       {/* modal to update user */}

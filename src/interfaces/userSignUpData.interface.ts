@@ -9,6 +9,7 @@ export interface userSignUpData {
     secondlastname: string;
     phone: string;
   };
+  active: boolean;
 }
 
 export interface UserPlainData {
@@ -21,6 +22,7 @@ export interface UserPlainData {
   email: string;
   password: string;
   confirmPassword: string;
+  active: boolean;
 }
 
 export interface LoginResponseData {
@@ -49,4 +51,5 @@ export const defaultUserData: UserPlainData = {
   email: "",
   password: "",
   confirmPassword: "",
+  active: true,
 };
