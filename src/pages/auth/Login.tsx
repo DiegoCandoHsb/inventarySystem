@@ -10,7 +10,7 @@ import InputGroup from "../../components/InputGroup";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { NavigationRoutes } from "../../config/navigationRoutes";
-import { useRef } from "react";
+import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
 
 export function Component() {
@@ -23,7 +23,19 @@ export function Component() {
   });
 
   function showErrorMessage(error: any) {
-    const errorStrings: string = error.response.data.message as string;
+    const errorStrings: string | string[] = error.response.data.message as
+      | string
+      | string[];
+
+    if (Array.isArray(errorStrings)) {
+      errorStrings.map((str) => str.split("details.").join(" ").trim());
+
+      const errorNodeList = [];
+      for (let i = 0; i < errorStrings.length; i++) {
+        const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+        errorNodeList.push(errorP);
+      }
+    }
 
     toastRef.current?.show({
       severity: "error",
