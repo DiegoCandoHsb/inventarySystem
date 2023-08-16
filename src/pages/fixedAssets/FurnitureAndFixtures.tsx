@@ -41,7 +41,7 @@ export default function FurnitureAndFixtures() {
     if (Number(current) >= Number(dateBeforeDepre)) return true;
     return false;
   }
-  console.log(assets);
+
   return (
     <div>
       <Toast ref={toastRef} position="top-right" />
