@@ -10,14 +10,28 @@ import InputGroup from "../../components/InputGroup";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { NavigationRoutes } from "../../config/navigationRoutes";
+import { useRef } from "react";
+import { Toast } from "primereact/toast";
 
 export function Component() {
   const navigate = useNavigate();
+  const toastRef = useRef<Toast>(null);
 
   const { email, password, onChange } = useForm<userSignInData>({
     email: "",
     password: "",
   });
+
+  function showErrorMessage(error: any) {
+    const errorStrings: string = error.response.data.message as string;
+
+    toastRef.current?.show({
+      severity: "error",
+      summary: `Error ${error.response.status as number}`,
+      detail: errorStrings,
+      life: 7000,
+    });
+  }
 
   function signIn(): void {
     SignIn({ email, password })
@@ -27,14 +41,14 @@ export function Component() {
         return data;
       })
       .catch((error) => {
-        alert(error.response?.data.message);
-        console.error(error.response?.data);
-        return;
+        showErrorMessage(error);
+        // console.log(error);
       });
   }
 
   return (
     <section className="flex h-screen items-center">
+      <Toast ref={toastRef} position="top-right" />
       <div className="flex w-full h-82 justify-center ">
         <RegisterForm title="Sign In">
           {/* email */}

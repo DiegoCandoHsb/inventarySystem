@@ -48,5 +48,5 @@ export const defaultUserData: UserPlainData = {
   phone: "",
   email: "",
   password: "",
-  confirmPassword: ""
-}
+  confirmPassword: "",
+};

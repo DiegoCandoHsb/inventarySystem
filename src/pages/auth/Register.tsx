@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Button } from "primereact/button";
 import RegisterForm from "../../components/Auth-Components/RegisterForm";
 import InputGroup from "../../components/InputGroup";
@@ -12,9 +14,12 @@ import { AxiosError } from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import { NavigationRoutes } from "../../config/navigationRoutes";
 import { Divider } from "primereact/divider";
+import { Toast } from "primereact/toast";
+import React, { useRef } from "react";
 
 export function Component() {
   const navigate = useNavigate();
+  const toastRef = useRef<Toast>(null);
 
   const {
     email,
@@ -28,6 +33,25 @@ export function Component() {
     confirmPassword,
     onChange,
   } = useForm<UserPlainData>(defaultUserData);
+
+  function showErrorMessage(error: any) {
+    const errorStrings: string[] = (
+      error.response.data.message as string[]
+    ).map((str) => str.split("details.").join(" ").trim());
+
+    const errorNodeList = [];
+    for (let i = 0; i < errorStrings.length; i++) {
+      const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+      errorNodeList.push(errorP);
+    }
+
+    toastRef.current?.show({
+      severity: "error",
+      summary: `Error ${error.response.status as number}`,
+      detail: errorNodeList,
+      life: 7000,
+    });
+  }
 
   function createUser() {
     const userTransformedData: userSignUpData = {
@@ -49,14 +73,14 @@ export function Component() {
         navigate("/");
         return data;
       })
-      .catch((axiosError: AxiosError) => {
-        // const axiosError = error as AxiosError;
-        alert(axiosError.response?.data);
-        console.error(axiosError.response?.data);
+      .catch((err) => {
+        showErrorMessage(err);
+        // console.log(err);
       });
   }
   return (
     <section className="flex justify-center">
+      <Toast ref={toastRef} position="top-right" />
       <RegisterForm title="Sign Up">
         {/* first name */}
         <InputGroup
