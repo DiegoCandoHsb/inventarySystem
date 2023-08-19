@@ -103,7 +103,7 @@ export default function HumanResources() {
         return data;
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
         showErrorMessage(err);
       })
       .finally(async () => await setNewUser());
@@ -175,7 +175,7 @@ export default function HumanResources() {
         header="Edit User"
         className="w-2/5"
       >
-        <div className="flex justify-between">
+        <div className="grid grid-cols-4 gap-2">
           <InputGroup
             inputType="text"
             keyfilter={"pint"}
@@ -186,7 +186,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2"
           />
           <InputGroup
             inputType="text"
@@ -198,10 +197,7 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2 "
           />
-        </div>
-        <div className="flex justify-between">
           <InputGroup
             inputType="text"
             label="First Name"
@@ -211,7 +207,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2"
           />
           <InputGroup
             inputType="text"
@@ -222,10 +217,7 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2 "
           />
-        </div>
-        <div className="flex justify-between">
           <InputGroup
             inputType="text"
             label="Surname"
@@ -235,7 +227,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2"
           />
           <InputGroup
             inputType="text"
@@ -246,10 +237,7 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2 "
           />
-        </div>
-        <div className="flex">
           <InputGroup
             inputType="text"
             keyfilter={"email"}
@@ -260,11 +248,47 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="p-2 w-4/6"
+            containerCls="col-span-3"
           />
-          {/* falta check box aqui */}
+          <InputGroup
+            inputType="checkbox"
+            label="Active"
+            name="active"
+            value={form.active.toString()}
+            // onChange={(e) =>
+            // onChange(e.target.value, e.target.id as keyof UserPlainData)
+            // }
+            containerCls="col-span-1"
+          />
+          {/* vacations */}
+          <div className="bg-level-3 col-span-4 grid grid-cols-4 gap-2 rounded-md px-2">
+            <span className="col-span-full text-2xl font-bold text-center bg-level-2 -mx-2 p-2">
+              Vacations
+            </span>
+            <InputGroup
+              inputType="date"
+              label="Start Day"
+              name="startDay"
+              placeholder={new Date().toISOString().split("T")[0]}
+              value={form.lastname}
+              onChange={(e) =>
+                onChange(e.target.value, e.target.id as keyof UserPlainData)
+              }
+            />
+            <InputGroup
+              inputType="date"
+              label="End Day"
+              name="startDay"
+              placeholder={new Date().toISOString().split("T")[0]}
+              value={form.lastname}
+              onChange={(e) =>
+                onChange(e.target.value, e.target.id as keyof UserPlainData)
+              }
+            />
+          </div>
         </div>
       </Dialog>
+
       {/* Modal to create user */}
       <Dialog
         visible={modal}
@@ -283,7 +307,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2"
           />
           <InputGroup
             inputType="text"
@@ -295,7 +318,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2 "
           />
         </div>
         <div className="flex justify-between">
@@ -308,7 +330,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2"
           />
           <InputGroup
             inputType="text"
@@ -319,7 +340,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2 "
           />
         </div>
         <div className="flex justify-between">
@@ -332,7 +352,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2"
           />
           <InputGroup
             inputType="text"
@@ -343,7 +362,6 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            className="w-1/2 p-2 "
           />
         </div>
         <InputGroup
@@ -356,7 +374,6 @@ export default function HumanResources() {
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
-          className="p-2"
         />
         <InputGroup
           inputType="text"
@@ -367,7 +384,6 @@ export default function HumanResources() {
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
-          className="p-2"
         />
         <InputGroup
           inputType="text"
@@ -378,7 +394,6 @@ export default function HumanResources() {
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof UserPlainData)
           }
-          className="p-2"
         />
         <div className="w-full p-2 mt-2">
           <Button

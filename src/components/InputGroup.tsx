@@ -13,6 +13,8 @@ import { SelectItemOptionsType } from "primereact/selectitem";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Password } from "primereact/password";
 import { KeyFilterType } from "primereact/keyfilter";
+import { InputSwitch } from "primereact/inputswitch";
+import { Checkbox } from "primereact/checkbox";
 
 interface InputGroupProps {
   inputType:
@@ -23,7 +25,9 @@ interface InputGroupProps {
     | "dropdown"
     | "decimal"
     | "textarea"
-    | "password";
+    | "password"
+    | "switch"
+    | "checkbox";
   label: string;
   name: string;
   value: string | number;
@@ -34,8 +38,8 @@ interface InputGroupProps {
   decimalQuliantity?: number;
   disabled?: boolean;
   keyfilter?: KeyFilterType | undefined;
+  containerCls?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
-  className?: string;
   onDateChange?: (e: CalendarChangeEvent) => void;
   onDropDownFilterChange?: (e: AutoCompleteChangeEvent) => void;
   onDropDownChange?: (e: DropdownChangeEvent) => void;
@@ -44,7 +48,7 @@ interface InputGroupProps {
 
 const defautlInputStyle = "w-full flex items-center";
 const labelClassname = "font-semibold";
-const containerClassname = "my-2";
+const containerClassname = "my-2 flex flex-col col-span-2";
 
 export default function InputGroup({
   inputType,
@@ -194,6 +198,26 @@ export default function InputGroup({
             toggleMask
           />
         );
+
+      case "switch":
+        return (
+          <InputSwitch
+            {...commonInputProps}
+            value={value}
+            style={{ width: "100%", height: "100%" }}
+            checked
+          />
+        );
+
+      case "checkbox":
+        return (
+          <Checkbox
+            checked
+            {...commonInputProps}
+            value={value}
+            style={{ width: "100%", height: "100%" }}
+          />
+        );
       default:
         break;
     }
@@ -201,9 +225,10 @@ export default function InputGroup({
 
   return (
     <div
-      className={
-        OtherProps.className ? OtherProps.className : containerClassname
-      }
+      className={containerClassname.concat(
+        " ",
+        OtherProps.containerCls as string
+      )}
     >
       <label htmlFor={name} className={labelClassname}>
         {label}

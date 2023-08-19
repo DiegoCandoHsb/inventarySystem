@@ -23,25 +23,6 @@ export function Component() {
     password: "",
   });
 
-  // function showErrorMessage(error: any) {
-  //   const errorStrings: string[] = (
-  //     [error.response.data.message] as string[]
-  //   ).map((str) => str.split("details.").join(" ").trim());
-
-  //   const errorNodeList = [];
-  //   for (let i = 0; i < errorStrings.length; i++) {
-  //     const errorP = React.createElement("p", { key: i }, errorStrings[i]);
-  //     errorNodeList.push(errorP);
-  //   }
-
-  //   toastRef.current?.show({
-  //     severity: "error",
-  //     summary: `Error ${error.response.status as number}`,
-  //     detail: errorNodeList,
-  //     life: 7000,
-  //   });
-  // }
-
   function showErrorMessage(error: any) {
     const errorStrings: string | string[] = error.response.data.message as
       | string
