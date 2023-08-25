@@ -14,7 +14,8 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Password } from "primereact/password";
 import { KeyFilterType } from "primereact/keyfilter";
 import { InputSwitch } from "primereact/inputswitch";
-import { Checkbox } from "primereact/checkbox";
+import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
+import { Button } from "primereact/button";
 
 interface InputGroupProps {
   inputType:
@@ -27,10 +28,11 @@ interface InputGroupProps {
     | "textarea"
     | "password"
     | "switch"
-    | "checkbox";
-  label: string;
+    | "checkbox"
+    | "button";
+  label?: string;
   name: string;
-  value: string | number;
+  value: string | number | boolean;
   placeholder?: string;
   options?: string[] | userSignUpData[] | SelectItemOptionsType;
   optionLabel?: string;
@@ -39,16 +41,20 @@ interface InputGroupProps {
   disabled?: boolean;
   keyfilter?: KeyFilterType | undefined;
   containerCls?: string;
+  containerSpan?: string;
+  buttonIcon?: string;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onDateChange?: (e: CalendarChangeEvent) => void;
   onDropDownFilterChange?: (e: AutoCompleteChangeEvent) => void;
   onDropDownChange?: (e: DropdownChangeEvent) => void;
   onNumberChange?: (e: InputNumberChangeEvent) => void;
+  onButtonClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  onCheckBoxChange?: (event: CheckboxChangeEvent) => void;
 }
 
 const defautlInputStyle = "w-full flex items-center";
 const labelClassname = "font-semibold";
-const containerClassname = "my-2 flex flex-col col-span-2";
+const containerClassname = "my-2 flex flex-col justify-between";
 
 export default function InputGroup({
   inputType,
@@ -124,7 +130,7 @@ export default function InputGroup({
         return (
           <Calendar
             {...commonInputProps}
-            value={value ? new Date(value) : null}
+            value={value ? new Date(value as string) : null}
             onChange={OtherProps.onDateChange}
             dateFormat="dd/mm/yy"
           />
@@ -191,7 +197,7 @@ export default function InputGroup({
         return (
           <Password
             {...commonInputProps}
-            value={value}
+            value={value as string}
             onChange={onChange}
             feedback={false}
             inputClassName={commonInputProps.className}
@@ -203,8 +209,8 @@ export default function InputGroup({
         return (
           <InputSwitch
             {...commonInputProps}
-            value={value}
-            style={{ width: "100%", height: "100%" }}
+            value={value as string}
+            // style={{ width: "100%" }}
             checked
           />
         );
@@ -212,10 +218,23 @@ export default function InputGroup({
       case "checkbox":
         return (
           <Checkbox
-            checked
             {...commonInputProps}
-            value={value}
             style={{ width: "100%", height: "100%" }}
+            value={value}
+            checked={value as boolean}
+            onClick={OtherProps.onCheckBoxChange}
+          />
+        );
+
+      case "button":
+        return (
+          <Button
+            {...commonInputProps}
+            icon={`${
+              OtherProps.buttonIcon ? "pi ".concat(OtherProps.buttonIcon) : ""
+            }`}
+            label={value.toString()}
+            onClick={OtherProps.onButtonClick}
           />
         );
       default:
@@ -227,13 +246,15 @@ export default function InputGroup({
     <div
       className={containerClassname.concat(
         " ",
-        OtherProps.containerCls as string
+        `${OtherProps.containerSpan ? OtherProps.containerSpan : "col-span-2"}`,
+        " ",
+        `${OtherProps.containerCls ? OtherProps.containerCls : ""}`
       )}
     >
       <label htmlFor={name} className={labelClassname}>
         {label}
       </label>
-      {slectInputByType()}
+      <div className="flex justify-center">{slectInputByType()}</div>
     </div>
   );
 }

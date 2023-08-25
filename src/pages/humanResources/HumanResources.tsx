@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Button } from "primereact/button";
-import { Column } from "primereact/column";
+import { Column, ColumnBodyOptions } from "primereact/column";
 import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
 import { GetUsers } from "../../services/user.service";
 import {
@@ -21,6 +21,8 @@ import { createUser } from "../../services/humanResources.service";
 import TableHeaderComponent from "../../components/TableHeaderComponent";
 import React from "react";
 import { Toast } from "primereact/toast";
+import { Vacations } from "../../interfaces/user.interface";
+import axios, { AxiosError } from "axios";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -31,6 +33,14 @@ export default function HumanResources() {
   const [edit, setEdit] = useState<boolean>(false);
 
   const { form, onChange, setState } = useForm<UserPlainData>(defaultUserData);
+
+  const currentDate = new Date().toISOString().split("T")[0];
+  const [dates, setDates] = useState<Vacations>({
+    startVacationDay: currentDate,
+    endVacationDay: currentDate,
+    days: 0,
+  });
+
   const toastRef = useRef<Toast>(null);
 
   function openModal() {
@@ -62,7 +72,7 @@ export default function HumanResources() {
         const errorP = React.createElement("h1", { key: i }, errorStrings[i]);
         errorNodeList.push(errorP);
       }
-      console.log(errorNodeList);
+
       toastRef.current?.show({
         severity: "error",
         summary: `Error ${error.response.status as number}`,
@@ -92,6 +102,7 @@ export default function HumanResources() {
         secondname: form.secondname,
         secondlastname: form.secondlastname,
         phone: form.phone.toString(),
+        vacations: form.vacations,
       },
       active: form.active,
     };
@@ -114,6 +125,78 @@ export default function HumanResources() {
     setUsers([...newUsers]);
     setModal(false);
   };
+
+  function setNewVacations() {
+    if (dates.startVacationDay > dates.endVacationDay) {
+      const headers = new axios.AxiosHeaders();
+      return showErrorMessage(
+        new AxiosError(
+          "error",
+          "400",
+          { headers },
+          {},
+          {
+            status: 400,
+            data: { message: "Invalid Start or End vacation date" },
+            statusText: "OK",
+            config: { headers },
+            headers,
+          }
+        )
+      );
+    }
+    setState((currentData) => ({
+      ...currentData,
+      vacations: [
+        ...currentData.vacations,
+        {
+          ...dates,
+          days: getLaborableDays(dates.startVacationDay, dates.endVacationDay),
+        },
+      ],
+    }));
+  }
+
+  function getLaborableDays(date1: string, date2: string) {
+    const prevDate = new Date(date1).getTime();
+    const nextDate = new Date(date2).getTime();
+    const difference = (nextDate - prevDate) / (24 * 60 * 60 * 1000) + 1;
+    return difference;
+  }
+
+  function updateUser() {
+    console.log(form);
+  }
+
+  function deleteRowButton(_: Vacations, column: ColumnBodyOptions) {
+    return (
+      <InputGroup
+        inputType="button"
+        name="Delete"
+        value=""
+        buttonIcon="pi-times"
+        containerCls="-my-2 p-0"
+        onButtonClick={() => {
+          setState((currentData) => ({
+            ...currentData,
+            vacations: currentData.vacations.filter(
+              (_, i) => i !== column.rowIndex
+            ),
+          }));
+        }}
+      />
+    );
+  }
+
+  function toggleElement(e?: React.MouseEvent<HTMLElement>) {
+    const nextElement = e?.currentTarget.nextElementSibling;
+    const elmClasses = [...(nextElement?.classList as unknown as string[])];
+
+    if (elmClasses.includes("hidden")) {
+      return nextElement?.classList.remove("hidden");
+    }
+    return nextElement?.classList.add("hidden");
+  }
 
   return (
     <div>
@@ -173,7 +256,7 @@ export default function HumanResources() {
         visible={edit}
         onHide={() => setEdit(false)}
         header="Edit User"
-        className="w-2/5"
+        className="w-2/5 bg-red-500"
       >
         <div className="grid grid-cols-4 gap-2">
           <InputGroup
@@ -248,45 +331,95 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
-            containerCls="col-span-3"
+            containerSpan="col-span-3"
           />
           <InputGroup
             inputType="checkbox"
             label="Active"
             name="active"
-            value={form.active.toString()}
-            // onChange={(e) =>
-            // onChange(e.target.value, e.target.id as keyof UserPlainData)
-            // }
-            containerCls="col-span-1"
+            value={form.active}
+            onCheckBoxChange={(e) =>
+              onChange(Boolean(!e.value), e.target.id as keyof UserPlainData)
+            }
+            containerSpan="col-span-1"
           />
           {/* vacations */}
-          <div className="bg-level-3 col-span-4 grid grid-cols-4 gap-2 rounded-md px-2">
-            <span className="col-span-full text-2xl font-bold text-center bg-level-2 -mx-2 p-2">
+          <div className="bg-level-3 col-span-full rounded-md shadow-md shadow-zinc-500">
+            <h1
+              className="w-full text-2xl font-bold text-center bg-level-2 mx-auto py-2"
+              onClick={toggleElement}
+            >
               Vacations
-            </span>
-            <InputGroup
-              inputType="date"
-              label="Start Day"
-              name="startDay"
-              placeholder={new Date().toISOString().split("T")[0]}
-              value={form.lastname}
-              onChange={(e) =>
-                onChange(e.target.value, e.target.id as keyof UserPlainData)
-              }
-            />
-            <InputGroup
-              inputType="date"
-              label="End Day"
-              name="startDay"
-              placeholder={new Date().toISOString().split("T")[0]}
-              value={form.lastname}
-              onChange={(e) =>
-                onChange(e.target.value, e.target.id as keyof UserPlainData)
-              }
-            />
+            </h1>
+            <div className="col-span-full grid grid-cols-7 gap-2 rounded-md p-2">
+              <InputGroup
+                inputType="date"
+                label="Start vacation day"
+                name="startDay"
+                placeholder={new Date().toISOString().split("T")[0]}
+                value={dates.startVacationDay.toString()}
+                onDateChange={(e) =>
+                  setDates((currentValues) => ({
+                    ...currentValues,
+                    startVacationDay: new Date(e.value as Date)
+                      .toISOString()
+                      .split("T")[0],
+                  }))
+                }
+                containerSpan="col-span-3"
+              />
+              <InputGroup
+                inputType="date"
+                label="End vacation day"
+                name="startDay"
+                placeholder={new Date().toISOString().split("T")[0]}
+                value={dates.endVacationDay.toString()}
+                onDateChange={(e) =>
+                  setDates((currentValues) => ({
+                    ...currentValues,
+                    endVacationDay: new Date(e.value as Date)
+                      .toISOString()
+                      .split("T")[0],
+                  }))
+                }
+                containerSpan="col-span-3"
+              />
+              <InputGroup
+                inputType="button"
+                name="submit"
+                value={""}
+                buttonIcon="pi-plus"
+                onButtonClick={setNewVacations}
+                containerSpan="col-span-1"
+              />
+              <DataTable
+                className="col-span-full rounded-md p-0"
+                stripedRows
+                selectionMode="single"
+                title="Vacations"
+                rows={5}
+                rowsPerPageOptions={[5, 10, 15, 20]}
+                value={form.vacations.map((e) => {
+                  return e;
+                })}
+                // onRowDoubleClick={(e) => console.log(e)}
+                onCellClick={() => console.log("xd")}
+              >
+                <Column body={(x: Vacations, d) => deleteRowButton(x, d)} />
+                <Column header="Start V. day" field="startVacationDay" />
+                <Column header="End V. day" field="endVacationDay" />
+                <Column header="Days" field="days" />
+              </DataTable>
+            </div>
           </div>
         </div>
+        <InputGroup
+          inputType="button"
+          name="submit"
+          value={"Update"}
+          onButtonClick={updateUser}
+          containerSpan={"1"}
+        />
       </Dialog>
 
       {/* Modal to create user */}

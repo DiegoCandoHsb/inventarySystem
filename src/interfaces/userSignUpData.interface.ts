@@ -1,3 +1,5 @@
+import { Vacations } from "./user.interface";
+
 export interface userSignUpData {
   id: string;
   name: string;
@@ -8,6 +10,8 @@ export interface userSignUpData {
     secondname: string;
     secondlastname: string;
     phone: string;
+    // vacations
+    vacations?: Vacations[];
   };
   active: boolean;
 }
@@ -23,6 +27,8 @@ export interface UserPlainData {
   password: string;
   confirmPassword: string;
   active: boolean;
+  // dates data
+  vacations: Vacations[];
 }
 
 export interface LoginResponseData {
@@ -36,6 +42,8 @@ export interface LoginResponseData {
       secondname: string;
       secondlastname: string;
       phone: string;
+      // dates data
+      vacations: Vacations[];
     };
   };
   token: string;
@@ -52,4 +60,6 @@ export const defaultUserData: UserPlainData = {
   password: "",
   confirmPassword: "",
   active: true,
+  // dates data
+  vacations: []
 };
