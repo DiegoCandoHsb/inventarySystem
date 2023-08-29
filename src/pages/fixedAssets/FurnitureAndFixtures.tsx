@@ -2,6 +2,7 @@ import { Toast } from "primereact/toast";
 import useAssetForm from "../../hooks/useAssetForm";
 import { Button } from "primereact/button";
 import {
+  AssetData,
   AssetPlainData,
   defaultAssetData,
 } from "../../interfaces/asset.interface";
@@ -11,8 +12,10 @@ import { Column } from "primereact/column";
 import { Card } from "primereact/card";
 import { Dialog } from "primereact/dialog";
 import InputGroup from "../../components/InputGroup";
-import { AssetTypeConfig } from "../../config/assets.config";
+import { AssetConfig, AssetTypeConfig } from "../../config/assets.config";
 import { AssetActive } from "../../interfaces/enums/assetActive";
+import { exportCSV, numValCell } from "./common/utilities";
+import TotalDepreciationCard from "../../components/TotalDepreciationCard";
 
 export default function FurnitureAndFixtures() {
   const assetName = "furnitureAndFixturesAssets";
@@ -30,6 +33,7 @@ export default function FurnitureAndFixtures() {
     submitButtonRef,
     toastRef,
     updateModal,
+    dataTableRef,
   } = useAssetForm();
 
   function calculateDepreTime(date: string) {
@@ -52,6 +56,7 @@ export default function FurnitureAndFixtures() {
             label="Add"
             onClick={() => {
               setModal(true);
+              AssetConfig.setDialogHeaderTitle("create");
               setEdit(false);
               setState(defaultAssetData);
               setFormSettings((curretValues) => ({
@@ -64,8 +69,16 @@ export default function FurnitureAndFixtures() {
         </div>
 
         <DataTable
+          ref={dataTableRef}
           className="shadow-md"
-          header={<TableHeaderComponent headerTitle="Furniture and Fixtures" />}
+          header={
+            <TableHeaderComponent
+              headerTitle="Furniture and Fixtures"
+              export
+              fun={() => exportCSV(false, dataTableRef)}
+            />
+          }
+          exportFilename={AssetConfig.furnitureAndFixture}
           value={
             assets[assetName] &&
             assets[assetName].map((asset) => {
@@ -108,76 +121,80 @@ export default function FurnitureAndFixtures() {
           }}
           stripedRows
         >
-          <Column header="ID" field="id" style={{ width: "5%" }}></Column>
+          <Column
+            header="ID"
+            field="id"
+            align="center"
+            alignHeader="center"
+            sortable
+          ></Column>
           <Column
             header="Item Name"
             field="name"
-            style={{ width: "15%" }}
+            align="center"
+            alignHeader="center"
+            sortable
           ></Column>
           <Column
             header="Acq. Date"
             field="purchaseDate"
-            style={{ width: "10%" }}
+            align="center"
+            alignHeader="center"
+            sortable
           ></Column>
           <Column
             header="Brand"
             field="details.brand"
-            style={{ width: "15%" }}
+            align="center"
+            alignHeader="center"
+            sortable
+          ></Column>
+          <Column
+            header="Purchase Value"
+            field="details.value"
+            body={(e: AssetData) => numValCell(e.details.value)}
+            align="right"
+            alignHeader="center"
+            sortable
           ></Column>
           <Column
             header="Monthly Dep."
             field="details.monthlyDepreciation"
-            style={{ width: "10" }}
+            body={(e: AssetData) => numValCell(e.details.monthlyDepreciation)}
+            align="right"
+            alignHeader="center"
+            sortable
           ></Column>
           <Column
             header="Val. Books"
             field="details.valueBooks"
-            style={{ width: "10" }}
+            body={(e: AssetData) => numValCell(e.details.valueBooks)}
+            align="right"
+            alignHeader="center"
+            sortable
           ></Column>
           <Column
             header="Insured"
             field="details.insured"
-            style={{ width: "15" }}
+            body={(e: AssetData) => numValCell(e.details.insured)}
+            align="right"
+            alignHeader="center"
+            sortable
           ></Column>
           <Column
             header="Responsible"
             field="details.responsibleName"
-            style={{ width: "15" }}
+            align="center"
+            alignHeader="center"
+            sortable
           ></Column>
         </DataTable>
       </section>
       {/* total depreciation */}
-      <div className="w-full  flex justify-center my-3">
-        <Card className="w-1/2 bg-level-2">
-          <div className="flex justify-evenly">
-            <h1 className="bg-level-1 p-2 rounded-md font-bold">
-              Total Annual Depreciation:{" "}
-              <span className="font-normal">
-                {assets[assetName]
-                  ? assets[assetName]
-                      .map((asset) => asset.details.annualDepreciation)
-                      .reduce((x, y) => x + y, 0)
-                      .toFixed(formSettings.decialQuiantity)
-                  : 0}
-              </span>
-            </h1>
-            <h1 className="bg-level-1 p-2 rounded-md font-bold">
-              Total Monthly Depreciation:{" "}
-              <span className="font-normal">
-                {assets[assetName]
-                  ? assets[assetName]
-                      .map((asset) => asset.details.monthlyDepreciation)
-                      .reduce((x, y) => x + y, 0)
-                      .toFixed(formSettings.decialQuiantity)
-                  : 0}
-              </span>
-            </h1>
-          </div>
-        </Card>
-      </div>
+      <TotalDepreciationCard data={assets[assetName] ?? 0} />
       {/* modal */}
       <Dialog
-        header="Create Asset"
+        header={AssetConfig.defaultHeaderTitle}
         visible={modal}
         className="w-1/3"
         onHide={() => setModal(false)}

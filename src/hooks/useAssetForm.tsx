@@ -12,7 +12,7 @@ import {
 } from "../interfaces/asset.interface";
 import { useLoaderData } from "react-router-dom";
 import { useForm } from "./useForm";
-import { DataTableRowClickEvent } from "primereact/datatable";
+import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
 import {
   CreateAsset,
   GetAllAssets,
@@ -20,6 +20,7 @@ import {
 } from "../services/asset.service";
 import { Toast } from "primereact/toast";
 import React from "react";
+import { AssetConfig } from "../config/assets.config";
 
 const useAssetForm = () => {
   const [assets, setAssets] = useState<AssetTypesData>(
@@ -31,8 +32,6 @@ const useAssetForm = () => {
 
   const [formSettings, setFormSettings] = useState({
     defaultSettings: {
-      porcetaje1: 10,
-      decialQuiantity: 2,
       submitButtonValue: "Create",
     },
     porcetaje1: 10,
@@ -54,6 +53,8 @@ const useAssetForm = () => {
 
   const submitButtonRef = useRef<HTMLInputElement>(null);
   const toastRef = useRef<Toast>(null);
+  const dataTableRef = useRef<DataTable<AssetData[]>>(null);
+
 
   function calculateResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
@@ -124,6 +125,8 @@ const useAssetForm = () => {
   function updateModal(e: DataTableRowClickEvent) {
     setEdit(true);
     setModal(true);
+    AssetConfig.setDialogHeaderTitle("update");
+
     const { details, ...assetData } = e.data as AssetData;
     setState({
       ...assetData,
@@ -139,27 +142,73 @@ const useAssetForm = () => {
 
   // create asset
   function createOrEditAsset() {
-    // console.log(form);
     if (!edit) {
       CreateAsset(formatData("responsibleName", "id"))
+        .then(() => setModal(false))
         .catch((err) => {
-          // alert(err.response.data.message);
+          inputErrors(form);
           showErrorMessage(err);
+          setModal(true);
         })
         .finally(async () => await setNewAssetsData());
     } else if (edit) {
       UpdateAsset(formatData("responsibleName"))
+        .then(() => setModal(false))
         .catch((err) => {
-          alert(err.response.data.message);
+          inputErrors(form);
+          showErrorMessage(err);
+          setModal(true);
         })
         .finally(async () => await setNewAssetsData());
+    }
+  }
+
+  function inputErrors(data: typeof form) {
+    const entries = Object.entries(data);
+
+    const filledData = entries.filter((entry) => {
+      if (entry[1].length > 1 || Number(entry[1]) > 0) {
+        return entry;
+      }
+    });
+
+    const emptyData = entries
+      .map((entrie) => {
+        if (!entrie[1].length || entrie[1] === 0) {
+          return entrie;
+        }
+        return;
+      })
+      .filter((x) => x !== undefined);
+
+    for (let i = 0; i < emptyData.length; i++) {
+      let emptyInp: HTMLInputElement | null = document.querySelector(
+        `#${emptyData[i]![0]}`
+      );
+
+      if (emptyInp === null || emptyInp.disabled) continue;
+      if (emptyInp.nodeName === "SPAN") {
+        emptyInp = emptyInp.firstChild as HTMLInputElement;
+      }
+      emptyInp.classList.add("input-error");
+    }
+
+    for (let i = 0; i < filledData.length; i++) {
+      let filledImp: HTMLInputElement | null = document.querySelector(
+        `#${filledData[i]![0]}`
+      );
+
+      if (filledImp === null || filledImp.disabled) continue;
+      if (filledImp.nodeName === "SPAN") {
+        filledImp = filledImp.firstChild as HTMLInputElement;
+      }
+      filledImp.classList.remove("input-error");
     }
   }
 
   async function setNewAssetsData() {
     const newAssetsData = await GetAllAssets();
     setAssets((currentAssets) => ({ ...currentAssets, ...newAssetsData }));
-    setModal(false);
   }
 
   function showErrorMessage(error: any) {
@@ -198,7 +247,6 @@ const useAssetForm = () => {
         delete data[propsToRemove[i] as keyof AssetData];
       }
     }
-    console.log(data);
     return data;
   }
 
@@ -218,6 +266,7 @@ const useAssetForm = () => {
     createOrEditAsset,
     updateModal,
     toastRef,
+    dataTableRef,
   };
 };
 

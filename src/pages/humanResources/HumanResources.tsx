@@ -245,10 +245,30 @@ export default function HumanResources() {
           rowsPerPageOptions={[25, 50, 75, 100]}
           tableStyle={{ minWidth: "50rem" }}
         >
-          <Column header="Idetification" field="id" style={{ width: "15%" }} />
-          <Column header="User Name" field="name" style={{ width: "20%" }} />
-          <Column header="Email" field="email" style={{ width: "20%" }} />
-          <Column header="Active" field="userActive" style={{ width: "20%" }} />
+          <Column
+            header="Idetification"
+            field="id"
+            style={{ width: "15%" }}
+            sortable
+          />
+          <Column
+            header="User Name"
+            field="name"
+            style={{ width: "20%" }}
+            sortable
+          />
+          <Column
+            header="Email"
+            field="email"
+            style={{ width: "20%" }}
+            sortable
+          />
+          <Column
+            header="Active"
+            field="userActive"
+            style={{ width: "20%" }}
+            sortable
+          />
         </DataTable>
       </section>
       {/* modal to update user */}

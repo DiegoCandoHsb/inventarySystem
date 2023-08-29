@@ -49,6 +49,14 @@
 .color-base {
   color: var(--orange-1);
 }
+.input-error {
+  outline: 2px solid rgb(218, 89, 89);
+  outline-offset: -2px;
+}
+
+
+
+
 .p-component {
   font-family: Segoe UI;
   font-size: 1rem;
@@ -1138,7 +1146,6 @@
   font-family: Segoe UI;
   font-size: 1rem;
   color: #495057;
-  background: #fff;
   padding: 0.75rem 0.75rem;
   border: 1px solid #ced4da;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s,

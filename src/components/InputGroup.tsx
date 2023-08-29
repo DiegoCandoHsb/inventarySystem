@@ -50,6 +50,7 @@ interface InputGroupProps {
   onNumberChange?: (e: InputNumberChangeEvent) => void;
   onButtonClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   onCheckBoxChange?: (event: CheckboxChangeEvent) => void;
+  prueba?: (e: any) => void
 }
 
 const defautlInputStyle = "w-full flex items-center";
@@ -113,6 +114,7 @@ export default function InputGroup({
       placeholder: placeholder,
       className: defautlInputStyle,
       disabled: OtherProps.disabled,
+      onInput: OtherProps.prueba
     };
 
     switch (type) {
