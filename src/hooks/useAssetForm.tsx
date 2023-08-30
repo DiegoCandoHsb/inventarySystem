@@ -20,7 +20,8 @@ import {
 } from "../services/asset.service";
 import { Toast } from "primereact/toast";
 import React from "react";
-import { AssetConfig } from "../config/assets.config";
+import { AssetConfig, AssetTypeConfig } from "../config/assets.config";
+import { inputErrors } from "../pages/fixedAssets/common/utilities";
 
 const useAssetForm = () => {
   const [assets, setAssets] = useState<AssetTypesData>(
@@ -54,7 +55,6 @@ const useAssetForm = () => {
   const submitButtonRef = useRef<HTMLInputElement>(null);
   const toastRef = useRef<Toast>(null);
   const dataTableRef = useRef<DataTable<AssetData[]>>(null);
-
 
   function calculateResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
@@ -141,9 +141,9 @@ const useAssetForm = () => {
   }
 
   // create asset
-  function createOrEditAsset() {
+  function createOrEditAsset(assetType: AssetTypeConfig) {
     if (!edit) {
-      CreateAsset(formatData("responsibleName", "id"))
+      CreateAsset(formatData(assetType, "responsibleName", "id"))
         .then(() => setModal(false))
         .catch((err) => {
           inputErrors(form);
@@ -152,7 +152,7 @@ const useAssetForm = () => {
         })
         .finally(async () => await setNewAssetsData());
     } else if (edit) {
-      UpdateAsset(formatData("responsibleName"))
+      UpdateAsset(formatData(assetType, "responsibleName"))
         .then(() => setModal(false))
         .catch((err) => {
           inputErrors(form);
@@ -160,49 +160,6 @@ const useAssetForm = () => {
           setModal(true);
         })
         .finally(async () => await setNewAssetsData());
-    }
-  }
-
-  function inputErrors(data: typeof form) {
-    const entries = Object.entries(data);
-
-    const filledData = entries.filter((entry) => {
-      if (entry[1].length > 1 || Number(entry[1]) > 0) {
-        return entry;
-      }
-    });
-
-    const emptyData = entries
-      .map((entrie) => {
-        if (!entrie[1].length || entrie[1] === 0) {
-          return entrie;
-        }
-        return;
-      })
-      .filter((x) => x !== undefined);
-
-    for (let i = 0; i < emptyData.length; i++) {
-      let emptyInp: HTMLInputElement | null = document.querySelector(
-        `#${emptyData[i]![0]}`
-      );
-
-      if (emptyInp === null || emptyInp.disabled) continue;
-      if (emptyInp.nodeName === "SPAN") {
-        emptyInp = emptyInp.firstChild as HTMLInputElement;
-      }
-      emptyInp.classList.add("input-error");
-    }
-
-    for (let i = 0; i < filledData.length; i++) {
-      let filledImp: HTMLInputElement | null = document.querySelector(
-        `#${filledData[i]![0]}`
-      );
-
-      if (filledImp === null || filledImp.disabled) continue;
-      if (filledImp.nodeName === "SPAN") {
-        filledImp = filledImp.firstChild as HTMLInputElement;
-      }
-      filledImp.classList.remove("input-error");
     }
   }
 
@@ -230,7 +187,10 @@ const useAssetForm = () => {
     });
   }
 
-  function formatData(...propsToRemove: (keyof AssetPlainData)[]) {
+  function formatData(
+    assetType: AssetTypeConfig,
+    ...propsToRemove: (keyof AssetPlainData)[]
+  ) {
     const { id, name, purchaseDate, ...details } = form;
     const data = {
       id,
@@ -238,6 +198,7 @@ const useAssetForm = () => {
       purchaseDate,
       details: {
         ...details,
+        assetType,
       },
     };
 

@@ -23,6 +23,7 @@ import TableHeaderComponent from "../../components/TableHeaderComponent";
 import { numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
 import { exportCSV } from "./common/utilities";
+import { AssetUbication } from "../../interfaces/enums/assetUbication.enum";
 
 export default function ElectronicEquipment() {
   const assetName = "electronicEquipmentAssets";
@@ -42,7 +43,6 @@ export default function ElectronicEquipment() {
     updateModal,
     dataTableRef,
   } = useAssetForm();
-
 
   function calculateDepreTime(date: string) {
     const acDate = new Date(date);
@@ -106,7 +106,6 @@ export default function ElectronicEquipment() {
                   );
                 }
               }
-
               return asset;
             })
           }
@@ -128,10 +127,12 @@ export default function ElectronicEquipment() {
             return depre ? "bg-warning" : "";
           }}
           stripedRows
+          size="small"
         >
           <Column
             header="ID"
             field="id"
+            body={(_, opt) => opt.rowIndex + 1}
             align="center"
             alignHeader="center"
             sortable
@@ -194,6 +195,13 @@ export default function ElectronicEquipment() {
           <Column
             header="Responsible"
             field="details.responsibleName"
+            align="center"
+            alignHeader="center"
+            sortable
+          ></Column>
+          <Column
+            header="Ubication"
+            field="details.ubication"
             align="center"
             alignHeader="center"
             sortable
@@ -290,13 +298,23 @@ export default function ElectronicEquipment() {
           }
         />
         <InputGroup
+          inputType="dropdown"
+          label="Asset Ubication"
+          name="ubication"
+          placeholder="Office"
+          value={form.ubication}
+          options={Object.values(AssetUbication)}
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          }
+        />
+        <InputGroup
           inputType="text"
           label="Supplier"
           name="supplier"
           placeholder="Gato"
           value={form.supplier}
           onChange={(e) => {
-            console.log(e.target.id);
             onChange(e.target.value, e.target.id as keyof AssetPlainData);
           }}
         />
@@ -308,7 +326,6 @@ export default function ElectronicEquipment() {
           value={form.value}
           decimalQuliantity={2} // Setting
           onNumberChange={(e) => {
-            console.log();
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
@@ -331,10 +348,11 @@ export default function ElectronicEquipment() {
           }
         />
         <InputGroup
-          inputType="number"
+          inputType="decimal"
           label="Residual Value"
           name="residualValue"
           placeholder="0"
+          decimalQuliantity={AssetConfig.decimalQuantity}
           value={form.residualValue}
           disabled={true}
           onNumberChange={(e) =>
@@ -351,7 +369,7 @@ export default function ElectronicEquipment() {
           name="annualDepreciation"
           placeholder="0"
           value={form.annualDepreciation}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
@@ -367,7 +385,7 @@ export default function ElectronicEquipment() {
           name="monthlyDepreciation"
           placeholder="0"
           value={form.monthlyDepreciation}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
@@ -383,7 +401,7 @@ export default function ElectronicEquipment() {
           name="valueBooks"
           placeholder="0"
           value={form.valueBooks}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
@@ -399,7 +417,7 @@ export default function ElectronicEquipment() {
           name="insured"
           placeholder="0"
           value={form.insured}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           onNumberChange={(e) =>
             onChange(
               e.value as number,
@@ -408,7 +426,7 @@ export default function ElectronicEquipment() {
             )
           }
         />
-        <InputGroup
+        {/* <InputGroup
           inputType="dropdown"
           label="Type"
           name="assetType"
@@ -418,7 +436,7 @@ export default function ElectronicEquipment() {
           onDropDownChange={(e) =>
             onChange(e.value as string, e.target.id as keyof AssetPlainData)
           }
-        />
+        /> */}
         <InputGroup
           inputType="dropdown"
           label="Status"
@@ -444,7 +462,9 @@ export default function ElectronicEquipment() {
           <Button
             ref={() => submitButtonRef}
             label={formSettings.submitButtonValue}
-            onClick={createOrEditAsset}
+            onClick={() =>
+              createOrEditAsset(AssetTypeConfig.ElectronicEquipment)
+            }
             className="w-full"
           />
         </div>

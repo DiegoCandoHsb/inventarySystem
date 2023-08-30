@@ -16,6 +16,8 @@ import { KeyFilterType } from "primereact/keyfilter";
 import { InputSwitch } from "primereact/inputswitch";
 import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
 import { Button } from "primereact/button";
+import { AssetConfig } from "../config/assets.config";
+import { AssetUbication } from "../interfaces/enums/assetUbication.enum";
 
 interface InputGroupProps {
   inputType:
@@ -32,7 +34,7 @@ interface InputGroupProps {
     | "button";
   label?: string;
   name: string;
-  value: string | number | boolean;
+  value: string | number | boolean | Date;
   placeholder?: string;
   options?: string[] | userSignUpData[] | SelectItemOptionsType;
   optionLabel?: string;
@@ -43,6 +45,7 @@ interface InputGroupProps {
   containerCls?: string;
   containerSpan?: string;
   buttonIcon?: string;
+  enumOptions?: AssetUbication;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onDateChange?: (e: CalendarChangeEvent) => void;
   onDropDownFilterChange?: (e: AutoCompleteChangeEvent) => void;
@@ -50,7 +53,6 @@ interface InputGroupProps {
   onNumberChange?: (e: InputNumberChangeEvent) => void;
   onButtonClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   onCheckBoxChange?: (event: CheckboxChangeEvent) => void;
-  prueba?: (e: any) => void
 }
 
 const defautlInputStyle = "w-full flex items-center";
@@ -96,10 +98,30 @@ export default function InputGroup({
     } else {
       const userOption = option as userSignUpData;
       if (type === "items") {
-        return <>{userOption.name.concat(" ", userOption.details.lastname)}</>;
+        return (
+          <>
+            {userOption.name.concat(
+              " ",
+              userOption.details.secondname,
+              " ",
+              userOption.details.lastname,
+              " ",
+              userOption.details.secondlastname
+            )}
+          </>
+        );
       } else {
         return userOption ? (
-          <>{userOption.name.concat(" ", userOption.details.lastname)}</>
+          <>
+            {userOption.name.concat(
+              " ",
+              userOption.details.secondname,
+              " ",
+              userOption.details.lastname,
+              " ",
+              userOption.details.secondlastname
+            )}
+          </>
         ) : (
           <>{placeholder}</>
         );
@@ -111,10 +133,9 @@ export default function InputGroup({
     const commonInputProps = {
       id: name,
       name: name,
-      placeholder: placeholder,
+      placeholder,
       className: defautlInputStyle,
       disabled: OtherProps.disabled,
-      onInput: OtherProps.prueba
     };
 
     switch (type) {
@@ -132,9 +153,10 @@ export default function InputGroup({
         return (
           <Calendar
             {...commonInputProps}
-            value={value ? new Date(value as string) : null}
+            value={value ? new Date(value.toString().replace("-", "/")) : null}
             onChange={OtherProps.onDateChange}
             dateFormat="dd/mm/yy"
+            showIcon
           />
         );
 
@@ -160,9 +182,9 @@ export default function InputGroup({
             optionLabel={OtherProps.optionLabel}
             optionValue={OtherProps.optionValue}
             itemTemplate={(opt) => templateType(opt, "items")}
-            // valueTemplate={(opt: userSignUpData) =>
-            // templateType(opt, "selected")
-            // }
+            valueTemplate={(opt: userSignUpData) =>
+              templateType(opt, "selected")
+            }
           />
         );
 
@@ -173,7 +195,7 @@ export default function InputGroup({
             value={Number(value)}
             maxFractionDigits={OtherProps.decimalQuliantity}
             onChange={OtherProps.onNumberChange}
-            prefix="$ " // settings
+            prefix={AssetConfig.valuePrefix}
           />
         );
 
@@ -239,6 +261,7 @@ export default function InputGroup({
             onClick={OtherProps.onButtonClick}
           />
         );
+
       default:
         break;
     }

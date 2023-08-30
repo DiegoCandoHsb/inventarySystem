@@ -23,6 +23,7 @@ import React from "react";
 import { Toast } from "primereact/toast";
 import { Vacations } from "../../interfaces/user.interface";
 import axios, { AxiosError } from "axios";
+import { inputErrors } from "../fixedAssets/common/utilities";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -92,6 +93,25 @@ export default function HumanResources() {
   }
 
   const AddUser = () => {
+    inputErrors(form);
+    if (!form.password.length || form.password !== form.confirmPassword) {
+      const headers = new axios.AxiosHeaders();
+      return showErrorMessage(
+        new AxiosError(
+          "error",
+          "400",
+          { headers },
+          {},
+          {
+            status: 400,
+            data: { message: "Passwords are not equals" },
+            statusText: "OK",
+            config: { headers },
+            headers,
+          }
+        )
+      );
+    }
     const userTransformedData: userSignUpData = {
       id: form.id.toString(),
       name: form.name,
@@ -103,6 +123,7 @@ export default function HumanResources() {
         secondlastname: form.secondlastname,
         phone: form.phone.toString(),
         vacations: form.vacations,
+        payroll: form.payroll,
       },
       active: form.active,
     };
@@ -110,11 +131,10 @@ export default function HumanResources() {
     createUser(userTransformedData)
       .then((data) => {
         setModal(false);
-        console.log(users);
         return data;
       })
       .catch((err) => {
-        console.log(err);
+        setModal(true);
         showErrorMessage(err);
       })
       .finally(async () => await setNewUser());
@@ -123,7 +143,6 @@ export default function HumanResources() {
   const setNewUser = async () => {
     const newUsers = await GetUsers();
     setUsers([...newUsers]);
-    setModal(false);
   };
 
   function setNewVacations() {
@@ -198,6 +217,17 @@ export default function HumanResources() {
     return nextElement?.classList.add("hidden");
   }
 
+  function activeSymb(userData: userSignUpData) {
+    const userActive = userData.active;
+    const activeSymbol = React.createElement("div", {
+      className: `w-5 h-5 rounded-full mx-auto ${
+        userActive ? "bg-lime-600" : "bg-red-700"
+      }`,
+    });
+
+    return activeSymbol;
+  }
+
   return (
     <div>
       <section className="mx-2">
@@ -207,6 +237,7 @@ export default function HumanResources() {
         </div>
         <DataTable
           className="shadow-md"
+          size="small"
           header={<TableHeaderComponent headerTitle="Human Resources" />}
           stripedRows
           value={
@@ -220,18 +251,10 @@ export default function HumanResources() {
                     " ",
                     userData.details.secondlastname
                   );
-
-                  const userActive = userData.active;
-                  const activeSymbol = React.createElement("div", {
-                    className: `w-5 h-5 rounded-full ${
-                      userActive ? "bg-lime-600" : "bg-red-700"
-                    }`,
-                  });
-
+                  console.log(userData);
                   return {
                     ...userData,
                     name: userFullName,
-                    userActive: activeSymbol,
                   };
                 })
               : []
@@ -240,34 +263,48 @@ export default function HumanResources() {
           selectionMode="single"
           title="Human Resources"
           onRowDoubleClick={(e) => updateModal(e)}
-          // paginator
+          paginator
           rows={25}
           rowsPerPageOptions={[25, 50, 75, 100]}
-          tableStyle={{ minWidth: "50rem" }}
+          // tableStyle={{ minWidth: "50rem" }}
+          sortField="active"
+          sortOrder={-1}
         >
           <Column
             header="Idetification"
             field="id"
-            style={{ width: "15%" }}
             sortable
+            align="center"
+            alignHeader="center"
           />
           <Column
             header="User Name"
             field="name"
-            style={{ width: "20%" }}
             sortable
+            align="center"
+            alignHeader="center"
           />
           <Column
             header="Email"
             field="email"
-            style={{ width: "20%" }}
             sortable
+            align="center"
+            alignHeader="center"
+          />
+          <Column
+            header="Payroll"
+            field="details.payroll"
+            sortable
+            align="center"
+            alignHeader="center"
           />
           <Column
             header="Active"
-            field="userActive"
-            style={{ width: "20%" }}
+            field="active"
+            body={(e: userSignUpData) => activeSymb(e)}
             sortable
+            align="center"
+            alignHeader="center"
           />
         </DataTable>
       </section>
@@ -447,9 +484,9 @@ export default function HumanResources() {
         visible={modal}
         onHide={() => setModal(false)}
         header="Create User"
-        className="w-2/5 flex"
+        className="w-1/3"
       >
-        <div className="flex justify-between">
+        <div className="grid grid-cols-8 gap-x-2">
           <InputGroup
             inputType="text"
             keyfilter={"pint"}
@@ -460,6 +497,7 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
+            containerSpan="col-span-4"
           />
           <InputGroup
             inputType="text"
@@ -471,9 +509,8 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
+            containerSpan="col-span-4"
           />
-        </div>
-        <div className="flex justify-between">
           <InputGroup
             inputType="text"
             label="First Name"
@@ -483,6 +520,7 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
+            containerSpan="col-span-4"
           />
           <InputGroup
             inputType="text"
@@ -493,9 +531,8 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
+            containerSpan="col-span-4"
           />
-        </div>
-        <div className="flex justify-between">
           <InputGroup
             inputType="text"
             label="Surname"
@@ -505,6 +542,7 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
+            containerSpan="col-span-4"
           />
           <InputGroup
             inputType="text"
@@ -515,43 +553,57 @@ export default function HumanResources() {
             onChange={(e) =>
               onChange(e.target.value, e.target.id as keyof UserPlainData)
             }
+            containerSpan="col-span-4"
           />
-        </div>
-        <InputGroup
-          inputType="text"
-          keyfilter={"email"}
-          label="Email"
-          name="email"
-          placeholder="example@exam.com"
-          value={form.email}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof UserPlainData)
-          }
-        />
-        <InputGroup
-          inputType="text"
-          label="Password"
-          name="password"
-          placeholder="*******"
-          value={form.password}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof UserPlainData)
-          }
-        />
-        <InputGroup
-          inputType="text"
-          label="Confirm Password"
-          name="confirmPassword"
-          placeholder="*******"
-          value={form.confirmPassword}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof UserPlainData)
-          }
-        />
-        <div className="w-full p-2 mt-2">
+          <InputGroup
+            inputType="text"
+            keyfilter={"email"}
+            label="Email"
+            name="email"
+            placeholder="example@exam.com"
+            value={form.email}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            containerSpan="col-span-5"
+          />
+          <InputGroup
+            inputType="dropdown"
+            label="Payroll"
+            name="payroll"
+            placeholder="Yes"
+            value={form.payroll}
+            options={["Yes", "No"]}
+            onDropDownChange={(e) =>
+              onChange(e.value as string, e.target.id as keyof UserPlainData)
+            }
+            containerSpan="col-span-3"
+          />
+          <InputGroup
+            inputType="text"
+            label="Password"
+            name="password"
+            placeholder="*******"
+            value={form.password}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            containerSpan="col-span-full"
+          />
+          <InputGroup
+            inputType="text"
+            label="Confirm Password"
+            name="confirmPassword"
+            placeholder="*******"
+            value={form.confirmPassword}
+            onChange={(e) =>
+              onChange(e.target.value, e.target.id as keyof UserPlainData)
+            }
+            containerSpan="col-span-full"
+          />
           <Button
             label="Create User"
-            className="w-full p-2"
+            className="col-span-full"
             onClick={AddUser}
           />
         </div>

@@ -15,6 +15,8 @@ import { NavigationRoutes } from "../../config/navigationRoutes";
 import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import React, { useRef } from "react";
+import axios, { AxiosError } from "axios";
+import { inputErrors } from "../fixedAssets/common/utilities";
 
 export function Component() {
   const navigate = useNavigate();
@@ -30,10 +32,13 @@ export function Component() {
     password,
     phone,
     confirmPassword,
+    payroll,
     onChange,
+    form,
   } = useForm<UserPlainData>(defaultUserData);
 
   function showErrorMessage(error: any) {
+    console.log(error.response.data.message);
     const errorStrings: string | string[] = error.response.data.message as
       | string
       | string[];
@@ -66,6 +71,27 @@ export function Component() {
   }
 
   function createUser() {
+    inputErrors(form);
+
+    if (!form.password.length || form.password !== form.confirmPassword) {
+      const headers = new axios.AxiosHeaders();
+      return showErrorMessage(
+        new AxiosError(
+          "error",
+          "400",
+          { headers },
+          {},
+          {
+            status: 400,
+            data: { message: "Passwords are not equals" },
+            statusText: "OK",
+            config: { headers },
+            headers,
+          }
+        )
+      );
+    }
+
     const userTransformedData: userSignUpData = {
       id: id.toString(),
       name,
@@ -76,8 +102,9 @@ export function Component() {
         secondname,
         secondlastname,
         phone,
+        payroll,
       },
-      active: true
+      active: true,
     };
 
     SignUp(userTransformedData)
@@ -88,7 +115,6 @@ export function Component() {
       })
       .catch((err) => {
         showErrorMessage(err);
-        // console.log(err);
       });
   }
   return (

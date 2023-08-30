@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { AssetTypeConfig } from "../config/assets.config";
+import { AssetConfig, AssetTypeConfig } from "../config/assets.config";
 import { Catalog } from "./catalog.interface";
 import { AssetActive } from "./enums/assetActive";
+import { AssetUbication } from "./enums/assetUbication.enum";
 import { userSignUpData } from "./userSignUpData.interface";
 
 export interface AssetData {
@@ -25,6 +26,7 @@ export interface AssetData {
     observation: string;
     insured: number;
     active: AssetActive;
+    ubication: AssetUbication
   };
   purchaseDate: string;
 }
@@ -59,13 +61,14 @@ export interface AssetPlainData {
   observation: string;
   insured: number;
   active: AssetActive;
+  ubication: AssetUbication
 }
 
 export const defaultAssetData: AssetPlainData = {
   id: 0,
   name: "",
   purchaseDate: "",
-  assetType: AssetTypeConfig.ElectronicEquipment,
+  assetType: " " as AssetTypeConfig,
   serialNumber: "",
   brand: "",
   model: "",
@@ -81,4 +84,5 @@ export const defaultAssetData: AssetPlainData = {
   observation: "",
   insured: 0,
   active: AssetActive.new,
+  ubication: AssetUbication.Office
 };

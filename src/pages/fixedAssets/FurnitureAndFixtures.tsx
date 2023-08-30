@@ -16,6 +16,7 @@ import { AssetConfig, AssetTypeConfig } from "../../config/assets.config";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { exportCSV, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
+import { AssetUbication } from "../../interfaces/enums/assetUbication.enum";
 
 export default function FurnitureAndFixtures() {
   const assetName = "furnitureAndFixturesAssets";
@@ -98,7 +99,6 @@ export default function FurnitureAndFixtures() {
                   );
                 }
               }
-
               return asset;
             })
           }
@@ -120,10 +120,12 @@ export default function FurnitureAndFixtures() {
             return depre ? "bg-warning" : "";
           }}
           stripedRows
+          size="small"
         >
           <Column
             header="ID"
             field="id"
+            body={(_, opt) => opt.rowIndex + 1}
             align="center"
             alignHeader="center"
             sortable
@@ -184,6 +186,13 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Responsible"
             field="details.responsibleName"
+            align="center"
+            alignHeader="center"
+            sortable
+          ></Column>
+          <Column
+            header="Ubication"
+            field="details.ubication"
             align="center"
             alignHeader="center"
             sortable
@@ -280,6 +289,17 @@ export default function FurnitureAndFixtures() {
           }
         />
         <InputGroup
+          inputType="dropdown"
+          label="Asset Ubication"
+          name="ubication"
+          placeholder="Office"
+          value={form.ubication}
+          options={Object.values(AssetUbication)}
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          }
+        />
+        <InputGroup
           inputType="text"
           label="Supplier"
           name="supplier"
@@ -296,7 +316,7 @@ export default function FurnitureAndFixtures() {
           name="value"
           placeholder="120.50"
           value={form.value}
-          decimalQuliantity={2} // Setting
+          decimalQuliantity={AssetConfig.decimalQuantity} // Setting
           onNumberChange={(e) => {
             console.log();
             onChange(
@@ -321,7 +341,7 @@ export default function FurnitureAndFixtures() {
           }
         />
         <InputGroup
-          inputType="number"
+          inputType="decimal"
           label="Residual Value"
           name="residualValue"
           placeholder="0"
@@ -341,7 +361,7 @@ export default function FurnitureAndFixtures() {
           name="annualDepreciation"
           placeholder="0"
           value={form.annualDepreciation}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
@@ -357,7 +377,7 @@ export default function FurnitureAndFixtures() {
           name="monthlyDepreciation"
           placeholder="0"
           value={form.monthlyDepreciation}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
@@ -373,7 +393,7 @@ export default function FurnitureAndFixtures() {
           name="monthlyDepreciation"
           placeholder="0"
           value={form.valueBooks}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
@@ -389,7 +409,7 @@ export default function FurnitureAndFixtures() {
           name="insured"
           placeholder="0"
           value={form.insured}
-          decimalQuliantity={2}
+          decimalQuliantity={AssetConfig.decimalQuantity}
           onNumberChange={(e) =>
             onChange(
               e.value as number,
@@ -398,7 +418,7 @@ export default function FurnitureAndFixtures() {
             )
           }
         />
-        <InputGroup
+        {/* <InputGroup
           inputType="dropdown"
           label="Type"
           name="assetType"
@@ -408,7 +428,7 @@ export default function FurnitureAndFixtures() {
           onDropDownChange={(e) =>
             onChange(e.value as string, e.target.id as keyof AssetPlainData)
           }
-        />
+        /> */}
         <InputGroup
           inputType="dropdown"
           label="Status"
@@ -434,7 +454,9 @@ export default function FurnitureAndFixtures() {
           <Button
             ref={() => submitButtonRef}
             label={formSettings.submitButtonValue}
-            onClick={createOrEditAsset}
+            onClick={() =>
+              createOrEditAsset(AssetTypeConfig.FurnitureAndFixtures)
+            }
             className="w-full"
           />
         </div>

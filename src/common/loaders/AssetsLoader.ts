@@ -10,6 +10,7 @@ export async function AssetDataLoader(): Promise<AssetTypesData> {
   const users = await GetUsers();
 
   const catalogs = await GetCatalog();
+
   let catalog = catalogs.filter(
     (ctlg) =>
       ctlg.catalogName === ElectronicEquipmentConfig.assetBrandCatalogName
@@ -18,6 +19,7 @@ export async function AssetDataLoader(): Promise<AssetTypesData> {
   if (!catalog) {
     catalog = { catalogName: "", catalogOptions: [] };
   }
+
   return {
     ...data,
     users,

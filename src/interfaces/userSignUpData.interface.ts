@@ -10,6 +10,7 @@ export interface userSignUpData {
     secondname: string;
     secondlastname: string;
     phone: string;
+    payroll: "Yes" | "No";
     // vacations
     vacations?: Vacations[];
   };
@@ -27,6 +28,7 @@ export interface UserPlainData {
   password: string;
   confirmPassword: string;
   active: boolean;
+  payroll: "Yes" | "No";
   // dates data
   vacations: Vacations[];
 }
@@ -42,6 +44,7 @@ export interface LoginResponseData {
       secondname: string;
       secondlastname: string;
       phone: string;
+      payroll: "Yes" | "No";
       // dates data
       vacations: Vacations[];
     };
@@ -60,6 +63,7 @@ export const defaultUserData: UserPlainData = {
   password: "",
   confirmPassword: "",
   active: true,
+  payroll: "Yes",
   // dates data
-  vacations: []
+  vacations: [],
 };

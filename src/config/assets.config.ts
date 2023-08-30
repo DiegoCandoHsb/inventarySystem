@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 export const AssetConfig = {
   decimalQuantity: 2,
-  valuePrefix: "$",
+  valuePrefix: "$ ",
 
   dialogCreateTitle: "Create Asset",
   dialogUpdateTitle: "Update Asset",

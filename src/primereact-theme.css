@@ -5100,3 +5100,16 @@
   border-bottom-right-radius: 6px;
   border-bottom-left-radius: 6px;
 }
+
+.p-divider .p-divider-content {
+  background-color: var(--color-level-2);
+}
+.p-divider.p-divider-horizontal {
+  margin: 1.25rem 0;
+  padding: 0 1.25rem;
+}
+.p-divider.p-divider-horizontal .p-divider-content {
+  padding: 0 0.5rem;
+  background-color: var(--color-level-2);
+  background: var(--color-level-2);
+}
