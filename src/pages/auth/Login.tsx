@@ -2,17 +2,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Link, useNavigate } from "react-router-dom";
+import { Link, redirect, useNavigate } from "react-router-dom";
 import RegisterForm from "../../components/Auth-Components/RegisterForm";
 import { userSignInData } from "../../interfaces/userSingInData.interface";
 import { useForm } from "../../hooks/useForm";
-import { SignIn } from "../../services/auth.service";
+import { SignIn, verifyToken } from "../../services/auth.service";
 import InputGroup from "../../components/InputGroup";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { NavigationRoutes } from "../../config/navigationRoutes";
 import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
+import { saveTokenToLS } from "../../common/tokenMng/tokenMng";
 
 export function Component() {
   const navigate = useNavigate();
@@ -58,13 +59,12 @@ export function Component() {
   function signIn(): void {
     SignIn({ email, password })
       .then((data) => {
+        saveTokenToLS(data.token);
         navigate("/");
-        console.log(data);
         return data;
       })
       .catch((error) => {
         showErrorMessage(error);
-        // console.log(error);
       });
   }
 
@@ -112,9 +112,4 @@ export function Component() {
       </div>
     </section>
   );
-}
-
-export default function loginLoader() {
-  sessionStorage.removeItem("token");
-  return { hola: true };
 }

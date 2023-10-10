@@ -54,7 +54,10 @@
   outline-offset: -2px;
 }
 
-
+.spiner-border {
+  border: 10px solid var(--color-level-3);
+  border-top: 10px solid var(--orange-1);
+}
 
 
 .p-component {

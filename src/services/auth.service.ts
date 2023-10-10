@@ -1,3 +1,4 @@
+import { getTokenFromLs, saveTokenToLS } from "../common/tokenMng/tokenMng";
 import {
   LoginResponseData,
   userSignUpData,
@@ -24,7 +25,16 @@ export async function SignIn({
     email,
     password,
   }).then((res) => {
-    sessionStorage.setItem("token", res.data.token);
+    // sessionStorage.setItem("token", res.data.token);
+    saveTokenToLS(res.data.token);
     return res.data;
   });
+}
+
+export async function verifyToken(): Promise<boolean> {
+  return (
+    await HsbBaseApiDb.post<boolean>("/auth/verify", {
+      token: getTokenFromLs(),
+    })
+  ).data;
 }

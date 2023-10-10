@@ -12,7 +12,6 @@ export default function FixedAssetsMenu() {
   const [activitiesMenuOptions] = useState<ActivitiesMenuOptions[]>([
     {
       icon: <i className="pi pi-desktop" style={iconStyles}></i>,
-
       title: "Electronic Equipment",
       navigateTo: NavigationRoutes.elecEquiPath,
     },

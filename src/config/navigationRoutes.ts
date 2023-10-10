@@ -27,3 +27,4 @@ export const NavigationRoutes = {
     return this.authBasePath.concat("register/");
   },
 };
+

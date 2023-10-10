@@ -1,26 +1,31 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
 import Layaout from "../common/Layaout";
 import NotFoundPage from "../common/NotFoundPage";
-import Activities, { ActivitiesLoader } from "../pages/Activities";
+import Activities from "../pages/Activities";
 import AuthLayaout from "../common/AuthLayaout";
 import FixedAssetsMenu from "../pages/fixedAssets/FixedAssetsMenu";
 import { NavigationRoutes } from "../config/navigationRoutes";
 
 import { AssetDataLoader } from "../common/loaders/AssetsLoader";
-import HumanResources, { HumanResourcesLoader } from "../pages/humanResources/HumanResources";
+import HumanResources, {
+  HumanResourcesLoader,
+} from "../pages/humanResources/HumanResources";
 import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
 import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
 import Expenses from "../pages/expenses/expenses";
+import TokenLoader from "../common/loaders/TokenLoader";
+import { PathProtectedLoader } from "../common/loaders/ProtectedPathLoader";
 
 export const routes = createBrowserRouter([
   {
     path: NavigationRoutes.basePath,
     element: <Layaout />,
+    // loader: PathProtectedLoader,
     errorElement: <NotFoundPage />,
     children: [
       {
         index: true,
-        loader: ActivitiesLoader,
+        loader: PathProtectedLoader,
         element: <Activities />,
       },
       {
@@ -35,7 +40,7 @@ export const routes = createBrowserRouter([
       },
       {
         path: NavigationRoutes.fixedAssetsPath,
-        element: <AuthLayaout />,
+        loader: PathProtectedLoader,
         children: [
           {
             index: true,
@@ -70,18 +75,12 @@ export const routes = createBrowserRouter([
       },
       {
         path: NavigationRoutes.login,
-        loader: () =>
-          import("../pages/auth/Login").then((component) =>
-            component.default()
-          ),
+        loader: TokenLoader,
         lazy: () => import("../pages/auth/Login"),
       },
       {
         path: NavigationRoutes.register,
-        loader: () =>
-          import("../pages/auth/Login").then((component) =>
-            component.default()
-          ),
+        loader: TokenLoader,
         lazy: () => import("../pages/auth/Register"),
       },
     ],

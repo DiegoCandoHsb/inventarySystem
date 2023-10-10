@@ -1,8 +1,9 @@
 import { useState } from "react";
 import ActivitiesCardcomponent from "../components/ActivitiesCardComponent";
 import { ActivitiesMenuOptions } from "../interfaces/activitiesMenus.interface";
-import DefaultImg from "../assets/images/defaultimg.jpg";
 import { NavigationRoutes } from "../config/navigationRoutes";
+import { verifyToken } from "../services/auth.service";
+import { redirect } from "react-router-dom";
 
 export default function Activities() {
   const iconStyles: React.CSSProperties = {
@@ -42,12 +43,4 @@ export default function Activities() {
       </ul>
     </section>
   );
-}
-
-export function ActivitiesLoader() {
-  const token = sessionStorage.getItem("token");
-
-  // if (!token) return redirect("/auth/login");
-
-  return token;
 }

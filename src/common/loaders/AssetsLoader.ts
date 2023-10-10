@@ -1,11 +1,9 @@
 import { ElectronicEquipmentConfig } from "../../config/assets.config";
-import { AssetTypesData } from "../../interfaces/asset.interface";
 import { GetAllAssets } from "../../services/asset.service";
 import { GetCatalog } from "../../services/catalog.service";
 import { GetUsers } from "../../services/user.service";
 
-export async function AssetDataLoader(): Promise<AssetTypesData> {
-
+export async function AssetDataLoader() {
   const data = await GetAllAssets();
   const users = await GetUsers();
 

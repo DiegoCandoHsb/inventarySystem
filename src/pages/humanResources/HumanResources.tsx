@@ -11,7 +11,7 @@ import {
   defaultUserData,
   userSignUpData,
 } from "../../interfaces/userSignUpData.interface";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useOutletContext } from "react-router-dom";
 import { useRef, useState } from "react";
 import { HumanResourcesLoader } from "../../interfaces/humanResLoader.interface";
 import { Dialog } from "primereact/dialog";
@@ -24,6 +24,7 @@ import { Toast } from "primereact/toast";
 import { Vacations } from "../../interfaces/user.interface";
 import axios, { AxiosError } from "axios";
 import { inputErrors } from "../fixedAssets/common/utilities";
+import LoadSpinner from "../../components/LoadSpinner";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -43,6 +44,7 @@ export default function HumanResources() {
   });
 
   const toastRef = useRef<Toast>(null);
+  const [turnSpinner, setTurnSpinner] = useOutletContext();
 
   function openModal() {
     setState(defaultUserData);
@@ -112,6 +114,7 @@ export default function HumanResources() {
         )
       );
     }
+
     const userTransformedData: userSignUpData = {
       id: form.id.toString(),
       name: form.name,
@@ -229,392 +232,400 @@ export default function HumanResources() {
   }
 
   return (
-    <div>
-      <section className="mx-2">
-        <Toast ref={toastRef} position="top-right" />
-        <div className="my-5">
-          <Button label="Add" onClick={openModal} />
-        </div>
-        <DataTable
-          className="shadow-md"
-          size="small"
-          header={<TableHeaderComponent headerTitle="Human Resources" />}
-          stripedRows
-          value={
-            users
-              ? users.map(({ name, ...userData }: userSignUpData) => {
-                  const userFullName = name.concat(
-                    " ",
-                    userData.details.secondname,
-                    " ",
-                    userData.details.lastname,
-                    " ",
-                    userData.details.secondlastname
-                  );
-                  console.log(userData);
-                  return {
-                    ...userData,
-                    name: userFullName,
-                  };
-                })
-              : []
-          }
-          emptyMessage={"No Users found"}
-          selectionMode="single"
-          title="Human Resources"
-          onRowDoubleClick={(e) => updateModal(e)}
-          paginator
-          rows={25}
-          rowsPerPageOptions={[25, 50, 75, 100]}
-          // tableStyle={{ minWidth: "50rem" }}
-          sortField="active"
-          sortOrder={-1}
-        >
-          <Column
-            header="Idetification"
-            field="id"
-            sortable
-            align="center"
-            alignHeader="center"
-          />
-          <Column
-            header="User Name"
-            field="name"
-            sortable
-            align="center"
-            alignHeader="center"
-          />
-          <Column
-            header="Email"
-            field="email"
-            sortable
-            align="center"
-            alignHeader="center"
-          />
-          <Column
-            header="Payroll"
-            field="details.payroll"
-            sortable
-            align="center"
-            alignHeader="center"
-          />
-          <Column
-            header="Active"
-            field="active"
-            body={(e: userSignUpData) => activeSymb(e)}
-            sortable
-            align="center"
-            alignHeader="center"
-          />
-        </DataTable>
-      </section>
-      {/* modal to update user */}
-      <Dialog
-        visible={edit}
-        onHide={() => setEdit(false)}
-        header="Edit User"
-        className="w-2/5 bg-red-500"
-      >
-        <div className="grid grid-cols-4 gap-2">
-          <InputGroup
-            inputType="text"
-            keyfilter={"pint"}
-            label="Identification"
-            name="id"
-            placeholder="1728548544"
-            value={form.id}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-          />
-          <InputGroup
-            inputType="text"
-            keyfilter={"pint"}
-            label="Phone"
-            name="phone"
-            placeholder="0979301325"
-            value={form.phone}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-          />
-          <InputGroup
-            inputType="text"
-            label="First Name"
-            name="name"
-            placeholder="David"
-            value={form.name}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-          />
-          <InputGroup
-            inputType="text"
-            label="Second Name"
-            name="secondname"
-            placeholder="Mateo"
-            value={form.secondname}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-          />
-          <InputGroup
-            inputType="text"
-            label="Surname"
-            name="lastname"
-            placeholder="Castro"
-            value={form.lastname}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-          />
-          <InputGroup
-            inputType="text"
-            label="Second Surname"
-            name="secondlastname"
-            placeholder="Castro"
-            value={form.secondlastname}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-          />
-          <InputGroup
-            inputType="text"
-            keyfilter={"email"}
-            label="Email"
-            name="email"
-            placeholder="example@exam.com"
-            value={form.email}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-3"
-          />
-          <InputGroup
-            inputType="checkbox"
-            label="Active"
-            name="active"
-            value={form.active}
-            onCheckBoxChange={(e) =>
-              onChange(Boolean(!e.value), e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-1"
-          />
-          {/* vacations */}
-          <div className="bg-level-3 col-span-full rounded-md shadow-md shadow-zinc-500">
-            <h1
-              className="w-full text-2xl font-bold text-center bg-level-2 mx-auto py-2"
-              onClick={toggleElement}
+    <>
+      {!users ? (
+        <LoadSpinner />
+      ) : (
+        <div>
+          <section className="mx-2">
+            <Toast ref={toastRef} position="top-right" />
+            <div className="my-5">
+              <Button label="Add" onClick={openModal} />
+            </div>
+            <DataTable
+              className="shadow-md"
+              size="small"
+              header={<TableHeaderComponent headerTitle="Human Resources" />}
+              stripedRows
+              value={
+                users
+                  ? users.map(({ name, ...userData }: userSignUpData) => {
+                      const userFullName = name.concat(
+                        " ",
+                        userData.details.secondname,
+                        " ",
+                        userData.details.lastname,
+                        " ",
+                        userData.details.secondlastname
+                      );
+                      return {
+                        ...userData,
+                        name: userFullName,
+                      };
+                    })
+                  : []
+              }
+              emptyMessage={"No Users found"}
+              selectionMode="single"
+              title="Human Resources"
+              onRowDoubleClick={(e) => updateModal(e)}
+              paginator
+              rows={25}
+              rowsPerPageOptions={[25, 50, 75, 100]}
+              sortField="active"
+              sortOrder={-1}
             >
-              Vacations
-            </h1>
-            <div className="col-span-full grid grid-cols-7 gap-2 rounded-md p-2">
+              <Column
+                header="Idetification"
+                field="id"
+                sortable
+                align="center"
+                alignHeader="center"
+              />
+              <Column
+                header="User Name"
+                field="name"
+                sortable
+                align="center"
+                alignHeader="center"
+              />
+              <Column
+                header="Email"
+                field="email"
+                sortable
+                align="center"
+                alignHeader="center"
+              />
+              <Column
+                header="Payroll"
+                field="details.payroll"
+                sortable
+                align="center"
+                alignHeader="center"
+              />
+              <Column
+                header="Active"
+                field="active"
+                body={(e: userSignUpData) => activeSymb(e)}
+                sortable
+                align="center"
+                alignHeader="center"
+              />
+            </DataTable>
+          </section>
+          {/* modal to update user */}
+          <Dialog
+            visible={edit}
+            onHide={() => setEdit(false)}
+            header="Edit User"
+            className="w-2/5 bg-red-500"
+          >
+            <div className="grid grid-cols-4 gap-2">
               <InputGroup
-                inputType="date"
-                label="Start vacation day"
-                name="startDay"
-                placeholder={new Date().toISOString().split("T")[0]}
-                value={dates.startVacationDay.toString()}
-                onDateChange={(e) =>
-                  setDates((currentValues) => ({
-                    ...currentValues,
-                    startVacationDay: new Date(e.value as Date)
-                      .toISOString()
-                      .split("T")[0],
-                  }))
+                inputType="text"
+                keyfilter={"pint"}
+                label="Identification"
+                name="id"
+                placeholder="1728548544"
+                value={form.id}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+              />
+              <InputGroup
+                inputType="text"
+                keyfilter={"pint"}
+                label="Phone"
+                name="phone"
+                placeholder="0979301325"
+                value={form.phone}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+              />
+              <InputGroup
+                inputType="text"
+                label="First Name"
+                name="name"
+                placeholder="David"
+                value={form.name}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+              />
+              <InputGroup
+                inputType="text"
+                label="Second Name"
+                name="secondname"
+                placeholder="Mateo"
+                value={form.secondname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+              />
+              <InputGroup
+                inputType="text"
+                label="Surname"
+                name="lastname"
+                placeholder="Castro"
+                value={form.lastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+              />
+              <InputGroup
+                inputType="text"
+                label="Second Surname"
+                name="secondlastname"
+                placeholder="Castro"
+                value={form.secondlastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+              />
+              <InputGroup
+                inputType="text"
+                keyfilter={"email"}
+                label="Email"
+                name="email"
+                placeholder="example@exam.com"
+                value={form.email}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-3"
               />
               <InputGroup
-                inputType="date"
-                label="End vacation day"
-                name="startDay"
-                placeholder={new Date().toISOString().split("T")[0]}
-                value={dates.endVacationDay.toString()}
-                onDateChange={(e) =>
-                  setDates((currentValues) => ({
-                    ...currentValues,
-                    endVacationDay: new Date(e.value as Date)
-                      .toISOString()
-                      .split("T")[0],
-                  }))
+                inputType="checkbox"
+                label="Active"
+                name="active"
+                value={form.active}
+                onCheckBoxChange={(e) =>
+                  onChange(
+                    Boolean(!e.value),
+                    e.target.id as keyof UserPlainData
+                  )
                 }
-                containerSpan="col-span-3"
-              />
-              <InputGroup
-                inputType="button"
-                name="submit"
-                value={""}
-                buttonIcon="pi-plus"
-                onButtonClick={setNewVacations}
                 containerSpan="col-span-1"
               />
-              <DataTable
-                className="col-span-full rounded-md p-0"
-                stripedRows
-                selectionMode="single"
-                title="Vacations"
-                rows={5}
-                rowsPerPageOptions={[5, 10, 15, 20]}
-                value={form.vacations.map((e) => {
-                  return e;
-                })}
-                // onRowDoubleClick={(e) => console.log(e)}
-                onCellClick={() => console.log("xd")}
-              >
-                <Column body={(x: Vacations, d) => deleteRowButton(x, d)} />
-                <Column header="Start V. day" field="startVacationDay" />
-                <Column header="End V. day" field="endVacationDay" />
-                <Column header="Days" field="days" />
-              </DataTable>
+              {/* vacations */}
+              <div className="bg-level-3 col-span-full rounded-md shadow-md shadow-zinc-500">
+                <h1
+                  className="w-full text-2xl font-bold text-center bg-level-2 mx-auto py-2"
+                  onClick={toggleElement}
+                >
+                  Vacations
+                </h1>
+                <div className="col-span-full grid grid-cols-7 gap-2 rounded-md p-2">
+                  <InputGroup
+                    inputType="date"
+                    label="Start vacation day"
+                    name="startDay"
+                    placeholder={new Date().toISOString().split("T")[0]}
+                    value={dates.startVacationDay.toString()}
+                    onDateChange={(e) =>
+                      setDates((currentValues) => ({
+                        ...currentValues,
+                        startVacationDay: new Date(e.value as Date)
+                          .toISOString()
+                          .split("T")[0],
+                      }))
+                    }
+                    containerSpan="col-span-3"
+                  />
+                  <InputGroup
+                    inputType="date"
+                    label="End vacation day"
+                    name="startDay"
+                    placeholder={new Date().toISOString().split("T")[0]}
+                    value={dates.endVacationDay.toString()}
+                    onDateChange={(e) =>
+                      setDates((currentValues) => ({
+                        ...currentValues,
+                        endVacationDay: new Date(e.value as Date)
+                          .toISOString()
+                          .split("T")[0],
+                      }))
+                    }
+                    containerSpan="col-span-3"
+                  />
+                  <InputGroup
+                    inputType="button"
+                    name="submit"
+                    value={""}
+                    buttonIcon="pi-plus"
+                    onButtonClick={setNewVacations}
+                    containerSpan="col-span-1"
+                  />
+                  <DataTable
+                    className="col-span-full rounded-md p-0"
+                    stripedRows
+                    selectionMode="single"
+                    title="Vacations"
+                    rows={5}
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    value={form.vacations.map((e) => {
+                      return e;
+                    })}
+                    // onRowDoubleClick={(e) => console.log(e)}
+                    onCellClick={() => console.log("xd")}
+                  >
+                    <Column body={(x: Vacations, d) => deleteRowButton(x, d)} />
+                    <Column header="Start V. day" field="startVacationDay" />
+                    <Column header="End V. day" field="endVacationDay" />
+                    <Column header="Days" field="days" />
+                  </DataTable>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <InputGroup
-          inputType="button"
-          name="submit"
-          value={"Update"}
-          onButtonClick={updateUser}
-          containerSpan={"1"}
-        />
-      </Dialog>
+            <InputGroup
+              inputType="button"
+              name="submit"
+              value={"Update"}
+              onButtonClick={updateUser}
+              containerSpan={"1"}
+            />
+          </Dialog>
 
-      {/* Modal to create user */}
-      <Dialog
-        visible={modal}
-        onHide={() => setModal(false)}
-        header="Create User"
-        className="w-1/3"
-      >
-        <div className="grid grid-cols-8 gap-x-2">
-          <InputGroup
-            inputType="text"
-            keyfilter={"pint"}
-            label="Identification"
-            name="id"
-            placeholder="1728548544"
-            value={form.id}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-4"
-          />
-          <InputGroup
-            inputType="text"
-            keyfilter={"pint"}
-            label="Phone"
-            name="phone"
-            placeholder="0979301325"
-            value={form.phone}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-4"
-          />
-          <InputGroup
-            inputType="text"
-            label="First Name"
-            name="name"
-            placeholder="David"
-            value={form.name}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-4"
-          />
-          <InputGroup
-            inputType="text"
-            label="Second Name"
-            name="secondname"
-            placeholder="Mateo"
-            value={form.secondname}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-4"
-          />
-          <InputGroup
-            inputType="text"
-            label="Surname"
-            name="lastname"
-            placeholder="Castro"
-            value={form.lastname}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-4"
-          />
-          <InputGroup
-            inputType="text"
-            label="Second Surname"
-            name="secondlastname"
-            placeholder="Castro"
-            value={form.secondlastname}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-4"
-          />
-          <InputGroup
-            inputType="text"
-            keyfilter={"email"}
-            label="Email"
-            name="email"
-            placeholder="example@exam.com"
-            value={form.email}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-5"
-          />
-          <InputGroup
-            inputType="dropdown"
-            label="Payroll"
-            name="payroll"
-            placeholder="Yes"
-            value={form.payroll}
-            options={["Yes", "No"]}
-            onDropDownChange={(e) =>
-              onChange(e.value as string, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-3"
-          />
-          <InputGroup
-            inputType="text"
-            label="Password"
-            name="password"
-            placeholder="*******"
-            value={form.password}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-full"
-          />
-          <InputGroup
-            inputType="text"
-            label="Confirm Password"
-            name="confirmPassword"
-            placeholder="*******"
-            value={form.confirmPassword}
-            onChange={(e) =>
-              onChange(e.target.value, e.target.id as keyof UserPlainData)
-            }
-            containerSpan="col-span-full"
-          />
-          <Button
-            label="Create User"
-            className="col-span-full"
-            onClick={AddUser}
-          />
+          {/* Modal to create user */}
+          <Dialog
+            visible={modal}
+            onHide={() => setModal(false)}
+            header="Create User"
+            className="w-1/3"
+          >
+            <div className="grid grid-cols-8 gap-x-2">
+              <InputGroup
+                inputType="text"
+                keyfilter={"pint"}
+                label="Identification"
+                name="id"
+                placeholder="1728548544"
+                value={form.id}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
+              />
+              <InputGroup
+                inputType="text"
+                keyfilter={"pint"}
+                label="Phone"
+                name="phone"
+                placeholder="0979301325"
+                value={form.phone}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
+              />
+              <InputGroup
+                inputType="text"
+                label="First Name"
+                name="name"
+                placeholder="David"
+                value={form.name}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
+              />
+              <InputGroup
+                inputType="text"
+                label="Second Name"
+                name="secondname"
+                placeholder="Mateo"
+                value={form.secondname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
+              />
+              <InputGroup
+                inputType="text"
+                label="Surname"
+                name="lastname"
+                placeholder="Castro"
+                value={form.lastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
+              />
+              <InputGroup
+                inputType="text"
+                label="Second Surname"
+                name="secondlastname"
+                placeholder="Castro"
+                value={form.secondlastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
+              />
+              <InputGroup
+                inputType="text"
+                keyfilter={"email"}
+                label="Email"
+                name="email"
+                placeholder="example@exam.com"
+                value={form.email}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-5"
+              />
+              <InputGroup
+                inputType="dropdown"
+                label="Payroll"
+                name="payroll"
+                placeholder="Yes"
+                value={form.payroll}
+                options={["Yes", "No"]}
+                onDropDownChange={(e) =>
+                  onChange(
+                    e.value as string,
+                    e.target.id as keyof UserPlainData
+                  )
+                }
+                containerSpan="col-span-3"
+              />
+              <InputGroup
+                inputType="text"
+                label="Password"
+                name="password"
+                placeholder="*******"
+                value={form.password}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-full"
+              />
+              <InputGroup
+                inputType="text"
+                label="Confirm Password"
+                name="confirmPassword"
+                placeholder="*******"
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-full"
+              />
+              <Button
+                label="Create User"
+                className="col-span-full"
+                onClick={AddUser}
+              />
+            </div>
+          </Dialog>
         </div>
-      </Dialog>
-    </div>
+      )}
+    </>
   );
 }
-
 export async function HumanResourcesLoader(): Promise<HumanResourcesLoader> {
   const users: userSignUpData[] = await GetUsers();
-
   return {
     users,
   };

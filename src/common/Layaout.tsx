@@ -1,20 +1,28 @@
 import { Outlet, useNavigation } from "react-router-dom";
 import NavComponent from "../components/NavComponent";
-import { ProgressSpinner } from "primereact/progressspinner";
+import { NavigationRoutes } from "../config/navigationRoutes";
+import { useEffect, useState } from "react";
+import LoadSpinner from "../components/LoadSpinner";
 
 export default function Layaout() {
-  const { state } = useNavigation();
+  // const { state, location } = useNavigation();
+  const xd = useNavigation();
+
+  const [turnSpinner, setTurnSpinner] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log(turnSpinner);
+  }, [turnSpinner]);
+
   return (
     <div className="bg-level-3 h-screen">
       <nav>
         <NavComponent />
       </nav>
-      {state === "loading" ? (
-        <div className="w-full h-96 flex justify-center content-center items-center">
-          <ProgressSpinner />
-        </div>
+      {turnSpinner ? (
+        <LoadSpinner />
       ) : (
-        <Outlet />
+        <Outlet context={[turnSpinner, setTurnSpinner]} />
       )}
     </div>
   );

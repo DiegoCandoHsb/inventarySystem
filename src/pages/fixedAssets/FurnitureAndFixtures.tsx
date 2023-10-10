@@ -9,12 +9,11 @@ import {
 import { DataTable } from "primereact/datatable";
 import TableHeaderComponent from "../../components/TableHeaderComponent";
 import { Column } from "primereact/column";
-import { Card } from "primereact/card";
 import { Dialog } from "primereact/dialog";
 import InputGroup from "../../components/InputGroup";
 import { AssetConfig, AssetTypeConfig } from "../../config/assets.config";
 import { AssetActive } from "../../interfaces/enums/assetActive";
-import { exportCSV, numValCell } from "./common/utilities";
+import { exportExcel, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
 import { AssetUbication } from "../../interfaces/enums/assetUbication.enum";
 
@@ -76,7 +75,11 @@ export default function FurnitureAndFixtures() {
             <TableHeaderComponent
               headerTitle="Furniture and Fixtures"
               export
-              fun={() => exportCSV(false, dataTableRef)}
+              fun={async () => {
+                if (assets) {
+                  return exportExcel(assets[assetName]!, assetName);
+                }
+              }}
             />
           }
           exportFilename={AssetConfig.furnitureAndFixture}

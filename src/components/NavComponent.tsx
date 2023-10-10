@@ -7,6 +7,7 @@ import { Avatar } from "primereact/avatar";
 
 import HSBlogo from "../assets/images/hsbLogo.svg";
 import { NavBarConfig } from "../config/navBar.config";
+import { removeTokenToLs } from "../common/tokenMng/tokenMng";
 
 type dataItem = { title: string; path: string };
 export default function NavComponent() {
@@ -77,6 +78,7 @@ export default function NavComponent() {
               className="relative w-3/5"
             />
             <Link
+              onClick={() => removeTokenToLs()}
               to={NavigationRoutes.login}
               className="flex w-1/4 items-center justify-center font-bold color-link hover:underline"
             >
