@@ -11,8 +11,8 @@ import {
   defaultUserData,
   userSignUpData,
 } from "../../interfaces/userSignUpData.interface";
-import { useLoaderData, useOutletContext } from "react-router-dom";
-import { useRef, useState } from "react";
+import { useLoaderData } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { HumanResourcesLoader } from "../../interfaces/humanResLoader.interface";
 import { Dialog } from "primereact/dialog";
 import { useForm } from "../../hooks/useForm";
@@ -34,6 +34,9 @@ export default function HumanResources() {
   const [modal, setModal] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
 
+  const [aviableForVacations, setAaviableForVacations] =
+    useState<boolean>(false);
+
   const { form, onChange, setState } = useForm<UserPlainData>(defaultUserData);
 
   const currentDate = new Date().toISOString().split("T")[0];
@@ -43,8 +46,30 @@ export default function HumanResources() {
     days: 0,
   });
 
+  const vacationsRef = useRef<HTMLHeadingElement>(null);
   const toastRef = useRef<Toast>(null);
-  const [turnSpinner, setTurnSpinner] = useOutletContext();
+
+  useEffect(() => {
+    checkAdmissionDate();
+  }, [form]);
+
+  function checkAdmissionDate(): boolean {
+    console.log(form);
+    if (!form.admissionDate) {
+      setAaviableForVacations(false);
+      return false;
+    } else {
+      const admissionDate = new Date(form.admissionDate).getTime();
+      const actDate = new Date().getTime();
+      // 31557600000
+      const diference = actDate - admissionDate;
+      if (diference >= 31557600000) {
+        setAaviableForVacations(true);
+        return true;
+      }
+      return false;
+    }
+  }
 
   function openModal() {
     setState(defaultUserData);
@@ -210,14 +235,24 @@ export default function HumanResources() {
     );
   }
 
-  function toggleElement(e?: React.MouseEvent<HTMLElement>) {
-    const nextElement = e?.currentTarget.nextElementSibling;
+  function toggleElement(elm: React.RefObject<HTMLHeadingElement>): string {
+    if (!aviableForVacations) return 'not aviable';
+
+    const nextElement = elm.current?.nextElementSibling;
+
     const elmClasses = [...(nextElement?.classList as unknown as string[])];
+    if (!aviableForVacations) {
+      console.log("xd");
+      nextElement?.classList.add("hidden");
+    }
 
     if (elmClasses.includes("hidden")) {
-      return nextElement?.classList.remove("hidden");
+      nextElement?.classList.remove("hidden");
+      return "xd";
     }
-    return nextElement?.classList.add("hidden");
+    nextElement?.classList.add("hidden");
+
+    return "done";
   }
 
   function activeSymb(userData: userSignUpData) {
@@ -268,7 +303,9 @@ export default function HumanResources() {
               emptyMessage={"No Users found"}
               selectionMode="single"
               title="Human Resources"
-              onRowDoubleClick={(e) => updateModal(e)}
+              onRowDoubleClick={(e) => {
+                updateModal(e);
+              }}
               paginator
               rows={25}
               rowsPerPageOptions={[25, 50, 75, 100]}
@@ -396,6 +433,7 @@ export default function HumanResources() {
                 containerSpan="col-span-3"
               />
               <InputGroup
+                containerCls="items-center mb-auto"
                 inputType="checkbox"
                 label="Active"
                 name="active"
@@ -408,15 +446,34 @@ export default function HumanResources() {
                 }
                 containerSpan="col-span-1"
               />
+              <InputGroup
+                inputType="date"
+                label="Admission Date"
+                name="admissionDate"
+                value={form.admissionDate}
+                containerSpan="col-span-4"
+                onDateChange={(e) =>
+                  onChange(
+                    new Date(e.value as Date).toISOString().split("T")[0],
+                    e.target.name as keyof UserPlainData
+                  )
+                }
+              />
+
               {/* vacations */}
               <div className="bg-level-3 col-span-full rounded-md shadow-md shadow-zinc-500">
                 <h1
-                  className="w-full text-2xl font-bold text-center bg-level-2 mx-auto py-2"
-                  onClick={toggleElement}
+                  className="w-full text-2xl font-bold text-center bg-level-2 mx-auto py-2 cursor-pointer"
+                  ref={vacationsRef}
+                  onClick={() => toggleElement(vacationsRef)}
                 >
                   Vacations
                 </h1>
-                <div className="col-span-full grid grid-cols-7 gap-2 rounded-md p-2">
+                <div
+                  className={`col-span-full grid grid-cols-7 gap-2 rounded-md p-2 ${
+                    !aviableForVacations ? "hidden" : ""
+                  }`}
+                >
                   <InputGroup
                     inputType="date"
                     label="Start vacation day"
@@ -458,7 +515,10 @@ export default function HumanResources() {
                     containerSpan="col-span-1"
                   />
                   <DataTable
-                    className="col-span-full rounded-md p-0"
+                    emptyMessage={
+                      <h1 className="p-2 ml-2 ">No vacations found</h1>
+                    }
+                    className="col-span-full rounded-md p-0 max-h-64 overflow-auto"
                     stripedRows
                     selectionMode="single"
                     title="Vacations"
@@ -467,13 +527,23 @@ export default function HumanResources() {
                     value={form.vacations.map((e) => {
                       return e;
                     })}
-                    // onRowDoubleClick={(e) => console.log(e)}
                     onCellClick={() => console.log("xd")}
                   >
-                    <Column body={(x: Vacations, d) => deleteRowButton(x, d)} />
-                    <Column header="Start V. day" field="startVacationDay" />
-                    <Column header="End V. day" field="endVacationDay" />
-                    <Column header="Days" field="days" />
+                    <Column
+                      body={(x: Vacations, d) => deleteRowButton(x, d)}
+                      align={"center"}
+                    />
+                    <Column
+                      header="Start V. day"
+                      field="startVacationDay"
+                      align={"center"}
+                    />
+                    <Column
+                      header="End V. day"
+                      field="endVacationDay"
+                      align={"center"}
+                    />
+                    <Column header="Days" field="days" align={"center"} />
                   </DataTable>
                 </div>
               </div>
@@ -481,7 +551,7 @@ export default function HumanResources() {
             <InputGroup
               inputType="button"
               name="submit"
-              value={"Update"}
+              value={"Update User"}
               onButtonClick={updateUser}
               containerSpan={"1"}
             />

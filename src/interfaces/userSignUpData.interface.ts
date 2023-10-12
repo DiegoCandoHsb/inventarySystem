@@ -31,6 +31,7 @@ export interface UserPlainData {
   payroll: "Yes" | "No";
   // dates data
   vacations: Vacations[];
+  admissionDate: string
 }
 
 export interface LoginResponseData {
@@ -66,4 +67,5 @@ export const defaultUserData: UserPlainData = {
   payroll: "Yes",
   // dates data
   vacations: [],
+  admissionDate:''
 };
