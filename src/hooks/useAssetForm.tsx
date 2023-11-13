@@ -46,7 +46,7 @@ const useAssetForm = () => {
   useEffect(() => {
     calculateResValue();
     depreciations();
-  }, [form.value, form.depreciationTime]);
+  }, [form.value, form.depreciationTime, form.residualValue]);
 
   useEffect(() => {
     calculateValueBooks();

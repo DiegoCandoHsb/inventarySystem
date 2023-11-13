@@ -54,7 +54,6 @@ export default function HumanResources() {
   }, [form]);
 
   function checkAdmissionDate(): boolean {
-    console.log(form);
     if (!form.admissionDate) {
       setAaviableForVacations(false);
       return false;
@@ -174,6 +173,8 @@ export default function HumanResources() {
   };
 
   function setNewVacations() {
+    console.log("Xd");
+    if (!checkAdmissionDate()) return;
     if (dates.startVacationDay > dates.endVacationDay) {
       const headers = new axios.AxiosHeaders();
       return showErrorMessage(
@@ -222,7 +223,7 @@ export default function HumanResources() {
         name="Delete"
         value=""
         buttonIcon="pi-times"
-        containerCls="-my-2 p-0"
+        containerCls="px-1"
         onButtonClick={() => {
           setState((currentData) => ({
             ...currentData,
@@ -236,7 +237,7 @@ export default function HumanResources() {
   }
 
   function toggleElement(elm: React.RefObject<HTMLHeadingElement>): string {
-    if (!aviableForVacations) return 'not aviable';
+    if (!aviableForVacations) return "not aviable";
 
     const nextElement = elm.current?.nextElementSibling;
 
@@ -471,7 +472,7 @@ export default function HumanResources() {
                 </h1>
                 <div
                   className={`col-span-full grid grid-cols-7 gap-2 rounded-md p-2 ${
-                    !aviableForVacations ? "hidden" : ""
+                    !aviableForVacations ? "hidden" : "block"
                   }`}
                 >
                   <InputGroup
@@ -543,8 +544,64 @@ export default function HumanResources() {
                       field="endVacationDay"
                       align={"center"}
                     />
-                    <Column header="Days" field="days" align={"center"} />
+                    <Column header="Days" field="days" align="center" />
+                    <Column header="Rem Days" field="days" align={"center"} />
                   </DataTable>
+
+                  {/* :value */}
+                  <div className="bg-level-2 flex col-span-3 px-1 gap-1 rounded-md">
+                    <InputGroup
+                      inputType="text"
+                      label="Add days"
+                      name=""
+                      value={""}
+                      containerSpan="col-start-2 col-span-2"
+                      inputCls="text-end"
+                    />
+                    <InputGroup
+                      inputType="button"
+                      name=""
+                      value={""}
+                      buttonIcon="pi pi-plus"
+                      containerSpan="col-start-1 col-span-1"
+                    />
+                  </div>
+                  <InputGroup
+                    inputType="text"
+                    label="Total V. Days"
+                    disabled
+                    name=""
+                    value={"123"}
+                    containerSpan="col-start-4 col-span-2"
+                    inputCls="text-end"
+                  />
+                  <InputGroup
+                    inputType="text"
+                    label="Taken days"
+                    disabled
+                    name=""
+                    value={"123"}
+                    containerSpan="col-start-6 col-span-2 border-t-2 border-gray-400"
+                    inputCls="text-end"
+                  />
+                  <InputGroup
+                    inputType="text"
+                    label="Total Added D."
+                    disabled
+                    name=""
+                    value={"123"}
+                    containerSpan="col-start-1 col-span-2"
+                    inputCls="text-end"
+                  />
+                  <InputGroup
+                    inputType="text"
+                    label="Total"
+                    disabled
+                    name=""
+                    value={"123"}
+                    containerSpan="col-start-6 col-span-2"
+                    inputCls="text-end"
+                  />
                 </div>
               </div>
             </div>

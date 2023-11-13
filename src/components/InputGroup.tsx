@@ -43,6 +43,7 @@ interface InputGroupProps {
   disabled?: boolean;
   keyfilter?: KeyFilterType | undefined;
   containerCls?: string;
+  inputCls?: string;
   containerSpan?: string;
   buttonIcon?: string;
   enumOptions?: AssetUbication;
@@ -134,7 +135,7 @@ export default function InputGroup({
       id: name,
       name: name,
       placeholder,
-      className: defautlInputStyle,
+      className: defautlInputStyle.concat(" ", OtherProps.inputCls ?? ""),
       disabled: OtherProps.disabled,
     };
 
