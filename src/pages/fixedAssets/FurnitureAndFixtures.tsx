@@ -34,101 +34,106 @@ export default function FurnitureAndFixtures() {
     toastRef,
     updateModal,
     dataTableRef,
+    globalFilterValue,
+    setGlobalFilterValue
   } = useAssetForm();
 
-  function calculateDepreTime(date: string) {
-    const acDate = new Date(date);
+  function calculateDepreTime( date: string ) {
+    const acDate = new Date( date );
     const current = new Date();
 
-    const dateBeforeDepre = acDate.setMonth(acDate.getMonth() + 58);
+    const dateBeforeDepre = acDate.setMonth( acDate.getMonth() + 58 );
 
-    if (Number(current) >= Number(dateBeforeDepre)) return true;
+    if ( Number( current ) >= Number( dateBeforeDepre ) ) return true;
     return false;
   }
 
   return (
     <div>
-      <Toast ref={toastRef} position="top-right" />
-      {/* table */}
+      <Toast ref={ toastRef } position="top-right" />
+      {/* table */ }
       <section className="mx-2">
         <div className="my-5">
           <Button
             label="Add"
-            onClick={() => {
-              setModal(true);
-              AssetConfig.setDialogHeaderTitle("create");
-              setEdit(false);
-              setState(defaultAssetData);
-              setFormSettings((curretValues) => ({
+            onClick={ () => {
+              setModal( true );
+              AssetConfig.setDialogHeaderTitle( "create" );
+              setEdit( false );
+              setState( defaultAssetData );
+              setFormSettings( ( curretValues ) => ( {
                 ...curretValues,
                 submitButtonValue:
                   curretValues.defaultSettings.submitButtonValue,
-              }));
-            }}
+              } ) );
+            } }
           />
         </div>
 
         <DataTable
-          ref={dataTableRef}
+          ref={ dataTableRef }
           className="shadow-md"
           header={
             <TableHeaderComponent
               headerTitle="Furniture and Fixtures"
               export
-              fun={async () => {
-                if (assets) {
-                  return exportExcel(assets[assetName]!, assetName);
+              fun={ async () => {
+                if ( assets ) {
+                  return exportExcel( assets[ assetName ]!, assetName );
                 }
-              }}
+              } }
+              setGlobalFilter={ setGlobalFilterValue }
             />
           }
-          exportFilename={AssetConfig.furnitureAndFixture}
+          exportFilename={ AssetConfig.furnitureAndFixture }
           value={
-            assets[assetName] &&
-            assets[assetName].map((asset) => {
+            assets[ assetName ] &&
+            assets[ assetName ].map( ( asset ) => {
               for (
                 let i = 0;
-                i < (assets.users ? assets.users.length : 1);
+                i < ( assets.users ? assets.users.length : 1 );
                 i++
               ) {
-                if (asset.details.responsible === assets.users![i].id) {
-                  asset.details.responsibleName = assets.users![i].name.concat(
+                if ( asset.details.responsible === assets.users![ i ].id ) {
+                  asset.details.responsibleName = assets.users![ i ].name.concat(
                     " ",
-                    assets.users![i].details.secondname,
+                    assets.users![ i ].details.secondname,
                     " ",
-                    assets.users![i].details.lastname,
+                    assets.users![ i ].details.lastname,
                     " ",
-                    assets.users![i].details.secondlastname
+                    assets.users![ i ].details.secondlastname
                   );
                 }
               }
               return asset;
-            })
+            } )
           }
-          emptyMessage={"No Assets found"}
+          emptyMessage={ "No Assets found" }
           selectionMode="single"
           title="Electronic Equipments"
-          onRowDoubleClick={(e) => updateModal(e)}
+          onRowDoubleClick={ ( e ) => updateModal( e ) }
           paginator
-          filters={{}}
-          rows={25}
-          rowsPerPageOptions={[25, 50, 75, 100]}
-          tableStyle={{
+          filters={ {} }
+          rows={ 25 }
+          rowsPerPageOptions={ [ 25, 50, 75, 100 ] }
+          tableStyle={ {
             minWidth: "50rem",
-          }}
-          cellClassName={(_, { ...data }) => {
+          } }
+          cellClassName={ ( _, { ...data } ) => {
             const depre = calculateDepreTime(
-              data.props.value![data.rowIndex].purchaseDate
+              data.props.value![ data.rowIndex ].purchaseDate
             );
             return depre ? "bg-warning" : "";
-          }}
+          } }
           stripedRows
           size="small"
+          globalFilterFields={ [ 'name', 'details.brand', 'details.responsibleName', 'details.ubication' ] }
+          globalFilter={ globalFilterValue }
         >
           <Column
             header="ID"
             field="id"
-            body={(_, opt) => opt.rowIndex + 1}
+            body={ ( _, opt ) => opt.rowIndex + 1 }
             align="center"
             alignHeader="center"
             sortable
@@ -157,7 +162,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Purchase Value"
             field="details.value"
-            body={(e: AssetData) => numValCell(e.details.value)}
+            body={ ( e: AssetData ) => numValCell( e.details.value ) }
             align="right"
             alignHeader="center"
             sortable
@@ -165,7 +170,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Monthly Dep."
             field="details.monthlyDepreciation"
-            body={(e: AssetData) => numValCell(e.details.monthlyDepreciation)}
+            body={ ( e: AssetData ) => numValCell( e.details.monthlyDepreciation ) }
             align="right"
             alignHeader="center"
             sortable
@@ -173,7 +178,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Val. Books"
             field="details.valueBooks"
-            body={(e: AssetData) => numValCell(e.details.valueBooks)}
+            body={ ( e: AssetData ) => numValCell( e.details.valueBooks ) }
             align="right"
             alignHeader="center"
             sortable
@@ -181,7 +186,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Insured"
             field="details.insured"
-            body={(e: AssetData) => numValCell(e.details.insured)}
+            body={ ( e: AssetData ) => numValCell( e.details.insured ) }
             align="right"
             alignHeader="center"
             sortable
@@ -202,23 +207,23 @@ export default function FurnitureAndFixtures() {
           ></Column>
         </DataTable>
       </section>
-      {/* total depreciation */}
-      <TotalDepreciationCard data={assets[assetName] ?? 0} />
-      {/* modal */}
+      {/* total depreciation */ }
+      <TotalDepreciationCard data={ assets[ assetName ] ?? 0 } />
+      {/* modal */ }
       <Dialog
-        header={AssetConfig.defaultHeaderTitle}
-        visible={modal}
+        header={ AssetConfig.defaultHeaderTitle }
+        visible={ modal }
         className="w-1/3"
-        onHide={() => setModal(false)}
+        onHide={ () => setModal( false ) }
       >
         <InputGroup
           inputType="text"
           label="Item Name"
           name="name"
           placeholder="Pc"
-          value={form.name}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          value={ form.name }
+          onChange={ ( e ) =>
+            onChange( e.target.value, e.target.id as keyof AssetPlainData )
           }
         />
 
@@ -227,22 +232,22 @@ export default function FurnitureAndFixtures() {
           label="Purchase Date"
           name="purchaseDate"
           placeholder="Purchase Date"
-          value={form.purchaseDate}
-          onDateChange={(e) => {
+          value={ form.purchaseDate }
+          onDateChange={ ( e ) => {
             onChange(
-              new Date(e.value as Date).toISOString().split("T")[0],
+              new Date( e.value as Date ).toISOString().split( "T" )[ 0 ],
               e.target.id as keyof AssetPlainData
             );
-          }}
+          } }
         />
         <InputGroup
           inputType="text"
           label="Serial Number"
           name="serialNumber"
           placeholder="123ADS23LK1"
-          value={form.serialNumber}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          value={ form.serialNumber }
+          onChange={ ( e ) =>
+            onChange( e.target.value, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
@@ -250,12 +255,12 @@ export default function FurnitureAndFixtures() {
           label="Brand"
           name="brand"
           placeholder="Asus"
-          value={form.brand}
-          options={assets.catalog!.catalogOptions.map(
-            (option) => option.catalogDetail
-          )}
-          onDropDownFilterChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          value={ form.brand }
+          options={ assets.catalog!.catalogOptions.map(
+            ( option ) => option.catalogDetail
+          ) }
+          onDropDownFilterChange={ ( e ) =>
+            onChange( e.value as string, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
@@ -263,9 +268,9 @@ export default function FurnitureAndFixtures() {
           label="Model"
           name="model"
           placeholder=""
-          value={form.model}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          value={ form.model }
+          onChange={ ( e ) =>
+            onChange( e.target.value, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
@@ -273,9 +278,9 @@ export default function FurnitureAndFixtures() {
           label="Color"
           name="color"
           placeholder="Red"
-          value={form.color}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          value={ form.color }
+          onChange={ ( e ) =>
+            onChange( e.target.value, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
@@ -283,12 +288,12 @@ export default function FurnitureAndFixtures() {
           label="Responsible"
           name="responsible"
           placeholder="Michael Ortiz"
-          value={form.responsible}
-          options={assets.users}
-          optionLabel={"name"}
-          optionValue={"id"}
-          onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          value={ form.responsible }
+          options={ assets.users }
+          optionLabel={ "name" }
+          optionValue={ "id" }
+          onDropDownChange={ ( e ) =>
+            onChange( e.value as string, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
@@ -296,10 +301,10 @@ export default function FurnitureAndFixtures() {
           label="Asset Ubication"
           name="ubication"
           placeholder="Office"
-          value={form.ubication}
-          options={Object.values(AssetUbication)}
-          onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          value={ form.ubication }
+          options={ Object.values( AssetUbication ) }
+          onDropDownChange={ ( e ) =>
+            onChange( e.value as string, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
@@ -307,38 +312,38 @@ export default function FurnitureAndFixtures() {
           label="Supplier"
           name="supplier"
           placeholder="Gato"
-          value={form.supplier}
-          onChange={(e) => {
-            console.log(e.target.id);
-            onChange(e.target.value, e.target.id as keyof AssetPlainData);
-          }}
+          value={ form.supplier }
+          onChange={ ( e ) => {
+            console.log( e.target.id );
+            onChange( e.target.value, e.target.id as keyof AssetPlainData );
+          } }
         />
         <InputGroup
           inputType="decimal"
           label="Value"
           name="value"
           placeholder="120.50"
-          value={form.value}
-          decimalQuliantity={AssetConfig.decimalQuantity} // Setting
-          onNumberChange={(e) => {
+          value={ form.value }
+          decimalQuliantity={ AssetConfig.decimalQuantity } // Setting
+          onNumberChange={ ( e ) => {
             console.log();
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             );
-          }}
+          } }
         />
         <InputGroup
           inputType="number"
           label="Depreciation Time"
           name="depreciationTime"
           placeholder="10"
-          value={form.depreciationTime}
-          onNumberChange={(e) =>
+          value={ form.depreciationTime }
+          onNumberChange={ ( e ) =>
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             )
           }
@@ -348,12 +353,12 @@ export default function FurnitureAndFixtures() {
           label="Residual Value"
           name="residualValue"
           placeholder="0"
-          value={form.residualValue}
-          disabled={true}
-          onNumberChange={(e) =>
+          value={ form.residualValue }
+          disabled={ true }
+          onNumberChange={ ( e ) =>
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             )
           }
@@ -363,13 +368,13 @@ export default function FurnitureAndFixtures() {
           label="Annual Depreciation"
           name="annualDepreciation"
           placeholder="0"
-          value={form.annualDepreciation}
-          decimalQuliantity={AssetConfig.decimalQuantity}
-          disabled={true}
-          onNumberChange={(e) =>
+          value={ form.annualDepreciation }
+          decimalQuliantity={ AssetConfig.decimalQuantity }
+          disabled={ true }
+          onNumberChange={ ( e ) =>
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             )
           }
@@ -379,13 +384,13 @@ export default function FurnitureAndFixtures() {
           label="Monthly Depreciation"
           name="monthlyDepreciation"
           placeholder="0"
-          value={form.monthlyDepreciation}
-          decimalQuliantity={AssetConfig.decimalQuantity}
-          disabled={true}
-          onNumberChange={(e) =>
+          value={ form.monthlyDepreciation }
+          decimalQuliantity={ AssetConfig.decimalQuantity }
+          disabled={ true }
+          onNumberChange={ ( e ) =>
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             )
           }
@@ -395,13 +400,13 @@ export default function FurnitureAndFixtures() {
           label="value in books"
           name="monthlyDepreciation"
           placeholder="0"
-          value={form.valueBooks}
-          decimalQuliantity={AssetConfig.decimalQuantity}
-          disabled={true}
-          onNumberChange={(e) =>
+          value={ form.valueBooks }
+          decimalQuliantity={ AssetConfig.decimalQuantity }
+          disabled={ true }
+          onNumberChange={ ( e ) =>
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             )
           }
@@ -411,12 +416,12 @@ export default function FurnitureAndFixtures() {
           label="Insured"
           name="insured"
           placeholder="0"
-          value={form.insured}
-          decimalQuliantity={AssetConfig.decimalQuantity}
-          onNumberChange={(e) =>
+          value={ form.insured }
+          decimalQuliantity={ AssetConfig.decimalQuantity }
+          onNumberChange={ ( e ) =>
             onChange(
               e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
+              ( e.originalEvent.target as HTMLInputElement )
                 .name as keyof AssetPlainData
             )
           }
@@ -437,28 +442,28 @@ export default function FurnitureAndFixtures() {
           label="Status"
           name="active"
           placeholder="new"
-          value={form.active}
-          options={Object.values(AssetActive)}
-          onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+          value={ form.active }
+          options={ Object.values( AssetActive ) }
+          onDropDownChange={ ( e ) =>
+            onChange( e.value as string, e.target.id as keyof AssetPlainData )
           }
         />
         <InputGroup
           inputType="textarea"
           label="Observations"
           name="observation"
-          value={form.observation}
-          onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+          value={ form.observation }
+          onChange={ ( e ) =>
+            onChange( e.target.value, e.target.id as keyof AssetPlainData )
           }
         />
-        {/* otros */}
+        {/* otros */ }
         <div className="w-full flex justify-center mt-5">
           <Button
-            ref={() => submitButtonRef}
-            label={formSettings.submitButtonValue}
-            onClick={() =>
-              createOrEditAsset(AssetTypeConfig.FurnitureAndFixtures)
+            ref={ () => submitButtonRef }
+            label={ formSettings.submitButtonValue }
+            onClick={ () =>
+              createOrEditAsset( AssetTypeConfig.FurnitureAndFixtures )
             }
             className="w-full"
           />
