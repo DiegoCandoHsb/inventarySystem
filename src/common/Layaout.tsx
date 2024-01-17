@@ -5,13 +5,10 @@ import { useEffect, useState } from "react";
 import LoadSpinner from "../components/LoadSpinner";
 
 export default function Layaout() {
-  // const { state, location } = useNavigation();
-  const xd = useNavigation();
-
   const [turnSpinner, setTurnSpinner] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log(turnSpinner);
+    // console.log(turnSpinner);
   }, [turnSpinner]);
 
   return (

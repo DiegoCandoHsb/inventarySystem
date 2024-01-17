@@ -31,7 +31,7 @@ export async function SignIn({
   });
 }
 
-export async function verifyToken(): Promise<boolean> {
+export async function verifyToken(): Promise<boolean | string> {
   return (
     await HsbBaseApiDb.post<boolean>("/auth/verify", {
       token: getTokenFromLs(),
