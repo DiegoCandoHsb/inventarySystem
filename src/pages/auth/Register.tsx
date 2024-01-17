@@ -92,7 +92,7 @@ export function Component() {
       );
     }
 
-    const userTransformedData: userSignUpData = clearData({
+    const userTransformedData: userSignUpData = {
       id: id.toString(),
       name,
       email,
@@ -105,12 +105,12 @@ export function Component() {
         payroll,
       },
       active: true,
-    }) as userSignUpData;
+    };
 
     SignUp(userTransformedData)
       .then((data) => {
         console.log(data);
-        navigate("/");
+        navigate(NavigationRoutes.login);
         return data;
       })
       .catch((err) => {

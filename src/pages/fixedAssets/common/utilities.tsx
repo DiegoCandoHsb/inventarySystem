@@ -110,7 +110,7 @@ export function clearData(
         key,
         typeof value === "string"
           ? value.trim()
-          : typeof value === "object"
+          : typeof value === "object" && !Array.isArray(value)
           ? clearData(value as Record<string, string | number | boolean>)
           : value,
       ];

@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-refresh/only-export-components */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Link, redirect, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RegisterForm from "../../components/Auth-Components/RegisterForm";
 import { userSignInData } from "../../interfaces/userSingInData.interface";
 import { useForm } from "../../hooks/useForm";
-import { SignIn, verifyToken } from "../../services/auth.service";
+import { SignIn } from "../../services/auth.service";
 import InputGroup from "../../components/InputGroup";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
@@ -57,10 +57,10 @@ export function Component() {
   }
 
   function signIn(): void {
-    SignIn({ email, password })
+    SignIn({ email: email.toLowerCase().trim(), password })
       .then((data) => {
         saveTokenToLS(data.token);
-        navigate(NavigationRoutes.login);
+        navigate(NavigationRoutes.basePath);
         return data;
       })
       .catch((error) => {
