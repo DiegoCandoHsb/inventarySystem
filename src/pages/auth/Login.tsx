@@ -60,7 +60,7 @@ export function Component() {
     SignIn({ email, password })
       .then((data) => {
         saveTokenToLS(data.token);
-        navigate("/");
+        navigate(NavigationRoutes.login);
         return data;
       })
       .catch((error) => {

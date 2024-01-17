@@ -16,7 +16,7 @@ import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import React, { useRef } from "react";
 import axios, { AxiosError } from "axios";
-import { inputErrors } from "../fixedAssets/common/utilities";
+import { clearData, inputErrors } from "../fixedAssets/common/utilities";
 
 export function Component() {
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ export function Component() {
       );
     }
 
-    const userTransformedData: userSignUpData = {
+    const userTransformedData: userSignUpData = clearData({
       id: id.toString(),
       name,
       email,
@@ -105,7 +105,7 @@ export function Component() {
         payroll,
       },
       active: true,
-    };
+    }) as userSignUpData;
 
     SignUp(userTransformedData)
       .then((data) => {

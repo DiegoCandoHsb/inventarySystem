@@ -1,6 +1,10 @@
 import { DataTable } from "primereact/datatable";
 import { AssetConfig } from "../../../config/assets.config";
 import { AssetData } from "../../../interfaces/asset.interface";
+import {
+  UserPlainData,
+  userSignUpData,
+} from "../../../interfaces/userSignUpData.interface";
 
 export function numValCell(field: string | number) {
   return (
@@ -95,4 +99,21 @@ export function inputErrors(data: Record<string, any>) {
     }
     filledImp.classList.remove("input-error");
   }
+}
+
+export function clearData(
+  data: Record<string, any>
+): Record<string, string | number | boolean> | userSignUpData {
+  return Object.fromEntries(
+    Object.entries(data).map(([key, value]) => {
+      return [
+        key,
+        typeof value === "string"
+          ? value.trim()
+          : typeof value === "object"
+          ? clearData(value as Record<string, string | number | boolean>)
+          : value,
+      ];
+    })
+  );
 }

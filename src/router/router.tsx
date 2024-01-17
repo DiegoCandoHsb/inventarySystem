@@ -14,7 +14,6 @@ import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
 import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
 import Expenses from "../pages/expenses/expenses";
 import TokenLoader from "../common/loaders/TokenLoader";
-import { PathProtectedLoader } from "../common/loaders/ProtectedPathLoader";
 import { conbinedLoaders } from "../common/loaders/CombineLoaders";
 
 export const routes = createBrowserRouter([
@@ -25,7 +24,7 @@ export const routes = createBrowserRouter([
     children: [
       {
         index: true,
-        loader: PathProtectedLoader,
+        loader: () => conbinedLoaders(),
         element: <Activities />,
       },
       {
