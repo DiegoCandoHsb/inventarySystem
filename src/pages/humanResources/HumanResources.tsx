@@ -5,7 +5,7 @@
 import { Button } from "primereact/button";
 import { Column, ColumnBodyOptions } from "primereact/column";
 import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
-import { GetUsers } from "../../services/user.service";
+import { GetUsers, UpdateUser } from "../../services/user.service";
 import {
   UserPlainData,
   defaultUserData,
@@ -213,7 +213,29 @@ export default function HumanResources() {
   }
 
   function updateUser() {
-    console.log(form);
+    const userTransformedData: userSignUpData = {
+      id: form.id.toString(),
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      details: {
+        lastname: form.lastname,
+        secondname: form.secondname,
+        secondlastname: form.secondlastname,
+        phone: form.phone.toString(),
+        vacations: form.vacations,
+        payroll: form.payroll,
+      },
+      active: form.active,
+    };
+
+    UpdateUser(form.id, userTransformedData)
+      .then((data) => {
+        setEdit(false);
+        return data;
+      })
+      .catch((err) => console.log(err))
+      .finally(async () => await setNewUser());
   }
 
   function deleteRowButton(_: Vacations, column: ColumnBodyOptions) {

@@ -16,7 +16,7 @@ import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import React, { useRef } from "react";
 import axios, { AxiosError } from "axios";
-import { clearData, inputErrors } from "../fixedAssets/common/utilities";
+import { inputErrors } from "../fixedAssets/common/utilities";
 
 export function Component() {
   const navigate = useNavigate();
