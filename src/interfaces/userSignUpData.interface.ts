@@ -8,6 +8,7 @@ export interface UserDetails {
   payroll: "Yes" | "No";
   // vacations
   vacations?: Vacations[];
+  admissionDate?: string;
 }
 
 export interface userSignUpData {

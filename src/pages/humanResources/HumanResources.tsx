@@ -34,7 +34,7 @@ export default function HumanResources() {
   const [modal, setModal] = useState<boolean>(false);
   const [edit, setEdit] = useState<boolean>(false);
 
-  const [aviableForVacations, setAaviableForVacations] =
+  const [aviableForVacations, setAviableForVacations] =
     useState<boolean>(false);
 
   const { form, onChange, setState } = useForm<UserPlainData>(defaultUserData);
@@ -55,18 +55,19 @@ export default function HumanResources() {
 
   function checkAdmissionDate(): boolean {
     if (!form.admissionDate) {
-      setAaviableForVacations(false);
+      setAviableForVacations(false);
       return false;
     } else {
-      const admissionDate = new Date(form.admissionDate).getTime();
-      const actDate = new Date().getTime();
+      // const admissionDate = new Date(form.admissionDate).getTime();
+      // const actDate = new Date().getTime();
       // 31557600000
-      const diference = actDate - admissionDate;
-      if (diference >= 31557600000) {
-        setAaviableForVacations(true);
-        return true;
-      }
-      return false;
+      // const diference = actDate - admissionDate;
+      // if (diference >= 31557600000) {
+      // setAviableForVacations(true);
+      // return true;
+      // }
+      setAviableForVacations(true);
+      return true;
     }
   }
 
@@ -173,7 +174,7 @@ export default function HumanResources() {
   };
 
   function setNewVacations() {
-    console.log("Xd");
+    console.log("vacations");
     if (!checkAdmissionDate()) return;
     if (dates.startVacationDay > dates.endVacationDay) {
       const headers = new axios.AxiosHeaders();
@@ -225,10 +226,11 @@ export default function HumanResources() {
         phone: form.phone.toString(),
         vacations: form.vacations,
         payroll: form.payroll,
+        admissionDate: form.admissionDate,
       },
       active: form.active,
     };
-
+    console.log("Esto se va a enviar: ", userTransformedData);
     UpdateUser(form.id, userTransformedData)
       .then((data) => {
         setEdit(false);
@@ -265,7 +267,6 @@ export default function HumanResources() {
 
     const elmClasses = [...(nextElement?.classList as unknown as string[])];
     if (!aviableForVacations) {
-      console.log("xd");
       nextElement?.classList.add("hidden");
     }
 
@@ -468,6 +469,16 @@ export default function HumanResources() {
                   )
                 }
                 containerSpan="col-span-1"
+              />
+              <InputGroup
+                inputType="text"
+                label="Password"
+                name="password"
+                value={form.password}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
               />
               <InputGroup
                 inputType="date"
