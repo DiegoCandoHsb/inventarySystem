@@ -1,19 +1,22 @@
 import { Vacations } from "./user.interface";
 
+export interface UserDetails {
+  lastname: string;
+  secondname: string;
+  secondlastname: string;
+  phone: string;
+  payroll: "Yes" | "No";
+  // vacations
+  vacations?: Vacations[];
+  admissionDate?: string;
+}
+
 export interface userSignUpData {
   id: string;
   name: string;
   email: string;
   password: string;
-  details: {
-    lastname: string;
-    secondname: string;
-    secondlastname: string;
-    phone: string;
-    payroll: "Yes" | "No";
-    // vacations
-    vacations?: Vacations[];
-  };
+  details: UserDetails;
   active: boolean;
 }
 
@@ -31,7 +34,7 @@ export interface UserPlainData {
   payroll: "Yes" | "No";
   // dates data
   vacations: Vacations[];
-  admissionDate: string
+  admissionDate: string;
 }
 
 export interface LoginResponseData {
@@ -67,5 +70,5 @@ export const defaultUserData: UserPlainData = {
   payroll: "Yes",
   // dates data
   vacations: [],
-  admissionDate:''
+  admissionDate: "",
 };

@@ -5,7 +5,7 @@
 import { Button } from "primereact/button";
 import { Column, ColumnBodyOptions } from "primereact/column";
 import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
-import { GetUsers } from "../../services/user.service";
+import { GetUsers, UpdateUser } from "../../services/user.service";
 import {
   UserPlainData,
   defaultUserData,
@@ -34,8 +34,13 @@ export default function HumanResources() {
   const [ modal, setModal ] = useState<boolean>( false );
   const [ edit, setEdit ] = useState<boolean>( false );
 
+
   // filtro global
   const [ globalFilterValue, setGlobalFilterValue ] = useState( '' );
+
+  const [aviableForVacations, setAviableForVacations] =
+    useState<boolean>(false);
+
 
 
   const [ aviableForVacations, setAaviableForVacations ] =
@@ -71,6 +76,7 @@ export default function HumanResources() {
         return true;
       }
       return false;
+
     }
   }
 
@@ -180,6 +186,7 @@ export default function HumanResources() {
     console.log( "Xd" );
     if ( !checkAdmissionDate() ) return;
     if ( dates.startVacationDay > dates.endVacationDay ) {
+
       const headers = new axios.AxiosHeaders();
       return showErrorMessage(
         new AxiosError(
@@ -217,7 +224,34 @@ export default function HumanResources() {
   }
 
   function updateUser() {
+
     console.log( form );
+
+    const userTransformedData: userSignUpData = {
+      id: form.id.toString(),
+      name: form.name,
+      email: form.email,
+      password: form.password,
+      details: {
+        lastname: form.lastname,
+        secondname: form.secondname,
+        secondlastname: form.secondlastname,
+        phone: form.phone.toString(),
+        vacations: form.vacations,
+        payroll: form.payroll,
+        admissionDate: form.admissionDate,
+      },
+      active: form.active,
+    };
+    console.log("Esto se va a enviar: ", userTransformedData);
+    UpdateUser(form.id, userTransformedData)
+      .then((data) => {
+        setEdit(false);
+        return data;
+      })
+      .catch((err) => console.log(err))
+      .finally(async () => await setNewUser());
+
   }
 
   function deleteRowButton( _: Vacations, column: ColumnBodyOptions ) {
@@ -245,10 +279,12 @@ export default function HumanResources() {
 
     const nextElement = elm.current?.nextElementSibling;
 
+
     const elmClasses = [ ...( nextElement?.classList as unknown as string[] ) ];
     if ( !aviableForVacations ) {
       console.log( "xd" );
       nextElement?.classList.add( "hidden" );
+
     }
 
     if ( elmClasses.includes( "hidden" ) ) {
@@ -451,6 +487,16 @@ export default function HumanResources() {
                   )
                 }
                 containerSpan="col-span-1"
+              />
+              <InputGroup
+                inputType="text"
+                label="Password"
+                name="password"
+                value={form.password}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
+                }
+                containerSpan="col-span-4"
               />
               <InputGroup
                 inputType="date"

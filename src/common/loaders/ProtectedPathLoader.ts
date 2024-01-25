@@ -1,14 +1,17 @@
 import { redirect } from "react-router-dom";
 import { verifyToken } from "../../services/auth.service";
-import { removeTokenToLs } from "../tokenMng/tokenMng";
+import { removeTokenToLs, saveTokenToLS } from "../tokenMng/tokenMng";
 
-export async function PathProtectedLoader() {
+export async function PathProtectedLoader(autoRedirectToLogin = false) {
   const isValidToken = await verifyToken();
+  console.log("se ha verificado");
 
-  if (!isValidToken) {
+  if (typeof isValidToken === "boolean") {
     removeTokenToLs();
-    return redirect("/auth/login");
+    return !autoRedirectToLogin ? false : redirect("/auth/login");
   }
 
-  return isValidToken;
+  saveTokenToLS(isValidToken);
+
+  return true;
 }

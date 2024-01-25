@@ -110,7 +110,7 @@ export function Component() {
     SignUp(userTransformedData)
       .then((data) => {
         console.log(data);
-        navigate("/");
+        navigate(NavigationRoutes.login);
         return data;
       })
       .catch((err) => {

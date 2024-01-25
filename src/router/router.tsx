@@ -14,33 +14,31 @@ import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
 import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
 import Expenses from "../pages/expenses/expenses";
 import TokenLoader from "../common/loaders/TokenLoader";
-import { PathProtectedLoader } from "../common/loaders/ProtectedPathLoader";
+import { conbinedLoaders } from "../common/loaders/CombineLoaders";
 
 export const routes = createBrowserRouter([
   {
     path: NavigationRoutes.basePath,
     element: <Layaout />,
-    // loader: PathProtectedLoader,
     errorElement: <NotFoundPage />,
     children: [
       {
         index: true,
-        loader: PathProtectedLoader,
+        loader: () => conbinedLoaders(),
         element: <Activities />,
       },
       {
         path: NavigationRoutes.expensesPath,
-        loader: AssetDataLoader,
+        loader: () => conbinedLoaders(AssetDataLoader),
         element: <Expenses />,
       },
       {
         path: NavigationRoutes.humanResourcesPath,
-        loader: HumanResourcesLoader,
+        loader: () => conbinedLoaders(HumanResourcesLoader),
         element: <HumanResources />,
       },
       {
         path: NavigationRoutes.fixedAssetsPath,
-        loader: PathProtectedLoader,
         children: [
           {
             index: true,
@@ -48,12 +46,12 @@ export const routes = createBrowserRouter([
           },
           {
             path: NavigationRoutes.elecEquiPath,
-            loader: AssetDataLoader,
+            loader: () => conbinedLoaders(AssetDataLoader),
             element: <ElectronicEquipment />,
           },
           {
             path: NavigationRoutes.furnAndMixPath,
-            loader: AssetDataLoader,
+            loader: () => conbinedLoaders(AssetDataLoader),
             element: <FurnitureAndFixtures />,
           },
         ],
