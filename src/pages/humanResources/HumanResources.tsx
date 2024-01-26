@@ -27,110 +27,104 @@ import { inputErrors } from "../fixedAssets/common/utilities";
 import LoadSpinner from "../../components/LoadSpinner";
 
 export default function HumanResources() {
-  const [ users, setUsers ] = useState<userSignUpData[]>(
-    ( useLoaderData() as HumanResourcesLoader ).users
+  const [users, setUsers] = useState<userSignUpData[]>(
+    (useLoaderData() as HumanResourcesLoader).users
   );
 
-  const [ modal, setModal ] = useState<boolean>( false );
-  const [ edit, setEdit ] = useState<boolean>( false );
-
+  const [modal, setModal] = useState<boolean>(false);
+  const [edit, setEdit] = useState<boolean>(false);
 
   // filtro global
-  const [ globalFilterValue, setGlobalFilterValue ] = useState( '' );
+  const [globalFilterValue, setGlobalFilterValue] = useState("");
 
   const [aviableForVacations, setAviableForVacations] =
     useState<boolean>(false);
 
+  const { form, onChange, setState } = useForm<UserPlainData>(defaultUserData);
 
-
-  const [ aviableForVacations, setAaviableForVacations ] =
-    useState<boolean>( false );
-
-  const { form, onChange, setState } = useForm<UserPlainData>( defaultUserData );
-
-  const currentDate = new Date().toISOString().split( "T" )[ 0 ];
-  const [ dates, setDates ] = useState<Vacations>( {
+  const currentDate = new Date().toISOString().split("T")[0];
+  const [dates, setDates] = useState<Vacations>({
     startVacationDay: currentDate,
     endVacationDay: currentDate,
     days: 0,
-  } );
+  });
 
-  const vacationsRef = useRef<HTMLHeadingElement>( null );
-  const toastRef = useRef<Toast>( null );
+  const vacationsRef = useRef<HTMLHeadingElement>(null);
+  const toastRef = useRef<Toast>(null);
 
-  useEffect( () => {
+  useEffect(() => {
     checkAdmissionDate();
-  }, [ form ] );
+  }, [form]);
 
   function checkAdmissionDate(): boolean {
-    if ( !form.admissionDate ) {
-      setAaviableForVacations( false );
+    if (!form.admissionDate) {
+      setAviableForVacations(false);
       return false;
     } else {
-      const admissionDate = new Date( form.admissionDate ).getTime();
-      const actDate = new Date().getTime();
+      // const admissionDate = new Date(form.admissionDate).getTime();
+      // const actDate = new Date().getTime();
       // 31557600000
-      const diference = actDate - admissionDate;
-      if ( diference >= 31557600000 ) {
-        setAaviableForVacations( true );
-        return true;
-      }
-      return false;
-
+      // const diference = actDate - admissionDate;
+      // if (diference >= 31557600000) {
+      // setAviableForVacations(true);
+      // return true;
+      // }
+      setAviableForVacations(true);
+      return true;
     }
   }
 
   function openModal() {
-    setState( defaultUserData );
-    setModal( true );
+    setState(defaultUserData);
+    setModal(true);
   }
 
-  function updateModal( e: DataTableRowClickEvent ) {
+  function updateModal(e: DataTableRowClickEvent) {
     const { details, ...hsbData } = e.data as userSignUpData;
 
-    setState( {
+    setState({
       ...hsbData,
       ...details,
-      name: hsbData.name.split( " " )[ 0 ],
-    } as UserPlainData );
-    setEdit( true );
+      name: hsbData.name.split(" ")[0],
+    } as UserPlainData);
+    setEdit(true);
   }
 
-  function showErrorMessage( error: any ) {
+  function showErrorMessage(error: any) {
     const errorStrings: string | string[] = error.response.data.message as
       | string
       | string[];
 
-    if ( Array.isArray( errorStrings ) ) {
-      errorStrings.map( ( str ) => str.split( "details." ).join( " " ).trim() );
+    if (Array.isArray(errorStrings)) {
+      errorStrings.map((str) => str.split("details.").join(" ").trim());
 
       const errorNodeList = [];
-      for ( let i = 0; i < errorStrings.length; i++ ) {
-        const errorP = React.createElement( "h1", { key: i }, errorStrings[ i ] );
-        errorNodeList.push( errorP );
+      for (let i = 0; i < errorStrings.length; i++) {
+        const errorP = React.createElement("h1", { key: i }, errorStrings[i]);
+        errorNodeList.push(errorP);
       }
 
-      toastRef.current?.show( {
+      toastRef.current?.show({
         severity: "error",
-        summary: `Error ${ error.response.status as number }`,
+        summary: `Error ${error.response.status as number}`,
         detail: errorNodeList,
         life: 7000,
-      } );
+      });
 
       return;
     }
 
-    toastRef.current?.show( {
+    toastRef.current?.show({
       severity: "error",
-      summary: `Error ${ error.response.status as number }`,
+      summary: `Error ${error.response.status as number}`,
       detail: errorStrings,
       life: 7000,
-    } );
+    });
   }
 
   const AddUser = () => {
-    inputErrors( form );
-    if ( !form.password.length || form.password !== form.confirmPassword ) {
+    inputErrors(form);
+    if (!form.password.length || form.password !== form.confirmPassword) {
       const headers = new axios.AxiosHeaders();
       return showErrorMessage(
         new AxiosError(
@@ -165,28 +159,27 @@ export default function HumanResources() {
       active: form.active,
     };
 
-    createUser( userTransformedData )
-      .then( ( data ) => {
-        setModal( false );
+    createUser(userTransformedData)
+      .then((data) => {
+        setModal(false);
         return data;
-      } )
-      .catch( ( err ) => {
-        setModal( true );
-        showErrorMessage( err );
-      } )
-      .finally( async () => await setNewUser() );
+      })
+      .catch((err) => {
+        setModal(true);
+        showErrorMessage(err);
+      })
+      .finally(async () => await setNewUser());
   };
 
   const setNewUser = async () => {
     const newUsers = await GetUsers();
-    setUsers( [ ...newUsers ] );
+    setUsers([...newUsers]);
   };
 
   function setNewVacations() {
-    console.log( "Xd" );
-    if ( !checkAdmissionDate() ) return;
-    if ( dates.startVacationDay > dates.endVacationDay ) {
-
+    console.log("Xd");
+    if (!checkAdmissionDate()) return;
+    if (dates.startVacationDay > dates.endVacationDay) {
       const headers = new axios.AxiosHeaders();
       return showErrorMessage(
         new AxiosError(
@@ -204,28 +197,27 @@ export default function HumanResources() {
         )
       );
     }
-    setState( ( currentData ) => ( {
+    setState((currentData) => ({
       ...currentData,
       vacations: [
         ...currentData.vacations,
         {
           ...dates,
-          days: getLaborableDays( dates.startVacationDay, dates.endVacationDay ),
+          days: getLaborableDays(dates.startVacationDay, dates.endVacationDay),
         },
       ],
-    } ) );
+    }));
   }
 
-  function getLaborableDays( date1: string, date2: string ) {
-    const prevDate = new Date( date1 ).getTime();
-    const nextDate = new Date( date2 ).getTime();
-    const difference = ( nextDate - prevDate ) / ( 24 * 60 * 60 * 1000 ) + 1;
+  function getLaborableDays(date1: string, date2: string) {
+    const prevDate = new Date(date1).getTime();
+    const nextDate = new Date(date2).getTime();
+    const difference = (nextDate - prevDate) / (24 * 60 * 60 * 1000) + 1;
     return difference;
   }
 
   function updateUser() {
-
-    console.log( form );
+    console.log(form);
 
     const userTransformedData: userSignUpData = {
       id: form.id.toString(),
@@ -251,10 +243,9 @@ export default function HumanResources() {
       })
       .catch((err) => console.log(err))
       .finally(async () => await setNewUser());
-
   }
 
-  function deleteRowButton( _: Vacations, column: ColumnBodyOptions ) {
+  function deleteRowButton(_: Vacations, column: ColumnBodyOptions) {
     return (
       <InputGroup
         inputType="button"
@@ -262,97 +253,102 @@ export default function HumanResources() {
         value=""
         buttonIcon="pi-times"
         containerCls="px-1"
-        onButtonClick={ () => {
-          setState( ( currentData ) => ( {
+        onButtonClick={() => {
+          setState((currentData) => ({
             ...currentData,
             vacations: currentData.vacations.filter(
-              ( _, i ) => i !== column.rowIndex
+              (_, i) => i !== column.rowIndex
             ),
-          } ) );
-        } }
+          }));
+        }}
       />
     );
   }
 
-  function toggleElement( elm: React.RefObject<HTMLHeadingElement> ): string {
-    if ( !aviableForVacations ) return "not aviable";
+  function toggleElement(elm: React.RefObject<HTMLHeadingElement>): string {
+    if (!aviableForVacations) return "not aviable";
 
     const nextElement = elm.current?.nextElementSibling;
 
-
-    const elmClasses = [ ...( nextElement?.classList as unknown as string[] ) ];
-    if ( !aviableForVacations ) {
-      console.log( "xd" );
-      nextElement?.classList.add( "hidden" );
-
+    const elmClasses = [...(nextElement?.classList as unknown as string[])];
+    if (!aviableForVacations) {
+      console.log("xd");
+      nextElement?.classList.add("hidden");
     }
 
-    if ( elmClasses.includes( "hidden" ) ) {
-      nextElement?.classList.remove( "hidden" );
+    if (elmClasses.includes("hidden")) {
+      nextElement?.classList.remove("hidden");
       return "xd";
     }
-    nextElement?.classList.add( "hidden" );
+    nextElement?.classList.add("hidden");
 
     return "done";
   }
 
-  function activeSymb( userData: userSignUpData ) {
+  function activeSymb(userData: userSignUpData) {
     const userActive = userData.active;
-    const activeSymbol = React.createElement( "div", {
-      className: `w-5 h-5 rounded-full mx-auto ${ userActive ? "bg-lime-600" : "bg-red-700"
-        }`,
-    } );
+    const activeSymbol = React.createElement("div", {
+      className: `w-5 h-5 rounded-full mx-auto ${
+        userActive ? "bg-lime-600" : "bg-red-700"
+      }`,
+    });
 
     return activeSymbol;
   }
 
   return (
     <>
-      { !users ? (
+      {!users ? (
         <LoadSpinner />
       ) : (
         <div>
           <section className="mx-2">
-            <Toast ref={ toastRef } position="top-right" />
+            <Toast ref={toastRef} position="top-right" />
             <div className="my-5">
-              <Button label="Add" onClick={ openModal } />
+              <Button label="Add" onClick={openModal} />
             </div>
             <DataTable
               className="shadow-md"
               size="small"
-              header={ <TableHeaderComponent headerTitle="Human Resources" export setGlobalFilter={ setGlobalFilterValue } /> }
+              header={
+                <TableHeaderComponent
+                  headerTitle="Human Resources"
+                  export
+                  setGlobalFilter={setGlobalFilterValue}
+                />
+              }
               stripedRows
               value={
                 users
-                  ? users.map( ( { name, ...userData }: userSignUpData ) => {
-                    const userFullName = name.concat(
-                      " ",
-                      userData.details.secondname,
-                      " ",
-                      userData.details.lastname,
-                      " ",
-                      userData.details.secondlastname
-                    );
-                    return {
-                      ...userData,
-                      name: userFullName,
-                    };
-                  } )
+                  ? users.map(({ name, ...userData }: userSignUpData) => {
+                      const userFullName = name.concat(
+                        " ",
+                        userData.details.secondname,
+                        " ",
+                        userData.details.lastname,
+                        " ",
+                        userData.details.secondlastname
+                      );
+                      return {
+                        ...userData,
+                        name: userFullName,
+                      };
+                    })
                   : []
               }
-              emptyMessage={ "No Users found" }
+              emptyMessage={"No Users found"}
               selectionMode="single"
               title="Human Resources"
-              onRowDoubleClick={ ( e ) => {
-                updateModal( e );
-              } }
+              onRowDoubleClick={(e) => {
+                updateModal(e);
+              }}
               paginator
-              rows={ 25 }
-              rowsPerPageOptions={ [ 25, 50, 75, 100 ] }
+              rows={25}
+              rowsPerPageOptions={[25, 50, 75, 100]}
               sortField="active"
-              sortOrder={ -1 }
-              globalFilterFields={ [ 'id', 'name', 'email' ] }
-              globalFilter={ globalFilterValue }
+              sortOrder={-1}
+              globalFilterFields={["id", "name", "email"]}
+              globalFilter={globalFilterValue}
             >
               <Column
                 header="Idetification"
@@ -385,41 +381,41 @@ export default function HumanResources() {
               <Column
                 header="Active"
                 field="active"
-                body={ ( e: userSignUpData ) => activeSymb( e ) }
+                body={(e: userSignUpData) => activeSymb(e)}
                 sortable
                 align="center"
                 alignHeader="center"
               />
             </DataTable>
           </section>
-          {/* modal to update user */ }
+          {/* modal to update user */}
           <Dialog
-            visible={ edit }
-            onHide={ () => setEdit( false ) }
+            visible={edit}
+            onHide={() => setEdit(false)}
             header="Edit User"
             className="w-2/5 bg-red-500"
           >
             <div className="grid grid-cols-4 gap-2">
               <InputGroup
                 inputType="text"
-                keyfilter={ "pint" }
+                keyfilter={"pint"}
                 label="Identification"
                 name="id"
                 placeholder="1728548544"
-                value={ form.id }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.id}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
               />
               <InputGroup
                 inputType="text"
-                keyfilter={ "pint" }
+                keyfilter={"pint"}
                 label="Phone"
                 name="phone"
                 placeholder="0979301325"
-                value={ form.phone }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.phone}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
               />
               <InputGroup
@@ -427,9 +423,9 @@ export default function HumanResources() {
                 label="First Name"
                 name="name"
                 placeholder="David"
-                value={ form.name }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.name}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
               />
               <InputGroup
@@ -437,9 +433,9 @@ export default function HumanResources() {
                 label="Second Name"
                 name="secondname"
                 placeholder="Mateo"
-                value={ form.secondname }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.secondname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
               />
               <InputGroup
@@ -447,9 +443,9 @@ export default function HumanResources() {
                 label="Surname"
                 name="lastname"
                 placeholder="Castro"
-                value={ form.lastname }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.lastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
               />
               <InputGroup
@@ -457,20 +453,20 @@ export default function HumanResources() {
                 label="Second Surname"
                 name="secondlastname"
                 placeholder="Castro"
-                value={ form.secondlastname }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.secondlastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
               />
               <InputGroup
                 inputType="text"
-                keyfilter={ "email" }
+                keyfilter={"email"}
                 label="Email"
                 name="email"
                 placeholder="example@exam.com"
-                value={ form.email }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.email}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-3"
               />
@@ -479,10 +475,10 @@ export default function HumanResources() {
                 inputType="checkbox"
                 label="Active"
                 name="active"
-                value={ form.active }
-                onCheckBoxChange={ ( e ) =>
+                value={form.active}
+                onCheckBoxChange={(e) =>
                   onChange(
-                    Boolean( !e.value ),
+                    Boolean(!e.value),
                     e.target.id as keyof UserPlainData
                   )
                 }
@@ -502,42 +498,43 @@ export default function HumanResources() {
                 inputType="date"
                 label="Admission Date"
                 name="admissionDate"
-                value={ form.admissionDate }
+                value={form.admissionDate}
                 containerSpan="col-span-4"
-                onDateChange={ ( e ) =>
+                onDateChange={(e) =>
                   onChange(
-                    new Date( e.value as Date ).toISOString().split( "T" )[ 0 ],
+                    new Date(e.value as Date).toISOString().split("T")[0],
                     e.target.name as keyof UserPlainData
                   )
                 }
               />
 
-              {/* vacations */ }
+              {/* vacations */}
               <div className="bg-level-3 col-span-full rounded-md shadow-md shadow-zinc-500">
                 <h1
                   className="w-full text-2xl font-bold text-center bg-level-2 mx-auto py-2 cursor-pointer"
-                  ref={ vacationsRef }
-                  onClick={ () => toggleElement( vacationsRef ) }
+                  ref={vacationsRef}
+                  onClick={() => toggleElement(vacationsRef)}
                 >
                   Vacations
                 </h1>
                 <div
-                  className={ `col-span-full grid grid-cols-7 gap-2 rounded-md p-2 ${ !aviableForVacations ? "hidden" : "block"
-                    }` }
+                  className={`col-span-full grid grid-cols-7 gap-2 rounded-md p-2 ${
+                    !aviableForVacations ? "hidden" : "block"
+                  }`}
                 >
                   <InputGroup
                     inputType="date"
                     label="Start vacation day"
                     name="startDay"
-                    placeholder={ new Date().toISOString().split( "T" )[ 0 ] }
-                    value={ dates.startVacationDay.toString() }
-                    onDateChange={ ( e ) =>
-                      setDates( ( currentValues ) => ( {
+                    placeholder={new Date().toISOString().split("T")[0]}
+                    value={dates.startVacationDay.toString()}
+                    onDateChange={(e) =>
+                      setDates((currentValues) => ({
                         ...currentValues,
-                        startVacationDay: new Date( e.value as Date )
+                        startVacationDay: new Date(e.value as Date)
                           .toISOString()
-                          .split( "T" )[ 0 ],
-                      } ) )
+                          .split("T")[0],
+                      }))
                     }
                     containerSpan="col-span-3"
                   />
@@ -545,24 +542,24 @@ export default function HumanResources() {
                     inputType="date"
                     label="End vacation day"
                     name="startDay"
-                    placeholder={ new Date().toISOString().split( "T" )[ 0 ] }
-                    value={ dates.endVacationDay.toString() }
-                    onDateChange={ ( e ) =>
-                      setDates( ( currentValues ) => ( {
+                    placeholder={new Date().toISOString().split("T")[0]}
+                    value={dates.endVacationDay.toString()}
+                    onDateChange={(e) =>
+                      setDates((currentValues) => ({
                         ...currentValues,
-                        endVacationDay: new Date( e.value as Date )
+                        endVacationDay: new Date(e.value as Date)
                           .toISOString()
-                          .split( "T" )[ 0 ],
-                      } ) )
+                          .split("T")[0],
+                      }))
                     }
                     containerSpan="col-span-3"
                   />
                   <InputGroup
                     inputType="button"
                     name="submit"
-                    value={ "" }
+                    value={""}
                     buttonIcon="pi-plus"
-                    onButtonClick={ setNewVacations }
+                    onButtonClick={setNewVacations}
                     containerSpan="col-span-1"
                   />
                   <DataTable
@@ -573,45 +570,45 @@ export default function HumanResources() {
                     stripedRows
                     selectionMode="single"
                     title="Vacations"
-                    rows={ 5 }
-                    rowsPerPageOptions={ [ 5, 10, 15, 20 ] }
-                    value={ form.vacations.map( ( e ) => {
+                    rows={5}
+                    rowsPerPageOptions={[5, 10, 15, 20]}
+                    value={form.vacations.map((e) => {
                       return e;
-                    } ) }
-                    onCellClick={ () => console.log( "xd" ) }
+                    })}
+                    onCellClick={() => console.log("xd")}
                   >
                     <Column
-                      body={ ( x: Vacations, d ) => deleteRowButton( x, d ) }
-                      align={ "center" }
+                      body={(x: Vacations, d) => deleteRowButton(x, d)}
+                      align={"center"}
                     />
                     <Column
                       header="Start V. day"
                       field="startVacationDay"
-                      align={ "center" }
+                      align={"center"}
                     />
                     <Column
                       header="End V. day"
                       field="endVacationDay"
-                      align={ "center" }
+                      align={"center"}
                     />
                     <Column header="Days" field="days" align="center" />
-                    <Column header="Rem Days" field="days" align={ "center" } />
+                    <Column header="Rem Days" field="days" align={"center"} />
                   </DataTable>
 
-                  {/* :value */ }
+                  {/* :value */}
                   <div className="bg-level-2 flex col-span-3 px-1 gap-1 rounded-md">
                     <InputGroup
                       inputType="text"
                       label="Add days"
                       name=""
-                      value={ "" }
+                      value={""}
                       containerSpan="col-start-2 col-span-2"
                       inputCls="text-end"
                     />
                     <InputGroup
                       inputType="button"
                       name=""
-                      value={ "" }
+                      value={""}
                       buttonIcon="pi pi-plus"
                       containerSpan="col-start-1 col-span-1"
                     />
@@ -621,7 +618,7 @@ export default function HumanResources() {
                     label="Total V. Days"
                     disabled
                     name=""
-                    value={ "123" }
+                    value={"123"}
                     containerSpan="col-start-4 col-span-2"
                     inputCls="text-end"
                   />
@@ -630,7 +627,7 @@ export default function HumanResources() {
                     label="Taken days"
                     disabled
                     name=""
-                    value={ "123" }
+                    value={"123"}
                     containerSpan="col-start-6 col-span-2 border-t-2 border-gray-400"
                     inputCls="text-end"
                   />
@@ -639,7 +636,7 @@ export default function HumanResources() {
                     label="Total Added D."
                     disabled
                     name=""
-                    value={ "123" }
+                    value={"123"}
                     containerSpan="col-start-1 col-span-2"
                     inputCls="text-end"
                   />
@@ -648,7 +645,7 @@ export default function HumanResources() {
                     label="Total"
                     disabled
                     name=""
-                    value={ "123" }
+                    value={"123"}
                     containerSpan="col-start-6 col-span-2"
                     inputCls="text-end"
                   />
@@ -658,41 +655,41 @@ export default function HumanResources() {
             <InputGroup
               inputType="button"
               name="submit"
-              value={ "Update User" }
-              onButtonClick={ updateUser }
-              containerSpan={ "1" }
+              value={"Update User"}
+              onButtonClick={updateUser}
+              containerSpan={"1"}
             />
           </Dialog>
 
-          {/* Modal to create user */ }
+          {/* Modal to create user */}
           <Dialog
-            visible={ modal }
-            onHide={ () => setModal( false ) }
+            visible={modal}
+            onHide={() => setModal(false)}
             header="Create User"
             className="w-1/3"
           >
             <div className="grid grid-cols-8 gap-x-2">
               <InputGroup
                 inputType="text"
-                keyfilter={ "pint" }
+                keyfilter={"pint"}
                 label="Identification"
                 name="id"
                 placeholder="1728548544"
-                value={ form.id }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.id}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-4"
               />
               <InputGroup
                 inputType="text"
-                keyfilter={ "pint" }
+                keyfilter={"pint"}
                 label="Phone"
                 name="phone"
                 placeholder="0979301325"
-                value={ form.phone }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.phone}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-4"
               />
@@ -701,9 +698,9 @@ export default function HumanResources() {
                 label="First Name"
                 name="name"
                 placeholder="David"
-                value={ form.name }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.name}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-4"
               />
@@ -712,9 +709,9 @@ export default function HumanResources() {
                 label="Second Name"
                 name="secondname"
                 placeholder="Mateo"
-                value={ form.secondname }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.secondname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-4"
               />
@@ -723,9 +720,9 @@ export default function HumanResources() {
                 label="Surname"
                 name="lastname"
                 placeholder="Castro"
-                value={ form.lastname }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.lastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-4"
               />
@@ -734,21 +731,21 @@ export default function HumanResources() {
                 label="Second Surname"
                 name="secondlastname"
                 placeholder="Castro"
-                value={ form.secondlastname }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.secondlastname}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-4"
               />
               <InputGroup
                 inputType="text"
-                keyfilter={ "email" }
+                keyfilter={"email"}
                 label="Email"
                 name="email"
                 placeholder="example@exam.com"
-                value={ form.email }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.email}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-5"
               />
@@ -757,9 +754,9 @@ export default function HumanResources() {
                 label="Payroll"
                 name="payroll"
                 placeholder="Yes"
-                value={ form.payroll }
-                options={ [ "Yes", "No" ] }
-                onDropDownChange={ ( e ) =>
+                value={form.payroll}
+                options={["Yes", "No"]}
+                onDropDownChange={(e) =>
                   onChange(
                     e.value as string,
                     e.target.id as keyof UserPlainData
@@ -772,9 +769,9 @@ export default function HumanResources() {
                 label="Password"
                 name="password"
                 placeholder="*******"
-                value={ form.password }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.password}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-full"
               />
@@ -783,21 +780,21 @@ export default function HumanResources() {
                 label="Confirm Password"
                 name="confirmPassword"
                 placeholder="*******"
-                value={ form.confirmPassword }
-                onChange={ ( e ) =>
-                  onChange( e.target.value, e.target.id as keyof UserPlainData )
+                value={form.confirmPassword}
+                onChange={(e) =>
+                  onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
                 containerSpan="col-span-full"
               />
               <Button
                 label="Create User"
                 className="col-span-full"
-                onClick={ AddUser }
+                onClick={AddUser}
               />
             </div>
           </Dialog>
         </div>
-      ) }
+      )}
     </>
   );
 }
