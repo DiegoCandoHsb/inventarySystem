@@ -9,6 +9,8 @@ import {
   AssetTypesData,
   defaultAssetData,
   AssetData,
+  FormatedAssetData,
+  PlainAssetData,
 } from "../interfaces/asset.interface";
 import { useLoaderData } from "react-router-dom";
 import { useForm } from "./useForm";
@@ -41,12 +43,12 @@ const useAssetForm = () => {
   });
 
   const { onChange, form, setState } =
-    useForm<AssetPlainData>(defaultAssetData);
+    useForm<PlainAssetData>(defaultAssetData);
 
   useEffect(() => {
     calculateResValue();
     depreciations();
-  }, [form.value, form.depreciationTime, form.residualValue]);
+  }, [form.unitValue, form.depreciationTime, form.residualValue]);
 
   useEffect(() => {
     calculateValueBooks();
@@ -58,7 +60,7 @@ const useAssetForm = () => {
 
   function calculateResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
-    const resValue = (form.value * formSettings.porcetaje1) / 100;
+    const resValue = (form.unitValue * formSettings.porcetaje1) / 100;
 
     setState((currentValues) => ({
       ...currentValues,
@@ -67,7 +69,7 @@ const useAssetForm = () => {
   }
 
   function depreciations() {
-    const value = form.value - form.residualValue;
+    const value = form.unitValue - form.residualValue;
     const annualDep = value / (form.depreciationTime / 12);
     const mensualDep = value / form.depreciationTime;
 
@@ -102,13 +104,13 @@ const useAssetForm = () => {
 
     let newValueBooks = 0;
     if (days <= 0) {
-      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
+      newValueBooks = form.unitValue - totalMonths * form.monthlyDepreciation;
       if (totalMonths > form.depreciationTime) {
         newValueBooks = form.residualValue;
       }
     } else {
       totalMonths += 1;
-      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
+      newValueBooks = form.unitValue - totalMonths * form.monthlyDepreciation;
 
       if (totalMonths > form.depreciationTime) {
         newValueBooks = form.residualValue;
@@ -127,12 +129,11 @@ const useAssetForm = () => {
     setModal(true);
     AssetConfig.setDialogHeaderTitle("update");
 
-    const { details, ...assetData } = e.data as AssetData;
+    const { details, ...assetData } = e.data as FormatedAssetData;
     setState({
       ...assetData,
       ...details,
-      purchaseDate: assetData.purchaseDate.substring(0, 10),
-    } as AssetPlainData);
+    } as PlainAssetData);
 
     setFormSettings((currentValues) => ({
       ...currentValues,
@@ -142,8 +143,11 @@ const useAssetForm = () => {
 
   // create asset
   function createOrEditAsset(assetType: AssetTypeConfig) {
+    form.type = assetType;
+
+    console.log("data: ",form)
     if (!edit) {
-      CreateAsset(formatData(assetType, "responsibleName", "id"))
+      CreateAsset(form)
         .then(() => setModal(false))
         .catch((err) => {
           inputErrors(form);
@@ -152,7 +156,7 @@ const useAssetForm = () => {
         })
         .finally(async () => await setNewAssetsData());
     } else if (edit) {
-      UpdateAsset(formatData(assetType, "responsibleName"))
+      UpdateAsset(form)
         .then(() => setModal(false))
         .catch((err) => {
           inputErrors(form);
@@ -185,30 +189,6 @@ const useAssetForm = () => {
       detail: errorNodeList,
       life: 7000,
     });
-  }
-
-  function formatData(
-    assetType: AssetTypeConfig,
-    ...propsToRemove: (keyof AssetPlainData)[]
-  ) {
-    const { id, name, purchaseDate, ...details } = form;
-    const data = {
-      id,
-      name,
-      purchaseDate,
-      details: {
-        ...details,
-        assetType,
-      },
-    };
-
-    if (propsToRemove) {
-      for (let i = 0; i < propsToRemove.length; i++) {
-        delete data.details[propsToRemove[i] as keyof typeof details];
-        delete data[propsToRemove[i] as keyof AssetData];
-      }
-    }
-    return data;
   }
 
   return {

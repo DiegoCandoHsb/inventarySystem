@@ -3,7 +3,8 @@ import useAssetForm from "../../hooks/useAssetForm";
 import { Button } from "primereact/button";
 import {
   AssetData,
-  AssetPlainData,
+  FormatedAssetData,
+  PlainAssetData,
   defaultAssetData,
 } from "../../interfaces/asset.interface";
 import { DataTable } from "primereact/datatable";
@@ -12,10 +13,9 @@ import { Column } from "primereact/column";
 import { Dialog } from "primereact/dialog";
 import InputGroup from "../../components/InputGroup";
 import { AssetConfig, AssetTypeConfig } from "../../config/assets.config";
-import { AssetActive } from "../../interfaces/enums/assetActive";
+import { AssetState } from "../../interfaces/enums/assetActive";
 import { exportExcel, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
-import { AssetUbication } from "../../interfaces/enums/assetUbication.enum";
 
 export default function FurnitureAndFixtures() {
   const assetName = "furnitureAndFixturesAssets";
@@ -135,7 +135,7 @@ export default function FurnitureAndFixtures() {
           ></Column>
           <Column
             header="Item Name"
-            field="name"
+            field="itemName"
             align="center"
             alignHeader="center"
             sortable
@@ -157,7 +157,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Purchase Value"
             field="details.value"
-            body={(e: AssetData) => numValCell(e.details.value)}
+            body={(e: FormatedAssetData) => numValCell(e.details.unitValue)}
             align="right"
             alignHeader="center"
             sortable
@@ -165,7 +165,9 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Monthly Dep."
             field="details.monthlyDepreciation"
-            body={(e: AssetData) => numValCell(e.details.monthlyDepreciation)}
+            body={(e: FormatedAssetData) =>
+              numValCell(e.details.monthlyDepreciation)
+            }
             align="right"
             alignHeader="center"
             sortable
@@ -173,7 +175,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Val. Books"
             field="details.valueBooks"
-            body={(e: AssetData) => numValCell(e.details.valueBooks)}
+            body={(e: FormatedAssetData) => numValCell(e.details.valueBooks)}
             align="right"
             alignHeader="center"
             sortable
@@ -181,7 +183,7 @@ export default function FurnitureAndFixtures() {
           <Column
             header="Insured"
             field="details.insured"
-            body={(e: AssetData) => numValCell(e.details.insured)}
+            body={(e: FormatedAssetData) => numValCell(e.details.insured || 0)}
             align="right"
             alignHeader="center"
             sortable
@@ -213,36 +215,36 @@ export default function FurnitureAndFixtures() {
       >
         <InputGroup
           inputType="text"
-          label="Item Name"
-          name="name"
-          placeholder="Pc"
-          value={form.name}
+          label="Code"
+          name="code"
+          placeholder="EE000"
+          value={form.code}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
           }
         />
-
         <InputGroup
-          inputType="date"
-          label="Purchase Date"
-          name="purchaseDate"
-          placeholder="Purchase Date"
-          value={form.purchaseDate}
-          onDateChange={(e) => {
+          inputType="number"
+          label="Quantity"
+          name="quantity"
+          placeholder="1"
+          value={form.quantity}
+          onNumberChange={(e) =>
             onChange(
-              new Date(e.value as Date).toISOString().split("T")[0],
-              e.target.id as keyof AssetPlainData
-            );
-          }}
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof PlainAssetData
+            )
+          }
         />
         <InputGroup
           inputType="text"
-          label="Serial Number"
-          name="serialNumber"
-          placeholder="123ADS23LK1"
-          value={form.serialNumber}
+          label="Item Name"
+          name="itemName"
+          placeholder="Pc"
+          value={form.itemName}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
           }
         />
         <InputGroup
@@ -255,17 +257,27 @@ export default function FurnitureAndFixtures() {
             (option) => option.catalogDetail
           )}
           onDropDownFilterChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+            onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
         />
         <InputGroup
           inputType="text"
           label="Model"
           name="model"
-          placeholder=""
+          placeholder="Gaming"
           value={form.model}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
+          }
+        />
+        <InputGroup
+          inputType="text"
+          label="Serial Number"
+          name="serialNumber"
+          placeholder="123ADS23LK1"
+          value={form.serialNumber}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
           }
         />
         <InputGroup
@@ -273,9 +285,73 @@ export default function FurnitureAndFixtures() {
           label="Color"
           name="color"
           placeholder="Red"
-          value={form.color}
+          value={form.color || ""}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
+          }
+        />
+        <InputGroup
+          inputType="date"
+          label="Purchase Date"
+          name="purchaseDate"
+          placeholder="Purchase Date"
+          value={form.purchaseDate}
+          onDateChange={(e) => {
+            onChange(
+              new Date(e.value as Date).toISOString().split("T")[0],
+              e.target.id as keyof PlainAssetData
+            );
+          }}
+        />
+        <InputGroup
+          inputType="text"
+          label="Invoice No."
+          name="invoice"
+          placeholder="192873"
+          value={form.invoice || ""}
+          onChange={(e) =>
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
+          }
+        />
+        <InputGroup
+          inputType="text"
+          label="Provider"
+          name="provider"
+          placeholder="Gato"
+          value={form.provider}
+          onChange={(e) => {
+            onChange(e.target.value, e.target.id as keyof PlainAssetData);
+          }}
+        />
+        <InputGroup
+          inputType="decimal"
+          label="Unit Value"
+          name="unitValue"
+          placeholder="120.50"
+          value={form.unitValue}
+          decimalQuliantity={2} // Setting
+          onNumberChange={(e) => {
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof PlainAssetData
+            );
+          }}
+        />
+        <InputGroup
+          inputType="decimal"
+          label="Total Value"
+          name="totalValue"
+          placeholder="0"
+          value={form.totalValue}
+          decimalQuliantity={AssetConfig.decimalQuantity}
+          disabled={true}
+          onNumberChange={(e) =>
+            onChange(
+              e.value as number,
+              (e.originalEvent.target as HTMLInputElement)
+                .name as keyof PlainAssetData
+            )
           }
         />
         <InputGroup
@@ -288,47 +364,59 @@ export default function FurnitureAndFixtures() {
           optionLabel={"name"}
           optionValue={"id"}
           onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+            onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
         />
         <InputGroup
           inputType="dropdown"
-          label="Asset Ubication"
-          name="ubication"
-          placeholder="Office"
-          value={form.ubication}
-          options={Object.values(AssetUbication)}
+          label="State"
+          name="state"
+          placeholder="new"
+          value={form.state}
+          options={Object.values(AssetState)} // TODO: DB
           onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+            onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
         />
         <InputGroup
-          inputType="text"
-          label="Supplier"
-          name="supplier"
-          placeholder="Gato"
-          value={form.supplier}
-          onChange={(e) => {
-            console.log(e.target.id);
-            onChange(e.target.value, e.target.id as keyof AssetPlainData);
-          }}
+          inputType="dropdown"
+          label="Active"
+          name="active"
+          placeholder="Active"
+          value={form.active}
+          options={["Active", "Inactive"]} // TODO: DB
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof PlainAssetData)
+          }
         />
         <InputGroup
           inputType="decimal"
-          label="Value"
-          name="value"
-          placeholder="120.50"
-          value={form.value}
-          decimalQuliantity={AssetConfig.decimalQuantity} // Setting
-          onNumberChange={(e) => {
-            console.log();
+          label="Insured"
+          name="insured"
+          placeholder="0"
+          value={form.insured || 0}
+          decimalQuliantity={AssetConfig.decimalQuantity}
+          onNumberChange={(e) =>
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
-            );
-          }}
+                .name as keyof PlainAssetData
+            )
+          }
         />
+        {/* TYPE: Burned */}
+        <InputGroup
+          inputType="dropdown"
+          label="Asset Location"
+          name="ubication"
+          placeholder="Office"
+          value={form.ubication}
+          options={["item1", "item2"]} // TODO: DB
+          onDropDownChange={(e) =>
+            onChange(e.value as string, e.target.id as keyof PlainAssetData)
+          }
+        />
+
         <InputGroup
           inputType="number"
           label="Depreciation Time"
@@ -339,7 +427,7 @@ export default function FurnitureAndFixtures() {
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
+                .name as keyof PlainAssetData
             )
           }
         />
@@ -348,13 +436,14 @@ export default function FurnitureAndFixtures() {
           label="Residual Value"
           name="residualValue"
           placeholder="0"
+          decimalQuliantity={AssetConfig.decimalQuantity}
           value={form.residualValue}
           disabled={true}
           onNumberChange={(e) =>
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
+                .name as keyof PlainAssetData
             )
           }
         />
@@ -370,7 +459,7 @@ export default function FurnitureAndFixtures() {
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
+                .name as keyof PlainAssetData
             )
           }
         />
@@ -386,14 +475,14 @@ export default function FurnitureAndFixtures() {
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
+                .name as keyof PlainAssetData
             )
           }
         />
         <InputGroup
           inputType="decimal"
           label="value in books"
-          name="monthlyDepreciation"
+          name="valueBooks"
           placeholder="0"
           value={form.valueBooks}
           decimalQuliantity={AssetConfig.decimalQuantity}
@@ -402,25 +491,11 @@ export default function FurnitureAndFixtures() {
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
+                .name as keyof PlainAssetData
             )
           }
         />
-        <InputGroup
-          inputType="decimal"
-          label="Insured"
-          name="insured"
-          placeholder="0"
-          value={form.insured}
-          decimalQuliantity={AssetConfig.decimalQuantity}
-          onNumberChange={(e) =>
-            onChange(
-              e.value as number,
-              (e.originalEvent.target as HTMLInputElement)
-                .name as keyof AssetPlainData
-            )
-          }
-        />
+
         {/* <InputGroup
           inputType="dropdown"
           label="Type"
@@ -429,27 +504,16 @@ export default function FurnitureAndFixtures() {
           value={form.assetType}
           options={Object.values(AssetTypeConfig)}
           onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
+            onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
         /> */}
-        <InputGroup
-          inputType="dropdown"
-          label="Status"
-          name="active"
-          placeholder="new"
-          value={form.active}
-          options={Object.values(AssetActive)}
-          onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof AssetPlainData)
-          }
-        />
         <InputGroup
           inputType="textarea"
           label="Observations"
           name="observation"
-          value={form.observation}
+          value={form.observation || ""}
           onChange={(e) =>
-            onChange(e.target.value, e.target.id as keyof AssetPlainData)
+            onChange(e.target.value, e.target.id as keyof PlainAssetData)
           }
         />
         {/* otros */}

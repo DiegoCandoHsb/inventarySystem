@@ -9,7 +9,7 @@ export interface AssetData {
   id?: number;
   name: string;
   details: {
-    assetType: AssetTypeConfig;
+    type: AssetTypeConfig;
     brand: string;
     serialNumber: string;
     model: string;
@@ -26,7 +26,7 @@ export interface AssetData {
     observation: string;
     insured: number;
     active: AssetActive;
-    ubication: AssetUbication
+    ubication: AssetUbication;
   };
   purchaseDate: string;
 }
@@ -61,28 +61,99 @@ export interface AssetPlainData {
   observation: string;
   insured: number;
   active: AssetActive;
-  ubication: AssetUbication
+  ubication: AssetUbication;
 }
 
-export const defaultAssetData: AssetPlainData = {
-  id: 0,
-  name: "",
-  purchaseDate: "",
-  assetType: " " as AssetTypeConfig,
-  serialNumber: "",
-  brand: "",
-  model: "",
-  color: "",
-  responsible: "",
-  supplier: "",
-  value: 0,
-  depreciationTime: 0,
-  residualValue: 0,
-  annualDepreciation: 0,
-  monthlyDepreciation: 0,
-  valueBooks: 0,
-  observation: "",
-  insured: 0,
-  active: AssetActive.new,
-  ubication: AssetUbication.Office
+/// nuevos
+interface AssetDetailsData {
+  code: string;
+  quantity: number;
+  brand: string;
+  model: string;
+  serialNumber: string;
+  provider: string;
+  unitValue: number;
+  totalValue: number;
+  depreciationTime: number;
+  residualValue: number;
+  annualDepreciation: number;
+  monthlyDepreciation: number;
+  valueBooks: number;
+  state: string; // observation DB
+  active: boolean;
+  responsible: string;
+  ubication: string; // observation DB
+  type: AssetTypeConfig;
+  color?: string;
+  invoice?: string;
+  insured?: number;
+  observation?: string;
+}
+
+interface AssetEETemplate {
+  inches?: string;
+  processor?: string;
+  kitValue?: number;
+  speed?: string;
+  ram?: string;
+  hdd?: string;
+}
+
+export interface FormatedAssetData {
+  id?: number;
+  itemName: string;
+  purchaseDate: string;
+  details: AssetDetailsData & AssetEETemplate;
+}
+
+export interface PlainAssetData extends AssetDetailsData, AssetEETemplate {
+  id?: number;
+  itemName: string;
+  purchaseDate: string;
+}
+
+// export const defaultAssetData: PlainAssetData = {
+//   itemName: "",
+//   purchaseDate: "",
+//   code: "",
+//   quantity: 0,
+//   brand: "",
+//   model: "",
+//   serialNumber: "",
+//   provider: "",
+//   unitValue: 0,
+//   totalValue: 0,
+//   depreciationTime: 0,
+//   residualValue: 0,
+//   annualDepreciation: 0,
+//   monthlyDepreciation: 0,
+//   valueBooks: 0,
+//   state: "",
+//   active: false,
+//   responsible: "",
+//   ubication: "",
+//   type: AssetTypeConfig.ElectronicEquipment,
+// };
+
+export const defaultAssetData: PlainAssetData = {
+  itemName: "item1",
+  purchaseDate: "2012-12-12",
+  code: "123123",
+  quantity: 1,
+  brand: "Brand",
+  model: "model",
+  serialNumber: "slakñdjfñasl",
+  provider: "prov1",
+  unitValue: 1,
+  totalValue: 1,
+  depreciationTime: 1,
+  residualValue: 1,
+  annualDepreciation: 1,
+  monthlyDepreciation: 1,
+  valueBooks: 1,
+  state: "new",
+  active: false,
+  responsible: "asdfs",
+  ubication: "office",
+  type: AssetTypeConfig.ElectronicEquipment,
 };
