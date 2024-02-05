@@ -1,14 +1,7 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import {
-  AssetPlainData,
   AssetTypesData,
   defaultAssetData,
-  AssetData,
   FormatedAssetData,
   PlainAssetData,
 } from "../interfaces/asset.interface";
@@ -19,16 +12,19 @@ import {
   CreateAsset,
   GetAllAssets,
   UpdateAsset,
+  getEspecificAssets,
 } from "../services/asset.service";
 import { Toast } from "primereact/toast";
 import React from "react";
 import { AssetConfig, AssetTypeConfig } from "../config/assets.config";
 import { inputErrors } from "../pages/fixedAssets/common/utilities";
+import { AxiosError } from "axios";
 
 const useAssetForm = () => {
   const [assets, setAssets] = useState<AssetTypesData>(
     useLoaderData() as AssetTypesData
   );
+
   const [modal, setModal] = useState<boolean>(false);
 
   const [edit, setEdit] = useState<boolean>(false);
@@ -56,7 +52,7 @@ const useAssetForm = () => {
 
   const submitButtonRef = useRef<HTMLInputElement>(null);
   const toastRef = useRef<Toast>(null);
-  const dataTableRef = useRef<DataTable<AssetData[]>>(null);
+  const dataTableRef = useRef<DataTable<FormatedAssetData[]>>(null);
 
   function calculateResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
@@ -133,7 +129,7 @@ const useAssetForm = () => {
     setState({
       ...assetData,
       ...details,
-    } as PlainAssetData);
+    });
 
     setFormSettings((currentValues) => ({
       ...currentValues,
@@ -145,37 +141,43 @@ const useAssetForm = () => {
   function createOrEditAsset(assetType: AssetTypeConfig) {
     form.type = assetType;
 
-    console.log("data: ",form)
     if (!edit) {
       CreateAsset(form)
         .then(() => setModal(false))
-        .catch((err) => {
+        .catch((err: Required<AxiosError<object>>) => {
           inputErrors(form);
           showErrorMessage(err);
           setModal(true);
         })
-        .finally(async () => await setNewAssetsData());
+        .finally(() => void setNewAssetsData(assetType));
     } else if (edit) {
       UpdateAsset(form)
         .then(() => setModal(false))
-        .catch((err) => {
+        .catch((err: Required<AxiosError<object>>) => {
           inputErrors(form);
           showErrorMessage(err);
           setModal(true);
         })
-        .finally(async () => await setNewAssetsData());
+        .finally(() => void setNewAssetsData(assetType));
     }
   }
 
-  async function setNewAssetsData() {
-    const newAssetsData = await GetAllAssets();
-    setAssets((currentAssets) => ({ ...currentAssets, ...newAssetsData }));
+  async function setNewAssetsData(assetType: AssetTypeConfig) {
+    const newAssetsData2 = await GetAllAssets();
+    const newAssetsData: FormatedAssetData[] = await getEspecificAssets(assetType);
+
+    return setAssets((currentAssets) => {
+      return {
+        ...currentAssets,
+        assets: newAssetsData,
+      };
+    });
   }
 
-  function showErrorMessage(error: any) {
+  function showErrorMessage(error: Required<AxiosError<object>>) {
     const errorStrings: string[] = (
-      error.response.data.message as string[]
-    ).map((str) => str.split("details.").join(" ").trim());
+      error.response.data as { message: string[] }
+    ).message.map((str) => str.split("details.").join(" ").trim());
 
     const errorNodeList = [];
     for (let i = 0; i < errorStrings.length; i++) {
@@ -185,7 +187,7 @@ const useAssetForm = () => {
 
     toastRef.current?.show({
       severity: "error",
-      summary: `Error ${error.response.status as number}`,
+      summary: `Error ${error.response.status}`,
       detail: errorNodeList,
       life: 7000,
     });

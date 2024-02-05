@@ -3,7 +3,7 @@ import InputGroup from "./InputGroup";
 interface Props {
   headerTitle: string;
   export?: boolean;
-  fun?: () => Promise<any>;
+  fun?: () => void;
 }
 
 export default function TableHeaderComponent({

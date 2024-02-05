@@ -1,30 +1,41 @@
-import { AssetData, PlainAssetData } from "../interfaces/asset.interface";
+import {
+  FormatedAssetData,
+  PlainAssetData,
+} from "../interfaces/asset.interface";
 import { HsbBaseApiDb, getReqConfig } from "./api.db";
 
 export async function GetAllAssets() {
-  return await HsbBaseApiDb.get<AssetData[]>("/assets", getReqConfig()).then(
-    (res) => {
-      const assetsList = res.data;
+  return await HsbBaseApiDb.get<FormatedAssetData[]>(
+    "/assets",
+    getReqConfig()
+  ).then((res) => {
+    const assetsList = res.data;
 
-      const electronicEquipmentAssets = assetsList.filter(
-        (asset) => asset.details.type === "EE"
-      );
+    const electronicEquipmentAssets = assetsList.filter(
+      (asset) => asset.details.type === "EE"
+    );
 
-      const furnitureAndFixturesAssets = assetsList.filter(
-        (asset) => asset.details.type === "ME"
-      );
-      const expensesAssets = assetsList.filter(
-        (asset) => asset.details.type === "Expenses"
-      );
+    const furnitureAndFixturesAssets = assetsList.filter(
+      (asset) => asset.details.type === "ME"
+    );
 
-      return {
-        assetsList,
-        electronicEquipmentAssets,
-        furnitureAndFixturesAssets,
-        expensesAssets,
-      };
-    }
-  );
+    return {
+      assetsList,
+      electronicEquipmentAssets,
+      furnitureAndFixturesAssets,
+    };
+  });
+}
+
+export async function getEspecificAssets(
+  assetType: string
+): Promise<FormatedAssetData[]> {
+  return await HsbBaseApiDb.get<FormatedAssetData[]>(
+    "/assets".concat("/", assetType),
+    getReqConfig()
+  ).then(({ data }) => {
+    return data;
+  });
 }
 
 export const CreateAsset = async (

@@ -7,9 +7,9 @@ import LoadSpinner from "../components/LoadSpinner";
 export default function Layaout() {
   const [turnSpinner, setTurnSpinner] = useState<boolean>(false);
 
-  useEffect(() => {
+  // useEffect(() => {
     // console.log(turnSpinner);
-  }, [turnSpinner]);
+  // }, [turnSpinner]);
 
   return (
     <div className="bg-level-3 h-screen">

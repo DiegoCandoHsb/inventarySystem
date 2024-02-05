@@ -8,7 +8,6 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 
 import {
-  AssetData,
   FormatedAssetData,
   PlainAssetData,
   defaultAssetData,
@@ -21,14 +20,12 @@ import useAssetForm from "../../hooks/useAssetForm";
 import { Button } from "primereact/button";
 import { Toast } from "primereact/toast";
 import TableHeaderComponent from "../../components/TableHeaderComponent";
-import { exportExcel, numValCell } from "./common/utilities";
+import { exportToXlsx, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
-import { AssetUbication } from "../../interfaces/enums/assetUbication.enum";
 import LoadSpinner from "../../components/LoadSpinner";
 import { useEffect } from "react";
 
 export default function ElectronicEquipment() {
-  const assetName = "electronicEquipmentAssets";
   const {
     assets,
     createOrEditAsset,
@@ -90,17 +87,19 @@ export default function ElectronicEquipment() {
                   headerTitle="Electronic Equipment"
                   export
                   // fun={() => exportCSV(false, dataTableRef)}
-                  fun={async () => {
-                    if (assets) {
-                      return exportExcel(assets[assetName]!, assetName);
+                  fun={() => {
+                    if (assets.assets?.length) {
+                      return exportToXlsx(
+                        assets.assets,
+                        AssetConfig.electronicEquipment
+                      );
                     }
                   }}
                 />
               }
-              exportFilename={AssetConfig.electronicEquipment}
               value={
-                assets[assetName] &&
-                assets[assetName].map((asset) => {
+                assets.assets &&
+                assets.assets.map((asset) => {
                   for (
                     let i = 0;
                     i < (assets.users ? assets.users.length : 1);
@@ -127,17 +126,19 @@ export default function ElectronicEquipment() {
               title="Electronic Equipments"
               onRowDoubleClick={(e) => updateModal(e)}
               paginator
-              filters={{}}
+              // filters={{}}
               rows={25}
               rowsPerPageOptions={[25, 50, 75, 100]}
               tableStyle={{
                 minWidth: "50rem",
               }}
-              cellClassName={(_, { ...data }) => {
-                const depre = calculateDepreTime(
-                  data.props.value![data.rowIndex].purchaseDate
-                );
-                return depre ? "bg-warning" : "";
+              rowClassName={(data) => {
+                // console.log(data);
+                const depre = calculateDepreTime(data.purchaseDate);
+                // return depre ? "bg-warning" : "";
+                return {
+                  "bg-warning": depre === true,
+                };
               }}
               stripedRows
               size="small"
@@ -228,12 +229,13 @@ export default function ElectronicEquipment() {
             </DataTable>
           </section>
           {/* total depreciation */}
-          <TotalDepreciationCard data={assets[assetName] ?? 0} />
+          <TotalDepreciationCard data={assets.assets ?? 0} />
           {/* modal */}
           <Dialog
             header={AssetConfig.defaultHeaderTitle}
             visible={modal}
             className="w-1/3"
+            modal
             onHide={() => setModal(false)}
           >
             <InputGroup
@@ -288,7 +290,7 @@ export default function ElectronicEquipment() {
               label="Inches"
               name="inches"
               placeholder='19"'
-              value={form.inches || ''}
+              value={form.inches || ""}
               onChange={(e) =>
                 onChange(e.target.value, e.target.id as keyof PlainAssetData)
               }
@@ -504,7 +506,6 @@ export default function ElectronicEquipment() {
                 onChange(e.value as string, e.target.id as keyof PlainAssetData)
               }
             />
-
             <InputGroup
               inputType="number"
               label="Depreciation Time"
@@ -583,18 +584,17 @@ export default function ElectronicEquipment() {
                 )
               }
             />
-
             {/* <InputGroup
-          inputType="dropdown"
-          label="Type"
-          name="assetType"
-          placeholder="Select asset type"
-          value={form.assetType}
-          options={Object.values(AssetTypeConfig)}
-          onDropDownChange={(e) =>
-            onChange(e.value as string, e.target.id as keyof PlainAssetData)
-          }
-        /> */}
+              inputType="dropdown"
+              label="Type"
+              name="assetType"
+              placeholder="Select asset type"
+              value={form.assetType}
+              options={Object.values(AssetTypeConfig)}
+              onDropDownChange={(e) =>
+                onChange(e.value as string, e.target.id as keyof PlainAssetData)
+              }
+            /> */}
             <InputGroup
               inputType="textarea"
               label="Observations"
@@ -604,7 +604,7 @@ export default function ElectronicEquipment() {
                 onChange(e.target.value, e.target.id as keyof PlainAssetData)
               }
             />
-            {/* otros */}
+
             <div className="w-full flex justify-center mt-5">
               <Button
                 ref={() => submitButtonRef}

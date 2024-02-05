@@ -2,7 +2,6 @@ import { Toast } from "primereact/toast";
 import useAssetForm from "../../hooks/useAssetForm";
 import { Button } from "primereact/button";
 import {
-  AssetData,
   FormatedAssetData,
   PlainAssetData,
   defaultAssetData,
@@ -14,11 +13,10 @@ import { Dialog } from "primereact/dialog";
 import InputGroup from "../../components/InputGroup";
 import { AssetConfig, AssetTypeConfig } from "../../config/assets.config";
 import { AssetState } from "../../interfaces/enums/assetActive";
-import { exportExcel, numValCell } from "./common/utilities";
+import { exportToXlsx, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
 
 export default function FurnitureAndFixtures() {
-  const assetName = "furnitureAndFixturesAssets";
   const {
     assets,
     createOrEditAsset,
@@ -75,17 +73,20 @@ export default function FurnitureAndFixtures() {
             <TableHeaderComponent
               headerTitle="Furniture and Fixtures"
               export
-              fun={async () => {
-                if (assets) {
-                  return exportExcel(assets[assetName]!, assetName);
+              fun={() => {
+                if (assets.assets?.length) {
+                  return exportToXlsx(
+                    assets.assets,
+                    AssetConfig.electronicEquipment
+                  );
                 }
               }}
             />
           }
           exportFilename={AssetConfig.furnitureAndFixture}
           value={
-            assets[assetName] &&
-            assets[assetName].map((asset) => {
+            assets.assets &&
+            assets.assets.map((asset) => {
               for (
                 let i = 0;
                 i < (assets.users ? assets.users.length : 1);
@@ -205,7 +206,7 @@ export default function FurnitureAndFixtures() {
         </DataTable>
       </section>
       {/* total depreciation */}
-      <TotalDepreciationCard data={assets[assetName] ?? 0} />
+      <TotalDepreciationCard data={assets.assets ?? 0} />
       {/* modal */}
       <Dialog
         header={AssetConfig.defaultHeaderTitle}

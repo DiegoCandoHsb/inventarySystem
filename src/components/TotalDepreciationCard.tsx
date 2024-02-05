@@ -1,9 +1,9 @@
 import { Card } from "primereact/card";
-import { AssetData } from "../interfaces/asset.interface";
+import { FormatedAssetData } from "../interfaces/asset.interface";
 import { AssetConfig } from "../config/assets.config";
 
 interface props {
-  data: AssetData[] | number;
+  data: FormatedAssetData[] | number;
 }
 
 export default function TotalDepreciationCard({ data }: props) {

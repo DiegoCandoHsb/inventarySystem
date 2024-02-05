@@ -1,15 +1,13 @@
 import { DataTable } from "primereact/datatable";
 import { AssetConfig } from "../../../config/assets.config";
-import { AssetData } from "../../../interfaces/asset.interface";
-import {
-  UserPlainData,
-  userSignUpData,
-} from "../../../interfaces/userSignUpData.interface";
+import { FormatedAssetData } from "../../../interfaces/asset.interface";
+import { userSignUpData } from "../../../interfaces/userSignUpData.interface";
+import * as XLSX from "xlsx";
 
 export function numValCell(field: string | number) {
   return (
     <p>
-      {AssetConfig.valuePrefix} {""}
+      {AssetConfig.valuePrefix}
       {Number(field).toFixed(AssetConfig.decimalQuantity)}
     </p>
   );
@@ -18,44 +16,28 @@ export function numValCell(field: string | number) {
 // Deprecated
 export const exportCSV = (
   selectionOnly: boolean,
-  reference: React.RefObject<DataTable<AssetData[]>>
+  reference: React.RefObject<DataTable<FormatedAssetData[]>>
 ) => {
   return reference.current?.exportCSV({ selectionOnly });
 };
 
-export async function exportExcel(assets: AssetData[], fileName: string) {
-  await import("xlsx").then(async (xlsx) => {
-    const worksheet = xlsx.utils.json_to_sheet(
-      assets.map((x) => {
-        return { ...x, ...x.details };
-      }) || []
-    );
-    const workbook = { Sheets: { data: worksheet }, SheetNames: ["data"] };
-
-    const excelBuffer = xlsx.write(workbook, {
-      type: "array",
-      bookType: "xlsx",
-    }) as BlobPart;
-
-    await saveAsExcelFile(excelBuffer, fileName);
+export function exportToXlsx(
+  assets: FormatedAssetData[],
+  fileName: string
+): void {
+  const plainData = assets.map(({ details, ...data }) => {
+    return { ...data, ...details };
   });
-}
+  const worksheet = XLSX.utils.json_to_sheet(plainData);
 
-async function saveAsExcelFile(buffer: BlobPart, fileName: string) {
-  await import("file-saver").then((module) => {
-    if (module && module.default) {
-      const EXCEL_TYPE =
-        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-      const data = new Blob([buffer], {
-        type: EXCEL_TYPE,
-      });
+  const workbook = XLSX.utils.book_new();
 
-      module.default.saveAs(
-        data,
-        fileName.concat("_export_", new Date().getTime().toString(), ".xlsx")
-      );
-    }
-  });
+  XLSX.utils.book_append_sheet(workbook, worksheet, fileName);
+
+  XLSX.writeFile(
+    workbook,
+    fileName.concat("_", new Date().getTime().toString(), ".xlsx")
+  );
 }
 
 export function inputErrors(data: Record<string, any>) {

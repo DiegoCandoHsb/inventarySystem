@@ -1,12 +1,16 @@
-import { ElectronicEquipmentConfig } from "../../config/assets.config";
-import { GetAllAssets } from "../../services/asset.service";
+import {
+  AssetTypeConfig,
+  ElectronicEquipmentConfig,
+} from "../../config/assets.config";
+import { GetAllAssets, getEspecificAssets } from "../../services/asset.service";
 import { GetCatalog } from "../../services/catalog.service";
 import { GetUsers } from "../../services/user.service";
 
-export async function AssetDataLoader() {
-  const data = await GetAllAssets();
-  const users = await GetUsers();
+export async function AssetDataLoader(assetType: AssetTypeConfig) {
+  // const data = await GetAllAssets();
 
+  const assets = await getEspecificAssets(assetType);
+  const users = await GetUsers();
   const catalogs = await GetCatalog();
 
   let catalog = catalogs.filter(
@@ -19,7 +23,7 @@ export async function AssetDataLoader() {
   }
 
   return {
-    ...data,
+    assets,
     users,
     catalog,
   };
