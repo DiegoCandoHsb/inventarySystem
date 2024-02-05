@@ -21,38 +21,34 @@ import { inputErrors } from "../pages/fixedAssets/common/utilities";
 import { AxiosError } from "axios";
 
 const useAssetForm = () => {
-  const [ assets, setAssets ] = useState<AssetTypesData>(
+  const [assets, setAssets] = useState<AssetTypesData>(
     useLoaderData() as AssetTypesData
   );
 
   const [modal, setModal] = useState<boolean>(false);
 
-  const [ edit, setEdit ] = useState<boolean>( false );
+  const [edit, setEdit] = useState<boolean>(false);
 
-  const [ formSettings, setFormSettings ] = useState( {
+  const [formSettings, setFormSettings] = useState({
     defaultSettings: {
       submitButtonValue: "Create",
     },
     porcetaje1: 10,
     decialQuiantity: 2,
     submitButtonValue: "Create",
-  } );
-
-  // Global filter (search)
-  const [ globalFilterValue, setGlobalFilterValue ] = useState( '' );
-
+  });
 
   const { onChange, form, setState } =
     useForm<PlainAssetData>(defaultAssetData);
 
-  useEffect( () => {
+  useEffect(() => {
     calculateResValue();
     depreciations();
   }, [form.unitValue, form.depreciationTime, form.residualValue]);
 
-  useEffect( () => {
+  useEffect(() => {
     calculateValueBooks();
-  }, [ form.purchaseDate, form.monthlyDepreciation ] );
+  }, [form.purchaseDate, form.monthlyDepreciation]);
 
   const submitButtonRef = useRef<HTMLInputElement>(null);
   const toastRef = useRef<Toast>(null);
@@ -62,10 +58,10 @@ const useAssetForm = () => {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
     const resValue = (form.unitValue * formSettings.porcetaje1) / 100;
 
-    setState( ( currentValues ) => ( {
+    setState((currentValues) => ({
       ...currentValues,
       residualValue: resValue,
-    } ) );
+    }));
   }
 
   function depreciations() {
@@ -73,16 +69,16 @@ const useAssetForm = () => {
     const annualDep = value / (form.depreciationTime / 12);
     const mensualDep = value / form.depreciationTime;
 
-    setState( ( currentValues ) => ( {
+    setState((currentValues) => ({
       ...currentValues,
-      annualDepreciation: validateNum( annualDep ),
-      monthlyDepreciation: validateNum( mensualDep ),
-    } ) );
+      annualDepreciation: validateNum(annualDep),
+      monthlyDepreciation: validateNum(mensualDep),
+    }));
   }
 
-  function validateNum( num: number ) {
-    if ( !isFinite( num ) ) return 0;
-    return Number( num.toFixed( formSettings.decialQuiantity ) );
+  function validateNum(num: number) {
+    if (!isFinite(num)) return 0;
+    return Number(num.toFixed(formSettings.decialQuiantity));
   }
 
   function calculateValueBooks() {
@@ -92,14 +88,14 @@ const useAssetForm = () => {
     const currentMoth = currentDate.getMonth() + 1;
     const currentYear = currentDate.getFullYear();
 
-    const adqusicionDate = new Date( form.purchaseDate );
+    const adqusicionDate = new Date(form.purchaseDate);
     const adqDay = adqusicionDate.getDay() + 1;
     const adqMonth = adqusicionDate.getMonth() + 1;
     const adqYear = adqusicionDate.getFullYear();
 
     // operations
     const days = currentDay - adqDay;
-    const yearsToMoths = ( currentYear - adqYear ) * 12;
+    const yearsToMoths = (currentYear - adqYear) * 12;
     let totalMonths = currentMoth - adqMonth + yearsToMoths;
 
     let newValueBooks = 0;
@@ -112,22 +108,22 @@ const useAssetForm = () => {
       totalMonths += 1;
       newValueBooks = form.unitValue - totalMonths * form.monthlyDepreciation;
 
-      if ( totalMonths > form.depreciationTime ) {
+      if (totalMonths > form.depreciationTime) {
         newValueBooks = form.residualValue;
       }
     }
 
-    setState( ( currentState ) => ( {
+    setState((currentState) => ({
       ...currentState,
-      valueBooks: validateNum( newValueBooks ),
-    } ) );
+      valueBooks: validateNum(newValueBooks),
+    }));
   }
 
   // open update modal
-  function updateModal( e: DataTableRowClickEvent ) {
-    setEdit( true );
-    setModal( true );
-    AssetConfig.setDialogHeaderTitle( "update" );
+  function updateModal(e: DataTableRowClickEvent) {
+    setEdit(true);
+    setModal(true);
+    AssetConfig.setDialogHeaderTitle("update");
 
     const { details, ...assetData } = e.data as FormatedAssetData;
     setState({
@@ -135,10 +131,10 @@ const useAssetForm = () => {
       ...details,
     });
 
-    setFormSettings( ( currentValues ) => ( {
+    setFormSettings((currentValues) => ({
       ...currentValues,
       submitButtonValue: "Update",
-    } ) );
+    }));
   }
 
   // create asset
@@ -168,7 +164,9 @@ const useAssetForm = () => {
 
   async function setNewAssetsData(assetType: AssetTypeConfig) {
     const newAssetsData2 = await GetAllAssets();
-    const newAssetsData: FormatedAssetData[] = await getEspecificAssets(assetType);
+    const newAssetsData: FormatedAssetData[] = await getEspecificAssets(
+      assetType
+    );
 
     return setAssets((currentAssets) => {
       return {
@@ -184,17 +182,17 @@ const useAssetForm = () => {
     ).message.map((str) => str.split("details.").join(" ").trim());
 
     const errorNodeList = [];
-    for ( let i = 0; i < errorStrings.length; i++ ) {
-      const errorP = React.createElement( "p", { key: i }, errorStrings[ i ] );
-      errorNodeList.push( errorP );
+    for (let i = 0; i < errorStrings.length; i++) {
+      const errorP = React.createElement("p", { key: i }, errorStrings[i]);
+      errorNodeList.push(errorP);
     }
 
-    toastRef.current?.show( {
+    toastRef.current?.show({
       severity: "error",
       summary: `Error ${error.response.status}`,
       detail: errorNodeList,
       life: 7000,
-    } );
+    });
   }
 
   return {
@@ -214,8 +212,6 @@ const useAssetForm = () => {
     updateModal,
     toastRef,
     dataTableRef,
-    globalFilterValue,
-    setGlobalFilterValue
   };
 };
 
