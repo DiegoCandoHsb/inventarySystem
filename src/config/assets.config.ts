@@ -31,7 +31,6 @@ export const ElectronicEquipmentConfig = {
 export const FurnitureAndFixturesConfig = {};
 
 export enum AssetTypeConfig {
-  ElectronicEquipment = "ElectronicEquipment",
-  FurnitureAndFixtures = "FurnitureAndFixtures",
-  Expenses = "Expenses",
+  ElectronicEquipment = "EE",
+  FurnitureAndFixtures = "ME",
 }

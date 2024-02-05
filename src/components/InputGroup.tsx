@@ -79,6 +79,10 @@ export default function InputGroup({
     }
   }, [OtherProps.options]);
 
+  useEffect(() => {
+    console.log("onchange");
+  }, [onChange]);
+
   function searchItems(e: AutoCompleteCompleteEvent) {
     const currentOps = [...options];
     const filteredOptions = OtherProps.options

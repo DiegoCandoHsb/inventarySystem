@@ -1,37 +1,49 @@
-import { AssetData } from "../interfaces/asset.interface";
+import {
+  FormatedAssetData,
+  PlainAssetData,
+} from "../interfaces/asset.interface";
 import { HsbBaseApiDb, getReqConfig } from "./api.db";
 
 export async function GetAllAssets() {
-  return await HsbBaseApiDb.get<AssetData[]>("/assets", getReqConfig()).then(
-    (res) => {
-      const assetsList = res.data;
+  return await HsbBaseApiDb.get<FormatedAssetData[]>(
+    "/assets",
+    getReqConfig()
+  ).then((res) => {
+    const assetsList = res.data;
 
-      const electronicEquipmentAssets = assetsList.filter(
-        (asset) => asset.details.assetType === "ElectronicEquipment"
-      );
+    const electronicEquipmentAssets = assetsList.filter(
+      (asset) => asset.details.type === "EE"
+    );
 
-      const furnitureAndFixturesAssets = assetsList.filter(
-        (asset) => asset.details.assetType === "FurnitureAndFixtures"
-      );
-      const expensesAssets = assetsList.filter(
-        (asset) => asset.details.assetType === "Expenses"
-      );
+    const furnitureAndFixturesAssets = assetsList.filter(
+      (asset) => asset.details.type === "ME"
+    );
 
-      return {
-        assetsList,
-        electronicEquipmentAssets,
-        furnitureAndFixturesAssets,
-        expensesAssets,
-      };
-    }
-  );
+    return {
+      assetsList,
+      electronicEquipmentAssets,
+      furnitureAndFixturesAssets,
+    };
+  });
 }
 
-export const CreateAsset = async ({
-  id,
-  ...Assetdata
-}: AssetData): Promise<AssetData> => {
-  const asset = await HsbBaseApiDb.post<AssetData>(
+export async function getEspecificAssets(
+  assetType: string
+): Promise<FormatedAssetData[]> {
+  return await HsbBaseApiDb.get<FormatedAssetData[]>(
+    "/assets".concat("/", assetType),
+    getReqConfig()
+  ).then(({ data }) => {
+    return data;
+  });
+}
+
+export const CreateAsset = async (
+  Assetdata: PlainAssetData
+): Promise<PlainAssetData> => {
+  // delete Assetdata.id;
+
+  const asset = await HsbBaseApiDb.post<PlainAssetData>(
     "assets",
     Assetdata,
     getReqConfig()
@@ -42,8 +54,8 @@ export const CreateAsset = async ({
 export async function UpdateAsset({
   id,
   ...assetData
-}: AssetData): Promise<AssetData> {
-  const res = await HsbBaseApiDb.patch<AssetData>(
+}: PlainAssetData): Promise<PlainAssetData> {
+  const res = await HsbBaseApiDb.patch<PlainAssetData>(
     `assets/${id!}`,
     {
       ...assetData,

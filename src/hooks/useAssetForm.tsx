@@ -1,14 +1,9 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable react-hooks/rules-of-hooks */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable react-refresh/only-export-components */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import {
-  AssetPlainData,
   AssetTypesData,
   defaultAssetData,
-  AssetData,
+  FormatedAssetData,
+  PlainAssetData,
 } from "../interfaces/asset.interface";
 import { useLoaderData } from "react-router-dom";
 import { useForm } from "./useForm";
@@ -17,17 +12,20 @@ import {
   CreateAsset,
   GetAllAssets,
   UpdateAsset,
+  getEspecificAssets,
 } from "../services/asset.service";
 import { Toast } from "primereact/toast";
 import React from "react";
 import { AssetConfig, AssetTypeConfig } from "../config/assets.config";
 import { inputErrors } from "../pages/fixedAssets/common/utilities";
+import { AxiosError } from "axios";
 
 const useAssetForm = () => {
   const [ assets, setAssets ] = useState<AssetTypesData>(
     useLoaderData() as AssetTypesData
   );
-  const [ modal, setModal ] = useState<boolean>( false );
+
+  const [modal, setModal] = useState<boolean>(false);
 
   const [ edit, setEdit ] = useState<boolean>( false );
 
@@ -45,24 +43,24 @@ const useAssetForm = () => {
 
 
   const { onChange, form, setState } =
-    useForm<AssetPlainData>( defaultAssetData );
+    useForm<PlainAssetData>(defaultAssetData);
 
   useEffect( () => {
     calculateResValue();
     depreciations();
-  }, [ form.value, form.depreciationTime, form.residualValue ] );
+  }, [form.unitValue, form.depreciationTime, form.residualValue]);
 
   useEffect( () => {
     calculateValueBooks();
   }, [ form.purchaseDate, form.monthlyDepreciation ] );
 
-  const submitButtonRef = useRef<HTMLInputElement>( null );
-  const toastRef = useRef<Toast>( null );
-  const dataTableRef = useRef<DataTable<AssetData[]>>( null );
+  const submitButtonRef = useRef<HTMLInputElement>(null);
+  const toastRef = useRef<Toast>(null);
+  const dataTableRef = useRef<DataTable<FormatedAssetData[]>>(null);
 
   function calculateResValue() {
     //  valor residual  =  valor * 0.1 (valor por 10 porciento)
-    const resValue = ( form.value * formSettings.porcetaje1 ) / 100;
+    const resValue = (form.unitValue * formSettings.porcetaje1) / 100;
 
     setState( ( currentValues ) => ( {
       ...currentValues,
@@ -71,8 +69,8 @@ const useAssetForm = () => {
   }
 
   function depreciations() {
-    const value = form.value - form.residualValue;
-    const annualDep = value / ( form.depreciationTime / 12 );
+    const value = form.unitValue - form.residualValue;
+    const annualDep = value / (form.depreciationTime / 12);
     const mensualDep = value / form.depreciationTime;
 
     setState( ( currentValues ) => ( {
@@ -105,14 +103,14 @@ const useAssetForm = () => {
     let totalMonths = currentMoth - adqMonth + yearsToMoths;
 
     let newValueBooks = 0;
-    if ( days <= 0 ) {
-      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
-      if ( totalMonths > form.depreciationTime ) {
+    if (days <= 0) {
+      newValueBooks = form.unitValue - totalMonths * form.monthlyDepreciation;
+      if (totalMonths > form.depreciationTime) {
         newValueBooks = form.residualValue;
       }
     } else {
       totalMonths += 1;
-      newValueBooks = form.value - totalMonths * form.monthlyDepreciation;
+      newValueBooks = form.unitValue - totalMonths * form.monthlyDepreciation;
 
       if ( totalMonths > form.depreciationTime ) {
         newValueBooks = form.residualValue;
@@ -131,12 +129,11 @@ const useAssetForm = () => {
     setModal( true );
     AssetConfig.setDialogHeaderTitle( "update" );
 
-    const { details, ...assetData } = e.data as AssetData;
-    setState( {
+    const { details, ...assetData } = e.data as FormatedAssetData;
+    setState({
       ...assetData,
       ...details,
-      purchaseDate: assetData.purchaseDate.substring( 0, 10 ),
-    } as AssetPlainData );
+    });
 
     setFormSettings( ( currentValues ) => ( {
       ...currentValues,
@@ -145,37 +142,46 @@ const useAssetForm = () => {
   }
 
   // create asset
-  function createOrEditAsset( assetType: AssetTypeConfig ) {
-    if ( !edit ) {
-      CreateAsset( formatData( assetType, "responsibleName", "id" ) )
-        .then( () => setModal( false ) )
-        .catch( ( err ) => {
-          inputErrors( form );
-          showErrorMessage( err );
-          setModal( true );
-        } )
-        .finally( async () => await setNewAssetsData() );
-    } else if ( edit ) {
-      UpdateAsset( formatData( assetType, "responsibleName" ) )
-        .then( () => setModal( false ) )
-        .catch( ( err ) => {
-          inputErrors( form );
-          showErrorMessage( err );
-          setModal( true );
-        } )
-        .finally( async () => await setNewAssetsData() );
+  function createOrEditAsset(assetType: AssetTypeConfig) {
+    form.type = assetType;
+
+    if (!edit) {
+      CreateAsset(form)
+        .then(() => setModal(false))
+        .catch((err: Required<AxiosError<object>>) => {
+          inputErrors(form);
+          showErrorMessage(err);
+          setModal(true);
+        })
+        .finally(() => void setNewAssetsData(assetType));
+    } else if (edit) {
+      UpdateAsset(form)
+        .then(() => setModal(false))
+        .catch((err: Required<AxiosError<object>>) => {
+          inputErrors(form);
+          showErrorMessage(err);
+          setModal(true);
+        })
+        .finally(() => void setNewAssetsData(assetType));
     }
   }
 
-  async function setNewAssetsData() {
-    const newAssetsData = await GetAllAssets();
-    setAssets( ( currentAssets ) => ( { ...currentAssets, ...newAssetsData } ) );
+  async function setNewAssetsData(assetType: AssetTypeConfig) {
+    const newAssetsData2 = await GetAllAssets();
+    const newAssetsData: FormatedAssetData[] = await getEspecificAssets(assetType);
+
+    return setAssets((currentAssets) => {
+      return {
+        ...currentAssets,
+        assets: newAssetsData,
+      };
+    });
   }
 
-  function showErrorMessage( error: any ) {
+  function showErrorMessage(error: Required<AxiosError<object>>) {
     const errorStrings: string[] = (
-      error.response.data.message as string[]
-    ).map( ( str ) => str.split( "details." ).join( " " ).trim() );
+      error.response.data as { message: string[] }
+    ).message.map((str) => str.split("details.").join(" ").trim());
 
     const errorNodeList = [];
     for ( let i = 0; i < errorStrings.length; i++ ) {
@@ -185,34 +191,10 @@ const useAssetForm = () => {
 
     toastRef.current?.show( {
       severity: "error",
-      summary: `Error ${ error.response.status as number }`,
+      summary: `Error ${error.response.status}`,
       detail: errorNodeList,
       life: 7000,
     } );
-  }
-
-  function formatData(
-    assetType: AssetTypeConfig,
-    ...propsToRemove: ( keyof AssetPlainData )[]
-  ) {
-    const { id, name, purchaseDate, ...details } = form;
-    const data = {
-      id,
-      name,
-      purchaseDate,
-      details: {
-        ...details,
-        assetType,
-      },
-    };
-
-    if ( propsToRemove ) {
-      for ( let i = 0; i < propsToRemove.length; i++ ) {
-        delete data.details[ propsToRemove[ i ] as keyof typeof details ];
-        delete data[ propsToRemove[ i ] as keyof AssetData ];
-      }
-    }
-    return data;
   }
 
   return {

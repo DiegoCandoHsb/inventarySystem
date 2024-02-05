@@ -1,4 +1,4 @@
-export enum AssetActive {
+export enum AssetState {
   new = "new",
   almostUsed = "almost used",
   used = "used",
@@ -8,8 +8,12 @@ export enum AssetActive {
   obsoletedDiscarded = "obsoleted discarded",
 }
 
+export enum AssetActive {
+  true = "Active",
+  false = "Inactive",
+}
 
 export enum ExpensesStatus {
   using = "using",
-  discarded = 'discarded'
+  discarded = "discarded",
 }

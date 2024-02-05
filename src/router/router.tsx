@@ -15,6 +15,7 @@ import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
 import Expenses from "../pages/expenses/expenses";
 import TokenLoader from "../common/loaders/TokenLoader";
 import { conbinedLoaders } from "../common/loaders/CombineLoaders";
+import { AssetTypeConfig } from "../config/assets.config";
 
 export const routes = createBrowserRouter([
   {
@@ -27,11 +28,11 @@ export const routes = createBrowserRouter([
         loader: () => conbinedLoaders(),
         element: <Activities />,
       },
-      {
-        path: NavigationRoutes.expensesPath,
-        loader: () => conbinedLoaders(AssetDataLoader),
-        element: <Expenses />,
-      },
+      // {
+      //   path: NavigationRoutes.expensesPath,
+      //   loader: () => conbinedLoaders(AssetDataLoader),
+      //   element: <Expenses />,
+      // },
       {
         path: NavigationRoutes.humanResourcesPath,
         loader: () => conbinedLoaders(HumanResourcesLoader),
@@ -46,12 +47,18 @@ export const routes = createBrowserRouter([
           },
           {
             path: NavigationRoutes.elecEquiPath,
-            loader: () => conbinedLoaders(AssetDataLoader),
+            loader: () =>
+              conbinedLoaders(() =>
+                AssetDataLoader(AssetTypeConfig.ElectronicEquipment)
+              ),
             element: <ElectronicEquipment />,
           },
           {
             path: NavigationRoutes.furnAndMixPath,
-            loader: () => conbinedLoaders(AssetDataLoader),
+            loader: () =>
+              conbinedLoaders(() =>
+                AssetDataLoader(AssetTypeConfig.FurnitureAndFixtures)
+              ),
             element: <FurnitureAndFixtures />,
           },
         ],

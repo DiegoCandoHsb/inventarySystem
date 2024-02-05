@@ -4,8 +4,7 @@ import InputGroup from "./InputGroup";
 interface Props {
   headerTitle: string;
   export?: boolean;
-  setGlobalFilter?: ( value: string ) => void;
-  fun?: () => Promise<any>;
+  fun?: () => void;
 }
 
 export default function TableHeaderComponent( {

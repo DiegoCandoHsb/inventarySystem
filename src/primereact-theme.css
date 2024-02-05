@@ -38,7 +38,7 @@
   background-color: var(--color-level-3);
 }
 .bg-warning {
-  background-color: var(--color-warning);
+  background-color: var(--color-warning)!important;
 }
 .bg-link {
   background-color: var(--link-color);
