@@ -15,6 +15,8 @@ import { AssetConfig, AssetTypeConfig } from "../../config/assets.config";
 import { AssetState } from "../../interfaces/enums/assetActive";
 import { exportToXlsx, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
+import { getEspecificAssets, uploadFile } from "../../services/asset.service";
+import { FileUploadHandlerEvent } from "primereact/fileupload";
 
 export default function FurnitureAndFixtures() {
   const {
@@ -32,109 +34,110 @@ export default function FurnitureAndFixtures() {
     toastRef,
     updateModal,
     dataTableRef,
-    globalFilterValue,
-    setGlobalFilterValue
+    setNewAssetsData,
+    filters,
+    setFilters,
   } = useAssetForm();
 
-  function calculateDepreTime( date: string ) {
-    const acDate = new Date( date );
+  function calculateDepreTime(date: string) {
+    const acDate = new Date(date);
     const current = new Date();
 
-    const dateBeforeDepre = acDate.setMonth( acDate.getMonth() + 58 );
+    const dateBeforeDepre = acDate.setMonth(acDate.getMonth() + 58);
 
-    if ( Number( current ) >= Number( dateBeforeDepre ) ) return true;
+    if (Number(current) >= Number(dateBeforeDepre)) return true;
     return false;
   }
 
   return (
     <div>
-      <Toast ref={ toastRef } position="top-right" />
-      {/* table */ }
+      <Toast ref={toastRef} position="top-right" />
+      {/* table */}
       <section className="mx-2">
         <div className="my-5">
           <Button
             label="Add"
-            onClick={ () => {
-              setModal( true );
-              AssetConfig.setDialogHeaderTitle( "create" );
-              setEdit( false );
-              setState( defaultAssetData );
-              setFormSettings( ( curretValues ) => ( {
+            onClick={() => {
+              setModal(true);
+              AssetConfig.setDialogHeaderTitle("create");
+              setEdit(false);
+              setState(defaultAssetData);
+              setFormSettings((curretValues) => ({
                 ...curretValues,
                 submitButtonValue:
                   curretValues.defaultSettings.submitButtonValue,
-              } ) );
-            } }
+              }));
+            }}
           />
         </div>
 
         <DataTable
-          ref={ dataTableRef }
+          ref={dataTableRef}
           className="shadow-md"
           header={
             <TableHeaderComponent
+              setGlobalFilter={setFilters}
               headerTitle="Furniture and Fixtures"
               export
-              fun={() => {
+              exportFun={() => {
                 if (assets.assets?.length) {
                   return exportToXlsx(
                     assets.assets,
-                    AssetConfig.electronicEquipment
+                    AssetConfig.furnitureAndFixture
                   );
                 }
-              } }
-              setGlobalFilter={ setGlobalFilterValue }
+              }}
+              importFun={({ files: [file] }: FileUploadHandlerEvent) => {
+                const formData = new FormData();
+                formData.append("file", file);
+
+                uploadFile(formData)
+                  .then(async (res) => {
+                    console.log(res);
+                    const xd = await getEspecificAssets(
+                      AssetTypeConfig.ElectronicEquipment
+                    );
+                    console.log("este es el llamado al back: ", xd);
+
+                    await setNewAssetsData(
+                      AssetTypeConfig.FurnitureAndFixtures
+                    );
+                  })
+                  .catch((err) => console.log(err));
+              }}
             />
           }
-          exportFilename={ AssetConfig.furnitureAndFixture }
-          value={
-            assets.assets &&
-            assets.assets.map((asset) => {
-              for (
-                let i = 0;
-                i < ( assets.users ? assets.users.length : 1 );
-                i++
-              ) {
-                if ( asset.details.responsible === assets.users![ i ].id ) {
-                  asset.details.responsibleName = assets.users![ i ].name.concat(
-                    " ",
-                    assets.users![ i ].details.secondname,
-                    " ",
-                    assets.users![ i ].details.lastname,
-                    " ",
-                    assets.users![ i ].details.secondlastname
-                  );
-                }
-              }
-              return asset;
-            } )
-          }
-          emptyMessage={ "No Assets found" }
+          exportFilename={AssetConfig.furnitureAndFixture}
+          value={assets.assets}
+          emptyMessage={"No Assets found"}
           selectionMode="single"
-          title="Electronic Equipments"
-          onRowDoubleClick={ ( e ) => updateModal( e ) }
+          onRowDoubleClick={(e) => updateModal(e)}
           paginator
-          filters={ {} }
-          rows={ 25 }
-          rowsPerPageOptions={ [ 25, 50, 75, 100 ] }
-          tableStyle={ {
+          rows={25}
+          rowsPerPageOptions={[25, 50, 75, 100]}
+          tableStyle={{
             minWidth: "50rem",
-          } }
-          cellClassName={ ( _, { ...data } ) => {
-            const depre = calculateDepreTime(
-              data.props.value![ data.rowIndex ].purchaseDate
-            );
-            return depre ? "bg-warning" : "";
-          } }
+          }}
+          rowClassName={(data) => {
+            const depre = calculateDepreTime(data.purchaseDate);
+            return {
+              "bg-warning": depre,
+            };
+          }}
           stripedRows
           size="small"
-          globalFilterFields={ [ 'name', 'details.brand', 'details.responsibleName', 'details.ubication' ] }
-          globalFilter={ globalFilterValue }
+          globalFilterFields={[
+            "itemName",
+            "details.brand",
+            "details.responsible",
+            "details.ubication",
+            "details.code",
+          ]}
+          globalFilter={filters}
         >
           <Column
-            header="ID"
-            field="id"
-            body={ ( _, opt ) => opt.rowIndex + 1 }
+            header="Code"
+            field="details.code"
             align="center"
             alignHeader="center"
             sortable
@@ -196,7 +199,22 @@ export default function FurnitureAndFixtures() {
           ></Column>
           <Column
             header="Responsible"
-            field="details.responsibleName"
+            body={(asset: FormatedAssetData) => {
+              const assetUser = assets.users?.find(
+                (user) => user.id === asset.details.responsible
+              );
+
+              if (!assetUser) return "No user Found";
+
+              return assetUser.name.concat(
+                " ",
+                assetUser.details.secondname,
+                " ",
+                assetUser.details.lastname,
+                " ",
+                assetUser.details.secondlastname
+              );
+            }}
             align="center"
             alignHeader="center"
             sortable
@@ -214,16 +232,16 @@ export default function FurnitureAndFixtures() {
       <TotalDepreciationCard data={assets.assets ?? 0} />
       {/* modal */}
       <Dialog
-        header={ AssetConfig.defaultHeaderTitle }
-        visible={ modal }
+        header={AssetConfig.defaultHeaderTitle}
+        visible={modal}
         className="w-1/3"
-        onHide={ () => setModal( false ) }
+        onHide={() => setModal(false)}
       >
         <InputGroup
           inputType="text"
           label="Code"
           name="code"
-          placeholder="EE000"
+          placeholder="ME000"
           value={form.code}
           onChange={(e) =>
             onChange(e.target.value, e.target.id as keyof PlainAssetData)
@@ -364,7 +382,7 @@ export default function FurnitureAndFixtures() {
           inputType="dropdown"
           label="Responsible"
           name="responsible"
-          placeholder="Michael Ortiz"
+          placeholder="Responsible Name"
           value={form.responsible}
           options={assets.users}
           optionLabel={"name"}
@@ -378,13 +396,13 @@ export default function FurnitureAndFixtures() {
           label="State"
           name="state"
           placeholder="new"
-          value={form.state}
+          value={form.state || "new"}
           options={Object.values(AssetState)} // TODO: DB
           onDropDownChange={(e) =>
             onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
         />
-        <InputGroup
+        {/* <InputGroup
           inputType="dropdown"
           label="Active"
           name="active"
@@ -394,7 +412,7 @@ export default function FurnitureAndFixtures() {
           onDropDownChange={(e) =>
             onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
-        />
+        /> */}
         <InputGroup
           inputType="decimal"
           label="Insured"
@@ -416,8 +434,8 @@ export default function FurnitureAndFixtures() {
           label="Asset Location"
           name="ubication"
           placeholder="Office"
-          value={form.ubication}
-          options={["item1", "item2"]} // TODO: DB
+          value={form.ubication || "Office"}
+          options={["Office", "Home"]} // TODO: DB
           onDropDownChange={(e) =>
             onChange(e.value as string, e.target.id as keyof PlainAssetData)
           }
@@ -428,8 +446,8 @@ export default function FurnitureAndFixtures() {
           label="Depreciation Time"
           name="depreciationTime"
           placeholder="10"
-          value={ form.depreciationTime }
-          onNumberChange={ ( e ) =>
+          value={form.depreciationTime}
+          onNumberChange={(e) =>
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
@@ -458,10 +476,10 @@ export default function FurnitureAndFixtures() {
           label="Annual Depreciation"
           name="annualDepreciation"
           placeholder="0"
-          value={ form.annualDepreciation }
-          decimalQuliantity={ AssetConfig.decimalQuantity }
-          disabled={ true }
-          onNumberChange={ ( e ) =>
+          value={form.annualDepreciation}
+          decimalQuliantity={AssetConfig.decimalQuantity}
+          disabled={true}
+          onNumberChange={(e) =>
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
@@ -474,10 +492,10 @@ export default function FurnitureAndFixtures() {
           label="Monthly Depreciation"
           name="monthlyDepreciation"
           placeholder="0"
-          value={ form.monthlyDepreciation }
-          decimalQuliantity={ AssetConfig.decimalQuantity }
-          disabled={ true }
-          onNumberChange={ ( e ) =>
+          value={form.monthlyDepreciation}
+          decimalQuliantity={AssetConfig.decimalQuantity}
+          disabled={true}
+          onNumberChange={(e) =>
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
@@ -490,10 +508,10 @@ export default function FurnitureAndFixtures() {
           label="value in books"
           name="valueBooks"
           placeholder="0"
-          value={ form.valueBooks }
-          decimalQuliantity={ AssetConfig.decimalQuantity }
-          disabled={ true }
-          onNumberChange={ ( e ) =>
+          value={form.valueBooks}
+          decimalQuliantity={AssetConfig.decimalQuantity}
+          disabled={true}
+          onNumberChange={(e) =>
             onChange(
               e.value as number,
               (e.originalEvent.target as HTMLInputElement)
@@ -522,13 +540,13 @@ export default function FurnitureAndFixtures() {
             onChange(e.target.value, e.target.id as keyof PlainAssetData)
           }
         />
-        {/* otros */ }
+        {/* otros */}
         <div className="w-full flex justify-center mt-5">
           <Button
-            ref={ () => submitButtonRef }
-            label={ formSettings.submitButtonValue }
-            onClick={ () =>
-              createOrEditAsset( AssetTypeConfig.FurnitureAndFixtures )
+            ref={() => submitButtonRef}
+            label={formSettings.submitButtonValue}
+            onClick={() =>
+              createOrEditAsset(AssetTypeConfig.FurnitureAndFixtures)
             }
             className="w-full"
           />

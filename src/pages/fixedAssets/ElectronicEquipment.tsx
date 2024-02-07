@@ -124,7 +124,6 @@ export default function ElectronicEquipment() {
               selectionMode="single"
               onRowDoubleClick={(e) => updateModal(e)}
               paginator
-              // filters={{}}
               rows={25}
               rowsPerPageOptions={[25, 50, 75, 100]}
               tableStyle={{
