@@ -65,3 +65,29 @@ export async function UpdateAsset({
 
   return res.data;
 }
+
+export async function downdloadFile(
+  assets: PlainAssetData[],
+  fileName: string
+): Promise<string> {
+  const res = await HsbBaseApiDb.post<string>(
+    `assets/download`,
+    {
+      assets,
+      fileName,
+    },
+    getReqConfig()
+  );
+
+  return res.data;
+}
+
+export async function uploadFile(file: object) {
+  const res = await HsbBaseApiDb.post<string>(
+    "http://localhost:3000/api/v1/assets/upload",
+    file,
+    getReqConfig()
+  );
+
+  return res.data;
+}

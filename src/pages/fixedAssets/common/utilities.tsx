@@ -3,6 +3,7 @@ import { AssetConfig } from "../../../config/assets.config";
 import { FormatedAssetData } from "../../../interfaces/asset.interface";
 import { userSignUpData } from "../../../interfaces/userSignUpData.interface";
 import * as XLSX from "xlsx";
+import { downdloadFile } from "../../../services/asset.service";
 
 export function numValCell(field: string | number) {
   return (
@@ -26,18 +27,18 @@ export function exportToXlsx(
   fileName: string
 ): void {
   const plainData = assets.map(({ details, ...data }) => {
+    delete data.id;
     return { ...data, ...details };
   });
-  const worksheet = XLSX.utils.json_to_sheet(plainData);
 
-  const workbook = XLSX.utils.book_new();
-
-  XLSX.utils.book_append_sheet(workbook, worksheet, fileName);
-
-  XLSX.writeFile(
-    workbook,
-    fileName.concat("_", new Date().getTime().toString(), ".xlsx")
-  );
+  downdloadFile(plainData, fileName)
+    .then((workbook) => {
+      XLSX.writeFile(
+        workbook as unknown as XLSX.WorkBook,
+        fileName.concat("_", new Date().getTime().toString(), ".xlsx")
+      );
+    })
+    .catch((err) => console.log(err));
 }
 
 export function inputErrors(data: Record<string, any>) {

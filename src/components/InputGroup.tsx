@@ -5,7 +5,7 @@ import {
   AutoCompleteChangeEvent,
   AutoCompleteCompleteEvent,
 } from "primereact/autocomplete";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { userSignUpData } from "../interfaces/userSignUpData.interface";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
@@ -18,6 +18,11 @@ import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
 import { Button } from "primereact/button";
 import { AssetConfig } from "../config/assets.config";
 import { AssetUbication } from "../interfaces/enums/assetUbication.enum";
+import {
+  FileUpload,
+  FileUploadHandlerEvent,
+  FileUploadUploadEvent,
+} from "primereact/fileupload";
 
 interface InputGroupProps {
   inputType:
@@ -31,7 +36,8 @@ interface InputGroupProps {
     | "password"
     | "switch"
     | "checkbox"
-    | "button";
+    | "button"
+    | "upload";
   label?: string;
   name: string;
   value: string | number | boolean | Date;
@@ -54,6 +60,7 @@ interface InputGroupProps {
   onNumberChange?: (e: InputNumberChangeEvent) => void;
   onButtonClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   onCheckBoxChange?: (event: CheckboxChangeEvent) => void;
+  onUpload?: (e: FileUploadHandlerEvent) => any;
 }
 
 const defautlInputStyle = "w-full flex items-center";
@@ -78,10 +85,6 @@ export default function InputGroup({
       setOptions(OtherProps.options);
     }
   }, [OtherProps.options]);
-
-  useEffect(() => {
-    console.log("onchange");
-  }, [onChange]);
 
   function searchItems(e: AutoCompleteCompleteEvent) {
     const currentOps = [...options];
@@ -264,6 +267,28 @@ export default function InputGroup({
             }`}
             label={value.toString()}
             onClick={OtherProps.onButtonClick}
+            tooltip={name}
+            tooltipOptions={{
+              position: "bottom",
+            }}
+          />
+        );
+
+      case "upload":
+        return (
+          <FileUpload
+            {...commonInputProps}
+            mode="basic"
+            chooseLabel={value.toString()}
+            chooseOptions={{
+              icon: `${
+                OtherProps.buttonIcon ? "pi ".concat(OtherProps.buttonIcon) : ""
+              }`,
+              iconOnly: true,
+            }}
+            auto
+            customUpload
+            uploadHandler={OtherProps.onUpload}
           />
         );
 

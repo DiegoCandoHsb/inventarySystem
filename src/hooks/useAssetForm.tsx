@@ -7,7 +7,11 @@ import {
 } from "../interfaces/asset.interface";
 import { useLoaderData } from "react-router-dom";
 import { useForm } from "./useForm";
-import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
+import {
+  DataTable,
+  DataTableFilterMeta,
+  DataTableRowClickEvent,
+} from "primereact/datatable";
 import {
   CreateAsset,
   GetAllAssets,
@@ -37,6 +41,8 @@ const useAssetForm = () => {
     decialQuiantity: 2,
     submitButtonValue: "Create",
   });
+
+  const [filters, setFilters] = useState("");
 
   const { onChange, form, setState } =
     useForm<PlainAssetData>(defaultAssetData);
@@ -163,17 +169,16 @@ const useAssetForm = () => {
   }
 
   async function setNewAssetsData(assetType: AssetTypeConfig) {
-    const newAssetsData2 = await GetAllAssets();
+    // const newAssetsData2 = await GetAllAssets();
     const newAssetsData: FormatedAssetData[] = await getEspecificAssets(
       assetType
     );
 
-    return setAssets((currentAssets) => {
-      return {
-        ...currentAssets,
-        assets: newAssetsData,
-      };
-    });
+    setAssets((currentAssets) => ({
+      ...currentAssets,
+      assets: newAssetsData,
+    }));
+    return;
   }
 
   function showErrorMessage(error: Required<AxiosError<object>>) {
@@ -212,6 +217,9 @@ const useAssetForm = () => {
     updateModal,
     toastRef,
     dataTableRef,
+    filters,
+    setFilters,
+    setNewAssetsData,
   };
 };
 

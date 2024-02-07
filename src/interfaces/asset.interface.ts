@@ -67,7 +67,7 @@ export interface AssetPlainData {
 }
 
 /// nuevos
-interface AssetDetailsData {
+export interface AssetDetailsData {
   code: string;
   quantity: number;
   brand: string;

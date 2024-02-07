@@ -4,7 +4,6 @@ import { removeTokenToLs, saveTokenToLS } from "../tokenMng/tokenMng";
 
 export async function PathProtectedLoader(autoRedirectToLogin = false) {
   const isValidToken = await verifyToken();
-  console.log("se ha verificado");
 
   if (typeof isValidToken === "boolean") {
     removeTokenToLs();

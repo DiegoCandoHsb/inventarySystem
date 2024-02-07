@@ -23,6 +23,8 @@ import TableHeaderComponent from "../../components/TableHeaderComponent";
 import { exportToXlsx, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
 import LoadSpinner from "../../components/LoadSpinner";
+import { FileUploadHandlerEvent } from "primereact/fileupload";
+import { getEspecificAssets, uploadFile } from "../../services/asset.service";
 
 export default function ElectronicEquipment() {
   const {
@@ -40,6 +42,9 @@ export default function ElectronicEquipment() {
     toastRef,
     updateModal,
     dataTableRef,
+    filters,
+    setFilters,
+    setNewAssetsData,
   } = useAssetForm();
 
   function calculateDepreTime(date: string) {
@@ -83,10 +88,10 @@ export default function ElectronicEquipment() {
               className="shadow-md"
               header={
                 <TableHeaderComponent
+                  setGlobalFilter={setFilters}
                   headerTitle="Electronic Equipment"
                   export
-                  // fun={() => exportCSV(false, dataTableRef)}
-                  fun={() => {
+                  exportFun={() => {
                     if (assets.assets?.length) {
                       return exportToXlsx(
                         assets.assets,
@@ -94,35 +99,29 @@ export default function ElectronicEquipment() {
                       );
                     }
                   }}
+                  importFun={({ files: [file] }: FileUploadHandlerEvent) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+
+                    uploadFile(formData)
+                      .then(async (res) => {
+                        console.log(res);
+                        const xd = await getEspecificAssets(
+                          AssetTypeConfig.ElectronicEquipment
+                        );
+                        console.log("este es el llamado al back: ", xd);
+
+                        await setNewAssetsData(
+                          AssetTypeConfig.ElectronicEquipment
+                        );
+                      })
+                      .catch((err) => console.log(err));
+                  }}
                 />
               }
-              value={
-                assets.assets &&
-                assets.assets.map((asset) => {
-                  for (
-                    let i = 0;
-                    i < (assets.users ? assets.users.length : 1);
-                    i++
-                  ) {
-                    if (asset.details.responsible === assets.users![i].id) {
-                      asset.details.responsibleName = assets.users![
-                        i
-                      ].name.concat(
-                        " ",
-                        assets.users![i].details.secondname,
-                        " ",
-                        assets.users![i].details.lastname,
-                        " ",
-                        assets.users![i].details.secondlastname
-                      );
-                    }
-                  }
-                  return asset;
-                })
-              }
+              value={assets.assets}
               emptyMessage={"No Assets found"}
               selectionMode="single"
-              title="Electronic Equipments"
               onRowDoubleClick={(e) => updateModal(e)}
               paginator
               // filters={{}}
@@ -132,27 +131,26 @@ export default function ElectronicEquipment() {
                 minWidth: "50rem",
               }}
               rowClassName={(data) => {
-                // console.log(data);
                 const depre = calculateDepreTime(data.purchaseDate);
-                // return depre ? "bg-warning" : "";
                 return {
-                  "bg-warning": depre === true,
+                  "bg-warning": depre,
                 };
               }}
               stripedRows
               size="small"
               globalFilterFields={[
-                "name",
+                "itemName",
                 "details.brand",
-                "details.responsibleName",
+                "details.responsible",
                 "details.ubication",
+                "details.code",
               ]}
+              globalFilter={filters}
             >
               <Column
-                header="ID"
-                field="id"
-                body={(_, opt) => opt.rowIndex + 1}
-                align="center"
+                header="Code"
+                field="details.code"
+                align="right"
                 alignHeader="center"
                 sortable
               ></Column>
@@ -219,7 +217,22 @@ export default function ElectronicEquipment() {
               ></Column>
               <Column
                 header="Responsible"
-                field="details.responsibleName"
+                body={(asset: FormatedAssetData) => {
+                  const assetUser = assets.users?.find(
+                    (user) => user.id === asset.details.responsible
+                  );
+
+                  if (!assetUser) return "No user Found";
+
+                  return assetUser.name.concat(
+                    " ",
+                    assetUser.details.secondname,
+                    " ",
+                    assetUser.details.lastname,
+                    " ",
+                    assetUser.details.secondlastname
+                  );
+                }}
                 align="center"
                 alignHeader="center"
                 sortable
@@ -453,7 +466,7 @@ export default function ElectronicEquipment() {
               inputType="dropdown"
               label="Responsible"
               name="responsible"
-              placeholder="Michael Ortiz"
+              placeholder="Responsible"
               value={form.responsible}
               options={assets.users}
               optionLabel={"name"}
@@ -467,23 +480,23 @@ export default function ElectronicEquipment() {
               label="State"
               name="state"
               placeholder="new"
-              value={form.state}
+              value={form.state || "new"}
               options={Object.values(AssetState)} // TODO: DB
               onDropDownChange={(e) =>
                 onChange(e.value as string, e.target.id as keyof PlainAssetData)
               }
             />
-            <InputGroup
+            {/* <InputGroup
               inputType="dropdown"
               label="Active"
               name="active"
               placeholder="Active"
               value={form.active}
-              options={["Active", "Inactive"]} // TODO: DB
+              options={["true", "false"]} // TODO: DB
               onDropDownChange={(e) =>
                 onChange(e.value as string, e.target.id as keyof PlainAssetData)
               }
-            />
+            /> */}
             <InputGroup
               inputType="decimal"
               label="Insured"
@@ -505,8 +518,8 @@ export default function ElectronicEquipment() {
               label="Asset Location"
               name="ubication"
               placeholder="Office"
-              value={form.ubication}
-              options={["item1", "item2"]} // TODO: DB
+              value={form.ubication || "Office"}
+              options={["Office", "Home"]} // TODO: DB
               onDropDownChange={(e) =>
                 onChange(e.value as string, e.target.id as keyof PlainAssetData)
               }
