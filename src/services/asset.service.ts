@@ -84,7 +84,7 @@ export async function downdloadFile(
 
 export async function uploadFile(file: object) {
   const res = await HsbBaseApiDb.post<string>(
-    "http://localhost:3000/api/v1/assets/upload",
+    "/assets/upload",
     file,
     getReqConfig()
   );

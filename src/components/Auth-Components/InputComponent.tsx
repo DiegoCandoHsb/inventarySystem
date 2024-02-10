@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { userSignUpData } from "../../interfaces/userSignUpData.interface";
 import { AssetActive } from "../../interfaces/enums/assetActive";
 import { CatalogOption } from "../../interfaces/catalog.interface";
-import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { AssetTypeConfig } from "../../config/assets.config";
 import {
   AutoComplete,

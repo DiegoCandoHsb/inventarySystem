@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { AssetConfig, AssetTypeConfig } from "../config/assets.config";
+import { AssetTypeConfig } from "../config/assets.config";
 import { Catalog } from "./catalog.interface";
 import { AssetActive } from "./enums/assetActive";
 import { AssetUbication } from "./enums/assetUbication.enum";
@@ -37,7 +37,7 @@ export interface AssetTypesData {
   // furnitureAndFixturesAssets?: FormatedAssetData[];
   // expensesAssets?: FormatedAssetData[];
 
-  assets?: FormatedAssetData[],
+  assets?: FormatedAssetData[];
   users?: userSignUpData[];
   catalog?: Catalog;
 }

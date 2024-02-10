@@ -49,6 +49,9 @@
 .color-base {
   color: var(--orange-1);
 }
+.bg-color-base {
+  background: var(--orange-1);
+}
 .input-error {
   outline: 2px solid rgb(218, 89, 89);
   outline-offset: -2px;
@@ -1916,15 +1919,18 @@
 }
 .p-button.p-button-text {
   background-color: rgba(0, 0, 0, 0);
-  color: var(--orange-1);
+  /* color: var(--orange-1); */
+  color: var(--color-level-1);
   border-color: rgba(0, 0, 0, 0);
 }
 .p-button.p-button-text:enabled:hover,
 .p-button.p-button-text:not(button):not(a):not(.p-disabled):hover {
   background: rgba(239, 92, 36, 0.04);
-  color: var(--orange-1);
+  /* color: var(--orange-1); */
+  color: var(--color-level-1);
   border-color: rgba(0, 0, 0, 0);
 }
+
 .p-button.p-button-text:enabled:active,
 .p-button.p-button-text:not(button):not(a):not(.p-disabled):active {
   background: rgba(239, 92, 36, 0.16);
@@ -2159,6 +2165,9 @@
   background: rgba(100, 116, 139, 0.04);
   border-color: rgba(0, 0, 0, 0);
   color: #64748b;
+    background: #000;
+  color: #000;
+
 }
 .p-button.p-button-secondary.p-button-text:enabled:active,
 .p-button.p-button-secondary.p-button-text:not(button):not(a):not(
@@ -2982,6 +2991,7 @@
 }
 .p-splitbutton.p-button-sm > .p-button .p-button-icon {
   font-size: 0.875rem;
+
 }
 .p-splitbutton.p-button-lg > .p-button {
   font-size: 1.25rem;

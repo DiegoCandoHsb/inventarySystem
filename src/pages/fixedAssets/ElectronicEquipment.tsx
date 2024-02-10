@@ -102,15 +102,9 @@ export default function ElectronicEquipment() {
                   importFun={({ files: [file] }: FileUploadHandlerEvent) => {
                     const formData = new FormData();
                     formData.append("file", file);
-
                     uploadFile(formData)
                       .then(async (res) => {
                         console.log(res);
-                        const xd = await getEspecificAssets(
-                          AssetTypeConfig.ElectronicEquipment
-                        );
-                        console.log("este es el llamado al back: ", xd);
-
                         await setNewAssetsData(
                           AssetTypeConfig.ElectronicEquipment
                         );

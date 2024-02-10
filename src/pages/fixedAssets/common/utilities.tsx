@@ -4,6 +4,7 @@ import { FormatedAssetData } from "../../../interfaces/asset.interface";
 import { userSignUpData } from "../../../interfaces/userSignUpData.interface";
 import * as XLSX from "xlsx";
 import { downdloadFile } from "../../../services/asset.service";
+import { downloadUsersFile } from "../../../services/user.service";
 
 export function numValCell(field: string | number) {
   return (
@@ -32,6 +33,17 @@ export function exportToXlsx(
   });
 
   downdloadFile(plainData, fileName)
+    .then((workbook) => {
+      XLSX.writeFile(
+        workbook as unknown as XLSX.WorkBook,
+        fileName.concat("_", new Date().getTime().toString(), ".xlsx")
+      );
+    })
+    .catch((err) => console.log(err));
+}
+
+export function exportUsersToXlsx(users: userSignUpData[], fileName: string) {
+  downloadUsersFile(users, fileName)
     .then((workbook) => {
       XLSX.writeFile(
         workbook as unknown as XLSX.WorkBook,

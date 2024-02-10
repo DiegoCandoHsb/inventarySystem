@@ -24,3 +24,28 @@ export async function UpdateUser(
 
   return updatedUser.data;
 }
+
+export async function downloadUsersFile(
+  users: userSignUpData[],
+  filename: string
+) {
+  const res = await HsbBaseApiDb.post<string>(
+    "/user/download",
+    {
+      users,
+      filename,
+    },
+    getReqConfig()
+  );
+
+  return res.data;
+}
+
+export async function uploadUsersFile(file: object) {
+  const res = await HsbBaseApiDb.post<string>(
+    "/user/upload",
+    file,
+    getReqConfig()
+  );
+  return res.data;
+}

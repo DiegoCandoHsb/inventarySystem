@@ -12,7 +12,6 @@ import HumanResources, {
 } from "../pages/humanResources/HumanResources";
 import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
 import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
-import Expenses from "../pages/expenses/expenses";
 import TokenLoader from "../common/loaders/TokenLoader";
 import { conbinedLoaders } from "../common/loaders/CombineLoaders";
 import { AssetTypeConfig } from "../config/assets.config";
@@ -43,6 +42,7 @@ export const routes = createBrowserRouter([
         children: [
           {
             index: true,
+            loader: () => conbinedLoaders(),
             element: <FixedAssetsMenu />,
           },
           {

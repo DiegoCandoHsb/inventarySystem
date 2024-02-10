@@ -2,8 +2,6 @@ import { useState } from "react";
 import ActivitiesCardcomponent from "../components/ActivitiesCardComponent";
 import { ActivitiesMenuOptions } from "../interfaces/activitiesMenus.interface";
 import { NavigationRoutes } from "../config/navigationRoutes";
-import { verifyToken } from "../services/auth.service";
-import { redirect } from "react-router-dom";
 
 export default function Activities() {
   const iconStyles: React.CSSProperties = {

@@ -5,7 +5,7 @@ import {
   AutoCompleteChangeEvent,
   AutoCompleteCompleteEvent,
 } from "primereact/autocomplete";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { userSignUpData } from "../interfaces/userSignUpData.interface";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
@@ -18,11 +18,7 @@ import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
 import { Button } from "primereact/button";
 import { AssetConfig } from "../config/assets.config";
 import { AssetUbication } from "../interfaces/enums/assetUbication.enum";
-import {
-  FileUpload,
-  FileUploadHandlerEvent,
-  FileUploadUploadEvent,
-} from "primereact/fileupload";
+import { FileUpload, FileUploadHandlerEvent } from "primereact/fileupload";
 
 interface InputGroupProps {
   inputType:
@@ -37,7 +33,8 @@ interface InputGroupProps {
     | "switch"
     | "checkbox"
     | "button"
-    | "upload";
+    | "upload"
+    | "moldeableBtn";
   label?: string;
   name: string;
   value: string | number | boolean | Date;
@@ -261,6 +258,23 @@ export default function InputGroup({
       case "button":
         return (
           <Button
+            {...commonInputProps}
+            icon={`${
+              OtherProps.buttonIcon ? "pi ".concat(OtherProps.buttonIcon) : ""
+            }`}
+            label={value.toString()}
+            onClick={OtherProps.onButtonClick}
+            tooltip={name}
+            tooltipOptions={{
+              position: "bottom",
+            }}
+          />
+        );
+
+      case "moldeableBtn":
+        return (
+          <Button
+            text
             {...commonInputProps}
             icon={`${
               OtherProps.buttonIcon ? "pi ".concat(OtherProps.buttonIcon) : ""

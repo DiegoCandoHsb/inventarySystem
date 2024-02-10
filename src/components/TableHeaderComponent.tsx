@@ -1,5 +1,4 @@
 import { FileUploadHandlerEvent } from "primereact/fileupload";
-import { uploadFile } from "../services/asset.service";
 import InputGroup from "./InputGroup";
 
 interface Props {
@@ -40,18 +39,17 @@ export default function TableHeaderComponent({
                 inputType="upload"
                 name="file"
                 value=""
-                buttonIcon="pi-upload"
+                buttonIcon="pi-cloud-upload"
                 onUpload={otherProps.importFun}
-
-                // inputCls="w-15 text-left flex items-center"
-                // containerCls="w-14"
+                containerCls="w-14"
               />
               <InputGroup
-                inputType="button"
+                inputType="moldeableBtn"
                 name="Export"
                 value=""
-                buttonIcon="pi-download"
+                buttonIcon="pi-cloud-download"
                 onButtonClick={otherProps.exportFun}
+                containerCls="w-14 bg-color-base rounded-md"
               />
             </>
           )}

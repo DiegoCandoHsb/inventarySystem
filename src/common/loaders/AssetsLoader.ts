@@ -2,7 +2,7 @@ import {
   AssetTypeConfig,
   ElectronicEquipmentConfig,
 } from "../../config/assets.config";
-import { GetAllAssets, getEspecificAssets } from "../../services/asset.service";
+import { getEspecificAssets } from "../../services/asset.service";
 import { GetCatalog } from "../../services/catalog.service";
 import { GetUsers } from "../../services/user.service";
 
@@ -12,7 +12,7 @@ export async function AssetDataLoader(assetType: AssetTypeConfig) {
   const assets = await getEspecificAssets(assetType);
   const users = await GetUsers();
   const catalogs = await GetCatalog();
-
+  console.log("catalogos: ", catalogs);
   let catalog = catalogs.filter(
     (ctlg) =>
       ctlg.catalogName === ElectronicEquipmentConfig.assetBrandCatalogName

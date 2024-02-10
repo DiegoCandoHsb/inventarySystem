@@ -5,7 +5,11 @@
 import { Button } from "primereact/button";
 import { Column, ColumnBodyOptions } from "primereact/column";
 import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
-import { GetUsers, UpdateUser } from "../../services/user.service";
+import {
+  GetUsers,
+  UpdateUser,
+  uploadUsersFile,
+} from "../../services/user.service";
 import {
   UserPlainData,
   defaultUserData,
@@ -23,8 +27,12 @@ import React from "react";
 import { Toast } from "primereact/toast";
 import { Vacations } from "../../interfaces/user.interface";
 import axios, { AxiosError } from "axios";
-import { inputErrors } from "../fixedAssets/common/utilities";
+import {
+  exportUsersToXlsx,
+  inputErrors,
+} from "../fixedAssets/common/utilities";
 import LoadSpinner from "../../components/LoadSpinner";
+import { FileUploadHandlerEvent } from "primereact/fileupload";
 
 export default function HumanResources() {
   const [users, setUsers] = useState<userSignUpData[]>(
@@ -217,8 +225,6 @@ export default function HumanResources() {
   }
 
   function updateUser() {
-    console.log(form);
-
     const userTransformedData: userSignUpData = {
       id: form.id.toString(),
       name: form.name,
@@ -235,7 +241,6 @@ export default function HumanResources() {
       },
       active: form.active,
     };
-    console.log("Esto se va a enviar: ", userTransformedData);
     UpdateUser(form.id, userTransformedData)
       .then((data) => {
         setEdit(false);
@@ -315,27 +320,27 @@ export default function HumanResources() {
                   headerTitle="Human Resources"
                   export
                   setGlobalFilter={setGlobalFilterValue}
+                  exportFun={() => {
+                    if (users) {
+                      exportUsersToXlsx(users, "Users");
+                      return;
+                    }
+                  }}
+                  importFun={({ files: [file] }: FileUploadHandlerEvent) => {
+                    const formData = new FormData();
+                    formData.append("file", file);
+                    uploadUsersFile(formData)
+                      .then(async (res) => {
+                        console.log(res);
+                        await setNewUser();
+                        return;
+                      })
+                      .catch((err) => console.log(err));
+                  }}
                 />
               }
               stripedRows
-              value={
-                users
-                  ? users.map(({ name, ...userData }: userSignUpData) => {
-                      const userFullName = name.concat(
-                        " ",
-                        userData.details.secondname,
-                        " ",
-                        userData.details.lastname,
-                        " ",
-                        userData.details.secondlastname
-                      );
-                      return {
-                        ...userData,
-                        name: userFullName,
-                      };
-                    })
-                  : []
-              }
+              value={users ?? []}
               emptyMessage={"No Users found"}
               selectionMode="single"
               title="Human Resources"
@@ -360,6 +365,18 @@ export default function HumanResources() {
               <Column
                 header="User Name"
                 field="name"
+                body={(user) => {
+                  const userFullName: string = user.name.concat(
+                    " ",
+                    user.details.secondname,
+                    " ",
+                    user.details.lastname,
+                    " ",
+                    user.details.secondlastname
+                  );
+
+                  return userFullName;
+                }}
                 sortable
                 align="center"
                 alignHeader="center"
@@ -492,7 +509,21 @@ export default function HumanResources() {
                 onChange={(e) =>
                   onChange(e.target.value, e.target.id as keyof UserPlainData)
                 }
-                containerSpan="col-span-4"
+                containerSpan="col-span-3"
+              />
+              <InputGroup
+                inputType="dropdown"
+                placeholder="Yes"
+                name="payroll"
+                value={form.payroll}
+                options={["Yes", "No"]}
+                onDropDownChange={(e) =>
+                  onChange(
+                    e.value as string,
+                    e.target.id as keyof UserPlainData
+                  )
+                }
+                containerSpan="2"
               />
               <InputGroup
                 inputType="date"

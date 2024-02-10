@@ -6,5 +6,3 @@ export async function GetCatalog() {
 
   return res.data;
 }
-
-// export async function CreateCatalogOption(params: type) {}

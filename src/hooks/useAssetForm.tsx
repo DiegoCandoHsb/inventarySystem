@@ -1,28 +1,25 @@
+import React from "react";
 import { useState, useEffect, useRef } from "react";
+
+import { DataTable, DataTableRowClickEvent } from "primereact/datatable";
+import { Toast } from "primereact/toast";
+import { AxiosError } from "axios";
+
+import { useLoaderData } from "react-router-dom";
+import { useForm } from "./useForm";
 import {
   AssetTypesData,
   defaultAssetData,
   FormatedAssetData,
   PlainAssetData,
 } from "../interfaces/asset.interface";
-import { useLoaderData } from "react-router-dom";
-import { useForm } from "./useForm";
-import {
-  DataTable,
-  DataTableFilterMeta,
-  DataTableRowClickEvent,
-} from "primereact/datatable";
 import {
   CreateAsset,
-  GetAllAssets,
   UpdateAsset,
   getEspecificAssets,
 } from "../services/asset.service";
-import { Toast } from "primereact/toast";
-import React from "react";
 import { AssetConfig, AssetTypeConfig } from "../config/assets.config";
 import { inputErrors } from "../pages/fixedAssets/common/utilities";
-import { AxiosError } from "axios";
 
 const useAssetForm = () => {
   const [assets, setAssets] = useState<AssetTypesData>(
