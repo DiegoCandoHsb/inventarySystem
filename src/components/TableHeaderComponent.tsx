@@ -17,7 +17,7 @@ export default function TableHeaderComponent({
   return (
     <>
       <div className="font-bold text-2xl w-full grid grid-cols-12 text-center items-center">
-        <span className="col-span-3 col-start-6">{headerTitle}</span>
+        <span className="col-span-4 col-start-5">{headerTitle}</span>
 
         <span className="p-input-icon-right col-span-2 col-start-9">
           <i className="pi pi-search" />
