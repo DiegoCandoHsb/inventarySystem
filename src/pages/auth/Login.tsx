@@ -14,6 +14,7 @@ import { NavigationRoutes } from "../../config/navigationRoutes";
 import React, { useRef } from "react";
 import { Toast } from "primereact/toast";
 import { saveTokenToLS } from "../../common/tokenMng/tokenMng";
+import { LoginResponseData } from "../../interfaces/userSignUpData.interface";
 
 export function Component() {
   const navigate = useNavigate();
@@ -56,8 +57,8 @@ export function Component() {
     });
   }
 
-  function signIn(): void {
-    SignIn({ email: email.toLowerCase().trim(), password })
+  function signIn(): Promise<void | LoginResponseData> {
+    return SignIn({ email: email.toLowerCase().trim(), password })
       .then((data) => {
         saveTokenToLS(data.token);
         navigate(NavigationRoutes.basePath);
@@ -72,7 +73,7 @@ export function Component() {
     <section className="flex h-screen items-center">
       <Toast ref={toastRef} position="top-right" />
       <div className="flex w-full h-82 justify-center ">
-        <RegisterForm title="Sign In">
+        <RegisterForm title="Sign In" authMethod={signIn}>
           {/* email */}
           <InputGroup
             inputType="text"
@@ -97,7 +98,11 @@ export function Component() {
             }
           />
           <div className="my-3">
-            <Button label="Sign In" className="w-full" onClick={signIn} />
+            <Button
+              label="Sign In"
+              className="w-full"
+              // onClick={signIn}
+            />
           </div>
           <Divider layout="horizontal" align="center">
             or

@@ -185,7 +185,6 @@ export default function HumanResources() {
   };
 
   function setNewVacations() {
-    console.log("Xd");
     if (!checkAdmissionDate()) return;
     if (dates.startVacationDay > dates.endVacationDay) {
       const headers = new axios.AxiosHeaders();
@@ -225,6 +224,8 @@ export default function HumanResources() {
   }
 
   function updateUser() {
+    inputErrors(form);
+
     const userTransformedData: userSignUpData = {
       id: form.id.toString(),
       name: form.name,
@@ -246,7 +247,9 @@ export default function HumanResources() {
         setEdit(false);
         return data;
       })
-      .catch((err) => console.log(err))
+      .catch((err) => {
+        showErrorMessage(err);
+      })
       .finally(async () => await setNewUser());
   }
 

@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 import { InputText } from "primereact/inputtext";
 import { Calendar, CalendarChangeEvent } from "primereact/calendar";
 import {
@@ -5,9 +7,7 @@ import {
   AutoCompleteChangeEvent,
   AutoCompleteCompleteEvent,
 } from "primereact/autocomplete";
-import { useEffect, useState } from "react";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
-import { userSignUpData } from "../interfaces/userSignUpData.interface";
 import { InputNumber, InputNumberChangeEvent } from "primereact/inputnumber";
 import { SelectItemOptionsType } from "primereact/selectitem";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -16,9 +16,11 @@ import { KeyFilterType } from "primereact/keyfilter";
 import { InputSwitch } from "primereact/inputswitch";
 import { Checkbox, CheckboxChangeEvent } from "primereact/checkbox";
 import { Button } from "primereact/button";
-import { AssetConfig } from "../config/assets.config";
-import { AssetUbication } from "../interfaces/enums/assetUbication.enum";
 import { FileUpload, FileUploadHandlerEvent } from "primereact/fileupload";
+
+import { userSignUpData } from "../interfaces/userSignUpData.interface";
+import { AssetUbication } from "../interfaces/enums/assetUbication.enum";
+import { AssetConfig } from "../config/assets.config";
 
 interface InputGroupProps {
   inputType:
@@ -229,8 +231,10 @@ export default function InputGroup({
             value={value as string}
             onChange={onChange}
             feedback={false}
-            inputClassName={commonInputProps.className}
             toggleMask
+            inputClassName={commonInputProps.className}
+            hideIcon={<i className="pi pi-eye-slash"></i>}
+            showIcon={<i className="pi pi-eye"></i>}
           />
         );
 

@@ -107,7 +107,7 @@ export function Component() {
       active: true,
     };
 
-    SignUp(userTransformedData)
+    return SignUp(userTransformedData)
       .then((data) => {
         console.log(data);
         navigate(NavigationRoutes.login);
@@ -120,7 +120,7 @@ export function Component() {
   return (
     <section className="flex justify-center">
       <Toast ref={toastRef} position="top-right" />
-      <RegisterForm title="Sign Up">
+      <RegisterForm title="Sign Up" authMethod={createUser}>
         {/* first name */}
         <InputGroup
           inputType="text"
@@ -225,7 +225,11 @@ export function Component() {
         />
         {/* Submit */}
         <div className="my-3">
-          <Button label="Sign Up" className="w-full" onClick={createUser} />
+          <Button
+            label="Sign Up"
+            className="w-full"
+            // onClick={createUser}
+          />
         </div>
         <Divider layout="horizontal" align="center">
           or
