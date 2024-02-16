@@ -10,6 +10,14 @@ export async function GetUsers(): Promise<userSignUpData[]> {
   return users.data;
 }
 
+export async function getUser(id: string): Promise<userSignUpData> {
+  const user = await HsbBaseApiDb.get<userSignUpData>(
+    "/user".concat("/", id),
+    getReqConfig()
+  );
+  return user.data;
+}
+
 export async function UpdateUser(
   userId: string,
   payload: userSignUpData

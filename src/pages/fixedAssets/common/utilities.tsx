@@ -5,6 +5,9 @@ import { userSignUpData } from "../../../interfaces/userSignUpData.interface";
 import * as XLSX from "xlsx";
 import { downdloadFile } from "../../../services/asset.service";
 import { downloadUsersFile } from "../../../services/user.service";
+import { Toast } from "primereact/toast";
+import React from "react";
+import { AxiosError } from "axios";
 
 export function numValCell(field: string | number) {
   return (
@@ -111,4 +114,39 @@ export function clearData(
       ];
     })
   );
+}
+
+export function showErrorMessage(
+  error: Required<AxiosError<{ [key: string]: any }>>,
+  toastRef: React.RefObject<Toast>
+) {
+  const errorStrings: string | string[] = error.response.data.message as
+    | string
+    | string[];
+
+  if (Array.isArray(errorStrings)) {
+    errorStrings.map((str) => str.split("details.").join(" ").trim());
+
+    const errorNodeList = [];
+    for (let i = 0; i < errorStrings.length; i++) {
+      const errorP = React.createElement("h1", { key: i }, errorStrings[i]);
+      errorNodeList.push(errorP);
+    }
+
+    toastRef.current?.show({
+      severity: "error",
+      summary: `Error ${error.response.status}`,
+      detail: errorNodeList,
+      life: 7000,
+    });
+
+    return;
+  }
+
+  toastRef.current?.show({
+    severity: "error",
+    summary: `Error ${error.response.status}`,
+    detail: errorStrings,
+    life: 7000,
+  });
 }

@@ -280,13 +280,12 @@ export default function HumanResources() {
 
     const elmClasses = [...(nextElement?.classList as unknown as string[])];
     if (!aviableForVacations) {
-      console.log("xd");
       nextElement?.classList.add("hidden");
     }
 
     if (elmClasses.includes("hidden")) {
       nextElement?.classList.remove("hidden");
-      return "xd";
+      return "";
     }
     nextElement?.classList.add("hidden");
 
@@ -413,7 +412,7 @@ export default function HumanResources() {
             visible={edit}
             onHide={() => setEdit(false)}
             header="Edit User"
-            className="w-2/5 bg-red-500"
+            className="w-2/5"
           >
             <div className="grid grid-cols-4 gap-2">
               <InputGroup

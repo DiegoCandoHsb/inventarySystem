@@ -57,8 +57,8 @@ export function Component() {
     });
   }
 
-  function signIn(): Promise<void | LoginResponseData> {
-    return SignIn({ email: email.toLowerCase().trim(), password })
+  async function signIn(): Promise<void | LoginResponseData> {
+    return await SignIn({ email: email.toLowerCase().trim(), password })
       .then((data) => {
         saveTokenToLS(data.token);
         navigate(NavigationRoutes.basePath);

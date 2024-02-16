@@ -24,7 +24,7 @@ import { exportToXlsx, numValCell } from "./common/utilities";
 import TotalDepreciationCard from "../../components/TotalDepreciationCard";
 import LoadSpinner from "../../components/LoadSpinner";
 import { FileUploadHandlerEvent } from "primereact/fileupload";
-import { getEspecificAssets, uploadFile } from "../../services/asset.service";
+import { uploadFile } from "../../services/asset.service";
 
 export default function ElectronicEquipment() {
   const {

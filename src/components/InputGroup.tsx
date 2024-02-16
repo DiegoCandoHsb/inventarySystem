@@ -324,9 +324,11 @@ export default function InputGroup({
         `${OtherProps.containerCls ? OtherProps.containerCls : ""}`
       )}
     >
-      <label htmlFor={name} className={labelClassname}>
-        {label}
-      </label>
+      {inputType !== "button" && (
+        <label htmlFor={name} className={labelClassname}>
+          {label}
+        </label>
+      )}
       <div className="flex justify-center">{slectInputByType()}</div>
     </div>
   );

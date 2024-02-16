@@ -1,20 +1,28 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
-import Layaout from "../common/Layaout";
-import NotFoundPage from "../common/NotFoundPage";
-import Activities from "../pages/Activities";
-import AuthLayaout from "../common/AuthLayaout";
-import FixedAssetsMenu from "../pages/fixedAssets/FixedAssetsMenu";
-import { NavigationRoutes } from "../config/navigationRoutes";
+import { createBrowserRouter, json, redirect } from "react-router-dom";
 
+import * as reactJWT from "react-jwt";
+
+import { NavigationRoutes } from "../config/navigationRoutes";
 import { AssetDataLoader } from "../common/loaders/AssetsLoader";
 import HumanResources, {
   HumanResourcesLoader,
 } from "../pages/humanResources/HumanResources";
-import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
-import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
 import TokenLoader from "../common/loaders/TokenLoader";
 import { conbinedLoaders } from "../common/loaders/CombineLoaders";
 import { AssetTypeConfig } from "../config/assets.config";
+import FixedAssetsMenu from "../pages/fixedAssets/FixedAssetsMenu";
+import NotFoundPage from "../common/NotFoundPage";
+import Layaout from "../common/Layaout";
+import AuthLayaout from "../common/AuthLayaout";
+import Activities from "../pages/Activities";
+import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
+import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
+import Profile from "../pages/auth/Profile";
+import { getTokenFromLs } from "../common/tokenMng/tokenMng";
+import { TokenPayload } from "../interfaces/toke.interface";
+import { userSignUpData } from "../interfaces/userSignUpData.interface";
+import { getUser } from "../services/user.service";
+import { ProfileLoader } from "../common/loaders/ProfileLoader";
 
 export const routes = createBrowserRouter([
   {
@@ -24,42 +32,42 @@ export const routes = createBrowserRouter([
     children: [
       {
         index: true,
-        loader: () => conbinedLoaders(),
         element: <Activities />,
+        loader: () => conbinedLoaders(),
       },
-      // {
-      //   path: NavigationRoutes.expensesPath,
-      //   loader: () => conbinedLoaders(AssetDataLoader),
-      //   element: <Expenses />,
-      // },
+      {
+        path: NavigationRoutes.profilePath,
+        element: <Profile />,
+        loader: () => conbinedLoaders(ProfileLoader),
+      },
       {
         path: NavigationRoutes.humanResourcesPath,
-        loader: () => conbinedLoaders(HumanResourcesLoader),
         element: <HumanResources />,
+        loader: () => conbinedLoaders(HumanResourcesLoader),
       },
       {
         path: NavigationRoutes.fixedAssetsPath,
         children: [
           {
             index: true,
-            loader: () => conbinedLoaders(),
             element: <FixedAssetsMenu />,
+            loader: () => conbinedLoaders(),
           },
           {
             path: NavigationRoutes.elecEquiPath,
+            element: <ElectronicEquipment />,
             loader: () =>
               conbinedLoaders(() =>
                 AssetDataLoader(AssetTypeConfig.ElectronicEquipment)
               ),
-            element: <ElectronicEquipment />,
           },
           {
             path: NavigationRoutes.furnAndMixPath,
+            element: <FurnitureAndFixtures />,
             loader: () =>
               conbinedLoaders(() =>
                 AssetDataLoader(AssetTypeConfig.FurnitureAndFixtures)
               ),
-            element: <FurnitureAndFixtures />,
           },
         ],
       },
@@ -80,13 +88,13 @@ export const routes = createBrowserRouter([
       },
       {
         path: NavigationRoutes.login,
-        loader: TokenLoader,
         lazy: () => import("../pages/auth/Login"),
+        loader: TokenLoader,
       },
       {
         path: NavigationRoutes.register,
-        loader: TokenLoader,
         lazy: () => import("../pages/auth/Register"),
+        loader: TokenLoader,
       },
     ],
   },
