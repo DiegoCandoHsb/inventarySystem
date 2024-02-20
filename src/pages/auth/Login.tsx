@@ -72,8 +72,9 @@ export function Component() {
   return (
     <section className="flex h-screen items-center">
       <Toast ref={toastRef} position="top-right" />
-      <div className="flex w-full h-82 justify-center ">
+      <div className="flex w-full h-82 justify-center">
         <RegisterForm title="Sign In" authMethod={signIn}>
+
           {/* email */}
           <InputGroup
             inputType="text"
@@ -86,6 +87,7 @@ export function Component() {
               onChange(e.target.value, e.target.id as keyof userSignInData)
             }
           />
+
           {/* password */}
           <InputGroup
             inputType="password"

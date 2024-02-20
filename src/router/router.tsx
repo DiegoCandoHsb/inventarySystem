@@ -18,10 +18,6 @@ import Activities from "../pages/Activities";
 import FurnitureAndFixtures from "../pages/fixedAssets/FurnitureAndFixtures";
 import ElectronicEquipment from "../pages/fixedAssets/ElectronicEquipment";
 import Profile from "../pages/auth/Profile";
-import { getTokenFromLs } from "../common/tokenMng/tokenMng";
-import { TokenPayload } from "../interfaces/toke.interface";
-import { userSignUpData } from "../interfaces/userSignUpData.interface";
-import { getUser } from "../services/user.service";
 import { ProfileLoader } from "../common/loaders/ProfileLoader";
 
 export const routes = createBrowserRouter([

@@ -517,6 +517,7 @@ export default function HumanResources() {
                 inputType="dropdown"
                 placeholder="Yes"
                 name="payroll"
+                label="Payroll"
                 value={form.payroll}
                 options={["Yes", "No"]}
                 onDropDownChange={(e) =>
